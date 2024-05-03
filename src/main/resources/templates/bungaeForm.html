@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>createBungae</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bungae.css}">
+</head>
+<body>
+<div class="container">
+    <h2>번개 모임 등록</h2>
+    <form th:action="@{/bungae/create_bungae}" method="post" enctype="multipart/form-data">
+        <table class="form-table">
+            <tr>
+                <th>모임 주제</th>
+                <td>
+                    <select name="upCg_code" id="upCg_code" class="form-control">
+                        <option disabled selected>::카테고리::</option>
+                        <option>술자리</option>
+                        <option>축구</option>
+                        <option>자전거</option>
+                        <option>러닝</option>
+                        <option>공부</option>
+                        <option>농구</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>모임명</th>
+                <td><input type="text" name="pname" id="pname" class="form-control"></td>
+            </tr>
+            <tr>
+                <th>일시</th>
+                <td><input type="text" name="pcompany" id="pcompany" class="form-control"></td>
+            </tr>
+            <tr>
+                <th>위치</th>
+                <td></td>
+            </tr>
+            <tr>
+                <th>모임 대표 이미지</th>
+                <td>
+                    <input type="file" name="pimage" accept="images/*" class="form-control">
+                </td>
+            </tr>
+            <tr>
+                <th>인원</th>
+                <td><input type="number" name="pqty" id="pqty" min="1" max="100" class="form-control"></td>
+            </tr>
+            <tr>
+                <th>나이 설정</th>
+                <td><input type="number" name="price" id="price" min="0" required class="form-control"></td>
+            </tr>
+            <tr>
+                <td colspan="2" class="btn-group">
+                    <button type="submit" class="btn">모임등록</button>
+                    <button type="reset" class="btn">다시쓰기</button>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
+</html>
