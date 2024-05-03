@@ -13,8 +13,8 @@ public class BungaeDTO {
 
     // private 장소 bungaeLocation;
 
-    private String imageName;
-    private String imagePath;
+    private String bungaeImageName;
+    private String bungaeImagePath;
     private int bungaeMaxMember;
     private LocalDateTime bungaeCreateTime;
     private LocalDateTime bungaeStartTime;

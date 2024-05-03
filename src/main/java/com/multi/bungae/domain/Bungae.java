@@ -1,8 +1,7 @@
 package com.multi.bungae.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,12 +10,14 @@ import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class Bungae {
 
     @Id
     @Column(name = "bungaeId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bungaeId;
 
     @Column
@@ -29,9 +30,9 @@ public class Bungae {
     private Integer bungaeMaxMember;
     private LocalDateTime bungaeCreateTime;
     private LocalDateTime bungaeStartTime;
-    private Byte bungaeMinAge;
-    private Byte bungaeMaxAge;
-    private Byte bungaeStatus;
+    private Integer bungaeMinAge;
+    private Integer bungaeMaxAge;
+    private Integer bungaeStatus;
 
 
 }
