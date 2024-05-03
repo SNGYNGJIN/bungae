@@ -33,10 +33,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
-	// https://mvnrepository.com/artifact/org.hibernate/hibernate-core
-	// implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.6.15.Final'
-	// https://mvnrepository.com/artifact/mysql/mysql-connector-java
-	implementation 'mysql:mysql-connector-java:8.0.28'
+
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	implementation 'org.springframework.boot:spring-boot-devtools'
 }
 
 tasks.named('test') {

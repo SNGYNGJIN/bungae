@@ -1,0 +1,27 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.container {
+    text-align: center;
+}
+.form-table {
+    margin: auto;
+    text-align: left;
+}
+.form-table th {
+    text-align: right;
+}
+.form-table td {
+    text-align: center;
+}
+.form-control {
+    width: 100%;
+}
+.btn-group {
+    margin-top: 20px;
+}
+.btn-group button {
+    margin-right: 10px;
+}
