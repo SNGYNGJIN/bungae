@@ -10,9 +10,8 @@ public class BungaeDTO {
     private int id;
 
     private int bungaeType;
-
+    private String bungaeName;
     // private 장소 bungaeLocation;
-
     private String bungaeImageName;
     private String bungaeImagePath;
     private int bungaeMaxMember;
