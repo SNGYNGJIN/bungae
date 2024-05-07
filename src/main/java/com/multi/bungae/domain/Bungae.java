@@ -21,7 +21,8 @@ public class Bungae {
     private Long bungaeId;
 
     @Column(name = "bungae_type", nullable = false)
-    private Integer bungaeType;
+    @Enumerated(EnumType.STRING)
+    private BungaeType bungaeType;
 
     @Column(name = "bungae_name", nullable = false)
     private String bungaeName;

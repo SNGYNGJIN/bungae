@@ -1,20 +1,46 @@
 package com.multi.bungae.service;
 
 import com.multi.bungae.domain.Bungae;
+import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.BungaeDTO;
 import com.multi.bungae.repository.BungaeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class BungaeServiceImpl implements BungaeService {
 
     private final BungaeRepository bungaeRepository;
+    private final BungaeMemberService bungaeMemberService;
+
+//    @Override
+//    public Bungae createBungae(BungaeDTO bungaeDTO, UserVO user) {
+//
+//        LocalDateTime createTime = LocalDateTime.now();
+//
+//        Bungae bungae = new Bungae(
+//                null,  // 생성 시 자동으로 할당
+//                bungaeDTO.getBungaeType(),
+//                bungaeDTO.getBungaeName(),
+//                //null,  // bungaeLocation: 나중에
+//                bungaeDTO.getBungaeImageName(),
+//                bungaeDTO.getBungaeImagePath(),
+//                bungaeDTO.getBungaeMaxMember(),
+//                createTime,
+//                bungaeDTO.getBungaeStartTime(),
+//                bungaeDTO.getBungaeMinAge(),
+//                bungaeDTO.getBungaeMaxAge(),
+//                bungaeDTO.getBungaeStatus()
+//        );
+//
+//        bungaeMemberService.createBungaeMember(bungae, user, true);
+//
+//        return bungaeRepository.save(bungae);
+//    }
 
     @Override
     public Bungae createBungae(BungaeDTO bungaeDTO) {
@@ -37,5 +63,10 @@ public class BungaeServiceImpl implements BungaeService {
         );
 
         return bungaeRepository.save(bungae);
+    }
+
+    @Override
+    public List<Bungae> bungaeList() {
+        return bungaeRepository.findAll();
     }
 }
