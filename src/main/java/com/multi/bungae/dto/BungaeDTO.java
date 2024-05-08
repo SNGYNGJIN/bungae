@@ -1,5 +1,6 @@
 package com.multi.bungae.dto;
 
+import com.multi.bungae.domain.BungaeType;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -9,10 +10,9 @@ public class BungaeDTO {
 
     private int id;
 
-    private int bungaeType;
-
+    private BungaeType bungaeType;
+    private String bungaeName;
     // private 장소 bungaeLocation;
-
     private String bungaeImageName;
     private String bungaeImagePath;
     private int bungaeMaxMember;

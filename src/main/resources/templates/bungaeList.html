@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bungae List</title>
+</head>
+<body>
+<ul id="bungaeList"></ul>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '/bungaeList',
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                var bungaeList = $('#bungaeList');
+                bungaeList.empty(); // 기존 목록 제거
+                $.each(data, function (index, bungae) {
+                    bungaeList.append('<li>' + bungae.someProperty + '</li>'); // Bungae 객체의 속성에 따라 수정
+                });
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX Error: ' + status, error);
+            }
+        });
+    });
+</script>
+</body>
+</html>
