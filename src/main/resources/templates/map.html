@@ -1,12 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>지도 화면</title>
     <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=k495h0yzln"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div id="map" style="width:100%;height:500px;"></div>
+<div th:replace="layout/header :: header"></div>
+<main>
+<div id="map" style="width:100%;height:600px;"></div>
 <script>
     navigator.geolocation.getCurrentPosition(function(position) {
     var lat = position.coords.latitude,
@@ -57,7 +60,7 @@
         }
     });
 
-    var locationBtnHtml= '<a href="#" class="btn_mylct"><button>내 위치</button></a>';
+    var locationBtnHtml= '<a href="#" class="btn_mylct"><img class="target" src="/images/target.png"/></a>';
     var customControl = new naver.maps.CustomControl(locationBtnHtml, {
     position: naver.maps.Position.RIGHT_CENTER
     });
@@ -72,5 +75,7 @@
 
 
 </script>
+</main>
+<div th:replace="layout/footer :: footer"></div>
 </body>
 </html>
