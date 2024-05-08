@@ -1,10 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Main</title>
+    <title>메인 페이지</title>
 </head>
 <body>
-    Hello World!!!!!
+<div th:replace="layout/header :: header"></div>
+<main>
+    <!-- 메인 페이지 내용 -->
+    <h1>환영합니다!</h1>
+    <p>여기는 메인 페이지입니다.</p>
+</main>
+<div th:replace="layout/footer :: footer"></div>
 </body>
 </html>

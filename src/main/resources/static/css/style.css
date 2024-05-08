@@ -1,0 +1,78 @@
+@font-face {
+    font-family: 'BMDOHYEON';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMDOHYEON.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+body{
+    margin:0px;
+    font-family: 'BMDOHYEON';
+}
+header{
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    display: flex;
+    background-color:#00FF80;
+    border-bottom: 2px solid #333;
+}
+.logo{
+  flex-grow: 1;
+}
+.menu{
+  text-align: center;
+}
+.bungae-logo{
+    width:200px;
+    height:50px;
+}
+nav ul {
+    list-style: none;
+    display: flex;
+    padding: 0;
+    margin: 0 auto;
+}
+
+nav ul li {
+    margin: 0 10px;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: black;
+  transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+  color: #006aff;
+}
+
+
+footer{
+    border-top: 2px solid #333;
+    text-align: center;
+    background-color:#00FF80;
+}
+.bottom-logo{
+    width:100px;
+    height:25px;
+}
+#copy{
+    color:gray;
+}
+.github_icon{
+    width:25px;
+    height:25px;
+}
+.notion_icon{
+    width:25px;
+    height:25px;
+}
+.target{
+    position: absolute;
+    border: 1px solid rgba(58, 70, 88, .45);
+    right:10px;
+    background:#fcfcfd;
+    width:20px;
+    height:20px;
+}
