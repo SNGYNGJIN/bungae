@@ -9,6 +9,9 @@ import com.multi.bungae.service.BungaeMemberService;
 import com.multi.bungae.service.BungaeService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -40,19 +43,31 @@ public class BungaeController {
         Bungae bungae = bungaeService.createBungae(bungaeDTO);
         logger.info("bungae: " + bungae);
 
-        return "redirect:/index.html";
+        return "redirect:/bungae/bungaeList";
     }
 
-    @GetMapping(value = "/bungaeList", produces = "application/json; charset=UTF-8")
+    /**
+     * 번개 목록을 불러와서 json으로 바꿔서 반환
+     */
+    @RequestMapping(value = "/getList", produces = "application/json; charset=UTF-8")
     @ResponseBody
-    public List<Bungae> bungaeList() {
+    public List<Bungae> getList() {
         List<Bungae> list = bungaeService.bungaeList();
         return list;
     }
 
-    @GetMapping("/find/location")
-    public Bungae findBungaeByLocation(@RequestParam("location") String location) {
-        return null;
+    /**
+     * bungaeList.html 호출
+     */
+    @GetMapping("/bungaeList")
+    public String bungaeList() {
+        return "bungaeList";
+    }
+
+    @GetMapping("/find/nearby")
+    public List<Bungae> findBungaeNearby(@RequestParam double lat, @RequestParam double lon, @RequestParam double radius) {
+        Point location = new GeometryFactory().createPoint(new Coordinate(lon, lat));
+        return bungaeService.findBungaeNearby(location, radius);
     }
 
     @GetMapping("/find/type")

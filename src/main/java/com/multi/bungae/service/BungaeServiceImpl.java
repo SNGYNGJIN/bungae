@@ -5,6 +5,7 @@ import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.BungaeDTO;
 import com.multi.bungae.repository.BungaeRepository;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ public class BungaeServiceImpl implements BungaeService {
 //                null,  // 생성 시 자동으로 할당
 //                bungaeDTO.getBungaeType(),
 //                bungaeDTO.getBungaeName(),
-//                //null,  // bungaeLocation: 나중에
+//                bungaeDTO.getBungaeLocation(),
 //                bungaeDTO.getBungaeImageName(),
 //                bungaeDTO.getBungaeImagePath(),
 //                bungaeDTO.getBungaeMaxMember(),
@@ -51,7 +52,7 @@ public class BungaeServiceImpl implements BungaeService {
                 null,  // 생성 시 자동으로 할당
                 bungaeDTO.getBungaeType(),
                 bungaeDTO.getBungaeName(),
-                //null,  // bungaeLocation: 나중에
+                bungaeDTO.getBungaeLocation(),
                 bungaeDTO.getBungaeImageName(),
                 bungaeDTO.getBungaeImagePath(),
                 bungaeDTO.getBungaeMaxMember(),
@@ -68,5 +69,10 @@ public class BungaeServiceImpl implements BungaeService {
     @Override
     public List<Bungae> bungaeList() {
         return bungaeRepository.findAll();
+    }
+
+    @Override
+    public List<Bungae> findBungaeNearby(Point userLocation, double radius) {
+        return bungaeRepository.findBungaeNearby(userLocation, radius);
     }
 }

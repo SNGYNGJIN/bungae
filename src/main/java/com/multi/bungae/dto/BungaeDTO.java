@@ -2,6 +2,7 @@ package com.multi.bungae.dto;
 
 import com.multi.bungae.domain.BungaeType;
 import lombok.Data;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +13,7 @@ public class BungaeDTO {
 
     private BungaeType bungaeType;
     private String bungaeName;
-    // private 장소 bungaeLocation;
+    private Point bungaeLocation;
     private String bungaeImageName;
     private String bungaeImagePath;
     private int bungaeMaxMember;
