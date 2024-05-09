@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
 
