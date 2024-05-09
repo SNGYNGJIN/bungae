@@ -1,4 +1,4 @@
-package com.multi.bungae.dto;
+package com.multi.bungae.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,11 +6,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-//응답할 때 사용
-public class ResponseDTO<T> {
-    int status;
-    T data;
+public class LoginRes {
+    private String access_token;
+    private String refresh_token;
 }

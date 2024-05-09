@@ -5,15 +5,19 @@
     <title>로그인</title>
 </head>
 <body>
-    <h1>로그인</h1>
-    <hr>
-    <form name="login" th:action="@{/user/login}" method="POST">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+<div th:replace="layout/header :: header"></div>
+<main>
+<h1>로그인</h1>
+<hr>
+<form name="login" th:action="@{/user/login}" method="POST">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-        <input type="text" name="username" placeholder="아이디"><br><br>
-        <input type="password" name="password" placeholder="비밀번호"><br><br>
-        <button type="submit">로그인</button>
-        <a href="signup.html" th:href="@{signup}"><button type="button">회원가입</button></a>
-    </form>
+    <input type="text" name="username" placeholder="아이디"><br><br>
+    <input type="password" name="password" placeholder="비밀번호"><br><br>
+    <button type="submit">로그인</button>
+    <a href="signup.html" th:href="@{signup}"><button type="button">회원가입</button></a>
+</form>
+</main>
+<div th:replace="layout/footer :: footer"></div>
 </body>
 </html>

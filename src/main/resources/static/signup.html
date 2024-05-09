@@ -9,10 +9,14 @@
             color: red;
         }
     </style>
+    <!--<script th:src="@{/js/signup.js}" type="text/javascript"></script>-->
 </head>
 <body>
 <h2>회원 가입</h2>
 <form name="signup" th:action="@{/user/api/signup}" method="post" onsubmit="return false;">
+
+<!-- <form name="signup" th:action="@{/user/signup}" method="POST" onsubmit="return checkID() && checkPWD()"> -->
+    <!--<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />-->
     <input type="hidden" name="_csrf" th:value="${_csrf.token}"/>
 
     <label for="userId">아이디:</label>
@@ -21,9 +25,9 @@
     <span id="idCheckMessage" class="message" style="color:red">* 중복 확인 미완료</span><br>
 
     <label for="passwd">비밀번호:</label>
-    <input type="password" id="passwd" name="passwd" placeholder="비밀번호"><br><br>
+    <input type="password" id="passwd" name="passwd" onkeyup="checkPWD()" placeholder="비밀번호"><br><br>
     <label for="passwdCheck">비밀번호 확인:</label>
-    <input type="password" id="passwdCheck" name="passwdCheck" placeholder="비밀번호 확인"><br>
+    <input type="password" id="passwdCheck" name="passwdCheck" onkeyup="checkPWD()" placeholder="비밀번호 확인"><br>
     <span id="passwordMessage" class="message"></span><br><br>
 
     <label for="name">이름:</label>
@@ -50,7 +54,7 @@
 
     <button type="submit" id="btn-save" class="btn btn-dark">회원가입완료</button>
 </form>
-<script th:inline="javascript">
+<script>
     // ID 중복 검사 함수를 Promise를 반환하도록 변경
     function checkID() {
         const userId = document.getElementById('userId').value;

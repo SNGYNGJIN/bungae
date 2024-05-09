@@ -1,13 +1,12 @@
 package com.multi.bungae.repository;
 
-import com.multi.bungae.domain.User;
+import com.multi.bungae.domain.UserVO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UserRepo extends JpaRepository<User,Integer> {
+public interface UserRepository extends JpaRepository<UserVO, String> {
     boolean existsUserByUserId(String userId);
-    List<User> findByEmail(String email);
-
+    List<UserVO> findByEmail(String email);
 }
