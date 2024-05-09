@@ -40,8 +40,8 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     implementation 'org.springframework.boot:spring-boot-devtools'
     implementation group: 'org.hibernate.orm', name: 'hibernate-spatial', version: '6.4.4.Final'
-
+}
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }

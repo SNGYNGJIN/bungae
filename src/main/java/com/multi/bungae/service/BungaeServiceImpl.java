@@ -160,4 +160,9 @@ public class BungaeServiceImpl implements BungaeService {
         dto.setBungaeMaxAge(bungae.getBungaeMaxAge());
         return dto;
     }
+
+    @Override
+    public List<Bungae> findBungaeNearby(Point userLocation, double radius) {
+        return bungaeRepository.findBungaeNearby(userLocation, radius);
+    }
 }
