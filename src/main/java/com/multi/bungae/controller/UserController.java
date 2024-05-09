@@ -5,43 +5,42 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import com.multi.bungae.service.UserService;
-import com.multi.bungae.dto.user.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserService userService;
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    //private final UserService userService;
+    //private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     // 메인 페이지(로그인 페이지)
     @GetMapping("/login")
     public String home() {
-        return "login";
+        return "/user/login";
     }
 
     // 회원가입 페이지
-    @GetMapping("/signup")
+    @GetMapping("/signupForm")
     public String dispSignup() {
-        return "signup";
+        return "/user/signup";
     }
 
-    // 회원가입 처리
-    @PostMapping("/signup")
-    public String execSignup(SignupReq signupReq, RedirectAttributes redirectAttributes) {
-        try {
-            SignupRes signupRes = userService.signupRes(signupReq);
-            redirectAttributes.addFlashAttribute("successMessage", "회원가입에 성공하였습니다.");
-            return "redirect:/user/login";
-        } catch (BaseException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
-            return "redirect:/user/signup";  // 실패시 다시 회원가입 페이지로 리디렉트
-        }
-    }
+//    // 회원가입 처리
+//    @PostMapping("/signup")
+//    public String execSignup(SignupReq signupReq, RedirectAttributes redirectAttributes) {
+//        try {
+//            SignupRes signupRes = userService.signupRes(signupReq);
+//            redirectAttributes.addFlashAttribute("successMessage", "회원가입에 성공하였습니다.");
+//            return "redirect:/user/login";
+//        } catch (BaseException e) {
+//            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+//            return "redirect:/user/signup";  // 실패시 다시 회원가입 페이지로 리디렉트
+//        }
+//    }
 
     // 회원가입 결과 페이지
     @GetMapping("/signup/result")

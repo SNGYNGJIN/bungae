@@ -2,8 +2,9 @@ package com.multi.bungae.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -12,10 +13,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table(name="USER")
-public class UserVO extends BaseVO {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
 
     @Column(name = "userId", nullable = false, unique = true)
     private String userId;
@@ -42,7 +43,19 @@ public class UserVO extends BaseVO {
     @Column(name= "userEmail", nullable = false)
     private String email;
 
+    @CreationTimestamp
+    @Column(name = "createdAt", updatable = false, nullable = false)
+    private Timestamp createAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private Status status = Status.ACTIVE;
+
     public enum Gender {
         FEMALE, MALE
+    }
+
+    public enum Status {
+        ACTIVE, INACTIVE, DELETE
     }
 }

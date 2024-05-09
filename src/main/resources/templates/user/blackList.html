@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>블랙리스트</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #FFD700; /* 배경색 */
+            padding: 20px;
+        }
+        .user-block {
+            background-color: #ffffff;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 5px;
+        }
+        .profile-image {
+            background: url('https://via.placeholder.com/100') no-repeat center;
+            background-size: cover;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        .button-area {
+            margin-left: 20px;
+        }
+        #nickname {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>블랙리스트 관리</h1>
+    <div th:each="user : ${users}">
+        <div class="user-block">
+            <div class="profile-image" th:style="'background-image:url(' + ${user.profilePicUrl} + ')'"></div>
+            <div class="nickname" th:text="${user.name}">사용자 닉네임</div>
+            <div class="button-area">
+                <button class="btn btn-primary" th:onclick="'unblockUser(' + ${user.id} + ');'">차단 해제</button>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-info btn-block">완료</button>
+</div>
+
+<script th:inline="javascript">
+    // 차단 해제 함수
+    function unblockUser(userId) {
+        if (!confirm('이 사용자의 차단을 해제하시겠습니까?')) return;
+
+        $.ajax({
+            type: 'POST',
+            url: '/api/unblock-user/' + userId,
+            contentType: 'application/json',
+            success: function(response) {
+                alert('차단이 해제되었습니다.');
+                location.reload();  // 페이지를 리로드하여 변경된 상태 반영
+            },
+            error: function(error) {
+                alert('차단 해제에 실패했습니다.');
+                console.error('Error:', error);
+            }
+        });
+    }
+</script>
+</body>
+</html>

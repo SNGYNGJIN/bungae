@@ -59,7 +59,7 @@
 </head>
 <body>
 <h2>회원 가입</h2>
-<form name="signupForm" th:action="@{/signup}" method="POST" onsubmit="return checkID() && checkPWD()">
+<form name="signup" th:action="@{/signup}" method="POST" onsubmit="return checkID() && checkPWD()">
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
     <label for="userId">아이디:</label>
@@ -97,54 +97,6 @@
 
     <button id="btn-save" class="btn btn-dark">회원가입완료 </button>
 </form>
-<script th:inline="javascript">
-    let index = {
-        init: function() {
-            $("#btn-save").on("click", () => {
-                this.save();
-            });
-        },
-
-        save: function() {
-            let data = {
-                userId: $("#userId").val(),
-                username: $("#username").val(),
-                password: $("#password").val(),
-                nickname: $("#nickname").val(),
-                email: $("#email").val(),
-                tel: $("#tel").val(),
-                gender : $("#gender").val(),
-                birth: $("#birth").val()
-            };
-
-            $.ajax({
-                type:"POST",
-                url:"/user", //맵핑되는 주소랑 동일, insert되는 주소는 api폴더안에 넣을거라서
-                data:JSON.stringify(data), // json으로 변경해야함
-                /*body 데이터가 어떤 타입인지, MINE 타입연관 */
-                contentType:"application/json; charset=utf-8",
-
-                /*
-                요청을 서버로해서 응답이 왔을 때, 숫자가올수도잇고, 문자가 올수도있고,
-                json이 올수도 있는걸 json타입으로 변경해줌
-                * 응답은 다 String(문자열로 옴)
-                */
-
-                dataType:"json"
-                //회원가입 수행 요청
-            }).done(function(resp){
-                alert("회원가입이 완료되었습니다. ");
-                //console.log(resp);
-                //location.href="/";
-            }).fail(function(error){
-                alert(JSON.stringify(error));
-            });
-        }
-    };
-
-    $(document).ready(function() {
-        index.init();
-    });
 </script>
 </body>
 </html>

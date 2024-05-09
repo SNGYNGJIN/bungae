@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>내가 받은 후기</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #FFD43B;
+            color: #333;
+            padding: 20px;
+        }
+        .user-review {
+            background-color: #ffffff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .profile-pic {
+            background: url('/path/to/default/profile-pic.png');
+            background-size: cover;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .review-content {
+            flex: 1;
+        }
+        .star-rating {
+            color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>내가 받은 후기</h1>
+    <div th:each="review : ${reviews}">
+        <div class="user-review">
+            <div class="profile-pic" th:style="'background-image:url(' + ${review.userProfilePicUrl} + ')'">유저 이미지</div>
+            <div class="review-content">
+                <h3 th:text="${review.username}">사용자 이름</h3>
+                <p>
+                    <span th:each="i : ${#numbers.sequence(1, review.rating)}" class="star-rating">&#9733;</span>
+                    <span th:each="i : ${#numbers.sequence(review.rating + 1, 5)}" class="star-rating">&#9734;</span>
+                </p>
+                <p th:text="${review.content}">리뷰 내용이 여기에 표시됩니다.</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

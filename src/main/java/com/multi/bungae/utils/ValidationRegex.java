@@ -1,6 +1,6 @@
 package com.multi.bungae.utils;
 
-import com.multi.bungae.domain.UserVO;
+import com.multi.bungae.domain.User;
 
 import java.util.Arrays;
 import java.util.regex.Matcher;
@@ -57,7 +57,7 @@ public class ValidationRegex {
 
     // 성별 형식 체크
     public static boolean isRegexGender(String target) {
-        return Arrays.stream(UserVO.Gender.values())
+        return Arrays.stream(User.Gender.values())
                 .anyMatch(e -> e.name().equalsIgnoreCase(target));
     }
 
