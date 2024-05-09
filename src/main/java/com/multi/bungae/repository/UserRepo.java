@@ -7,6 +7,7 @@ import java.util.List;
 
 @Repository
 public interface UserRepo extends JpaRepository<UserVO,Long> {
-    boolean existsUserById(String id);
+    boolean existsUserByUserId(String userId);
     List<UserVO> findByEmail(String email);
+
 }

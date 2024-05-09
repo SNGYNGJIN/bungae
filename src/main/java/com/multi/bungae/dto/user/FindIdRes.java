@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class FindIdRes {
-    private String id;
+    private String userId;
 }

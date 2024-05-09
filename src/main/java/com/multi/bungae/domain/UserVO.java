@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class UserVO extends BaseVO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
 
     @Column(name = "userId", nullable = false, unique = true)
     private String userId;

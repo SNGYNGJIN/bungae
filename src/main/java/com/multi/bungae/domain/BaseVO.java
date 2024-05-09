@@ -22,6 +22,6 @@ public class BaseVO {
     private Status status = Status.ACTIVE;
 
     public enum Status {
-        ACTIVE, DELETE
+        ACTIVE, INACTIVE, DELETE
     }
 }

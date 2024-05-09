@@ -5,14 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class SignupRes {
-    private String id;
+    private Long id;
     private String userId;
     private String nickname;
     private String name;
@@ -21,7 +20,7 @@ public class SignupRes {
     private String email;
     private String tel;
 
-    public SignupRes(String id, String userId) {
+    public SignupRes(Long id, String userId) {
         this.id = id;
         this.userId = userId;
     }
