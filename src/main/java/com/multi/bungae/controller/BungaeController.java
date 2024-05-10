@@ -52,8 +52,7 @@ public class BungaeController {
     @RequestMapping(value = "/getList", produces = "application/json; charset=UTF-8")
     @ResponseBody
     public List<Bungae> getList() {
-        List<Bungae> list = bungaeService.bungaeList();
-        return list;
+        return bungaeService.bungaeList();
     }
 
     /**
@@ -80,13 +79,13 @@ public class BungaeController {
         return null;
     }
 
-    @PostMapping("/editBungae/{bungaeId}")
-    public Bungae editBungae(/*주최자일때만*/@PathVariable Long bungaeId) {
-        return null;
+    @PutMapping("/editBungae/{bungaeId}")
+    public Bungae editBungae(/*주최자일때만*/@PathVariable Long bungaeId, @RequestBody BungaeDTO bungaeDTO) {
+        return bungaeService.editBungae(bungaeId, bungaeDTO);
     }
 
     @DeleteMapping("/{bungaeId}")
-    public void cancelBungae(/*주최자일때만*/@PathVariable Long bungaeID) {
-
+    public void cancelBungae(/*주최자일때만*/@PathVariable Long bungaeId) {
+        
     }
 }

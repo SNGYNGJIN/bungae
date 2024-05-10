@@ -15,4 +15,8 @@ public interface BungaeService {
     List<Bungae> bungaeList();
 
     List<Bungae> findBungaeNearby(Point userLocation, double radius);
+
+    Bungae editBungae(Long bungaeId, BungaeDTO bungaeDTO);
+
+    void cancelBungae(Long bungaeId);
 }
