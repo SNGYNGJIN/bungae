@@ -79,13 +79,17 @@ public class BungaeController {
         return null;
     }
 
-    @PutMapping("/editBungae/{bungaeId}")
+    /**
+     * 수정, 삭제 주최자가 로그인 했을 때만 가능하게 수정해야함
+     */
+    @PutMapping("/{bungaeId}")
     public Bungae editBungae(/*주최자일때만*/@PathVariable Long bungaeId, @RequestBody BungaeDTO bungaeDTO) {
         return bungaeService.editBungae(bungaeId, bungaeDTO);
     }
 
     @DeleteMapping("/{bungaeId}")
-    public void cancelBungae(/*주최자일때만*/@PathVariable Long bungaeId) {
-        
+    public String cancelBungae(/*주최자일때만*/@PathVariable Long bungaeId) {
+        bungaeService.cancelBungae(bungaeId);
+        return "redirect:/bungae/bungaeList";
     }
 }

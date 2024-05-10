@@ -95,7 +95,11 @@ public class BungaeServiceImpl implements BungaeService {
     }
 
     public void cancelBungae(Long bungaeId) {
-        
+
+        if (!bungaeRepository.existsById(bungaeId)) {
+            throw new RuntimeException("해당 id를 가진 번개모임이 없음: " + bungaeId);
+        }
+        bungaeRepository.deleteById(bungaeId);
     }
 
     private void updateBungaeData(Bungae bungae, BungaeDTO bungaeDTO) {
