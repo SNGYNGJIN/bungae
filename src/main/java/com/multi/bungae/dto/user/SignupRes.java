@@ -21,8 +21,9 @@ public class SignupRes {
     private String email;
     private String tel;
 
-    public SignupRes(int id, String userId) {
+    public SignupRes(int id, String userId, String nickname) {
         this.id = id;
         this.userId = userId;
+        this.nickname = nickname;
     }
 }

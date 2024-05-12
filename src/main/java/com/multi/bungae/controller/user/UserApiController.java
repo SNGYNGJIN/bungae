@@ -16,6 +16,14 @@ public class UserApiController {
 
     private final UserService userService;
 
+    @PostMapping("/login")
+    @ResponseBody
+    public BaseResponse<LoginRes> login(@RequestBody LoginReq loginReq) throws BaseException {
+        log.info("Received login request for user: " + loginReq.getUserId());
+        LoginRes loginRes = userService.login(loginReq);
+        return new BaseResponse<>(loginRes);
+    }
+
     @PostMapping("/check_id")
     @ResponseBody
     public BaseResponse<CheckIdRes> checkId(@RequestBody CheckIdReq checkIdReq) {
@@ -26,6 +34,7 @@ public class UserApiController {
     @PostMapping("/signup")
     @ResponseBody
     public BaseResponse<SignupRes> signup(@RequestBody SignupReq signupReq) throws BaseException {
+        log.info("signupReq: {}", signupReq);
         SignupRes signupRes = userService.signupRes(signupReq);
         return new BaseResponse<>(signupRes);
     }
@@ -37,10 +46,4 @@ public class UserApiController {
         return new BaseResponse<>(findIdRes);
     }
 
-    @PostMapping("/login")
-    @ResponseBody
-    public BaseResponse<LoginRes> login(LoginReq loginReq) throws BaseException {
-        LoginRes loginRes = userService.login(loginReq);
-        return new BaseResponse<>(loginRes);
-    }
 }

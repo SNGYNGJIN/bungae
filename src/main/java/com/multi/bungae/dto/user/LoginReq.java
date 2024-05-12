@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class LoginReq {
-    private int id;
+    private String userId;
+    private String passwd;
 }

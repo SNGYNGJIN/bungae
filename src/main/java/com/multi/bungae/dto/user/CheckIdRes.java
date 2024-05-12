@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class CheckIdRes {
-    private Boolean available;
+    private Boolean available = Boolean.FALSE;
 }

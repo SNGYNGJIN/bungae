@@ -3,7 +3,6 @@ package com.multi.bungae.service;
 import com.multi.bungae.config.BaseException;
 import com.multi.bungae.config.BaseExceptionStatus;
 import com.multi.bungae.domain.UserVO;
-import com.multi.bungae.domain.BaseVO;
 import com.multi.bungae.dto.user.*;
 import com.multi.bungae.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 import static com.multi.bungae.config.BaseExceptionStatus.INVALID_PASSWORD;
 import static com.multi.bungae.utils.ValidationRegex.*;
@@ -25,19 +25,27 @@ import static com.multi.bungae.utils.ValidationRegex.*;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepo;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+    public UserDetails loadUserByUsername(String usernickname) throws UsernameNotFoundException {
+        UserVO user = userRepo.findByUserId(usernickname)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + usernickname));
+        return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getPassword(), new ArrayList<>());
     }
-
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public CheckIdRes checkId(CheckIdReq checkIdReq) {
         return new CheckIdRes(!userRepo.existsUserByUserId(checkIdReq.getUserId()));
     }
 
-
+    public LoginRes login(@RequestBody LoginReq loginReq) throws BaseException {
+        Optional<UserVO> userOpt = userRepo.findByUserId(loginReq.getUserId());
+        if (userOpt.isPresent() && passwordEncoder.matches(loginReq.getPasswd(), userOpt.get().getPassword())) {
+            return new LoginRes("access_token_OK", "refresh_token_OK"); // Replace with actual token generation
+        } else {
+            throw new BaseException(BaseExceptionStatus.LOGIN_FAILED);
+        }
+    }
     @Transactional
     public SignupRes signupRes(@RequestBody SignupReq signupReq) throws BaseException {
 
@@ -122,7 +130,7 @@ public class UserService implements UserDetailsService {
                 .build();
 
         userRepo.save(user);
-        return new SignupRes(user.getId(), signupReq.getUserId());
+        return new SignupRes(user.getId(), signupReq.getUserId(), signupReq.getNickname());
     }
 
 
@@ -132,10 +140,6 @@ public class UserService implements UserDetailsService {
             throw new BaseException(BaseExceptionStatus.NOT_FOUND_EMAIL);
         }
         return new FindIdRes(user_list.get(0).getId());
-    }
-
-    public LoginRes login(LoginReq loginReq) throws BaseException {
-        return new LoginRes("d", "d");
     }
 
 }

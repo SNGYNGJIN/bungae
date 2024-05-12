@@ -7,13 +7,13 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-    @GetMapping("/")  // 루트 URL을 처리하는 메소드
+    @GetMapping("/")  // 루트 URL을 로그인 페이지로 리디렉션
     public String index() {
-        return "/user/login";  // 루트 URL 접속 시 로그인 페이지로 리다이렉션
+        return "redirect:/user/login";
     }
-    @GetMapping("/logins")
+    @GetMapping("/login")
     public String login() {
-        return "user/login";  // 실제 로그인 페이지 반환
+        return "user/login";
     }
 
     @GetMapping("/signup")
@@ -21,4 +21,13 @@ public class UserController {
         return "user/signup";
     }
 
+    @GetMapping("/signupSuccess")
+    public String signupSuccess() {
+        return "user/signupSuccess";
+    }
+
+    @GetMapping("/myinfo")
+    public String myPage() {
+        return "/user/myinfo";
+    }
 }

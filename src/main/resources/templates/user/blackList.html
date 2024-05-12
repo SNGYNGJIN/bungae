@@ -4,34 +4,7 @@
     <meta charset="UTF-8">
     <title>블랙리스트</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #FFD700; /* 배경색 */
-            padding: 20px;
-        }
-        .user-block {
-            background-color: #ffffff;
-            padding: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-radius: 5px;
-        }
-        .profile-image {
-            background: url('https://via.placeholder.com/100') no-repeat center;
-            background-size: cover;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-        }
-        .button-area {
-            margin-left: 20px;
-        }
-        #nickname {
-            padding: 10px;
-        }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/blackList.css}">
 </head>
 <body>
 <div class="container">

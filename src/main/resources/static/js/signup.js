@@ -1,33 +1,36 @@
-// ID 중복 검사 함수를 Promise를 반환하도록 변경
 function checkID() {
     const userId = document.getElementById('userId').value;
     const idCheckMessage = document.getElementById('idCheckMessage');
+    const idValid = document.getElementById('idValid');
 
-    return fetch('/user/check_id', {
+    return fetch('/user/api/check_id', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ id: userId })
+        body: JSON.stringify({ userId: userId })
     })
         .then(response => response.json())
         .then(data => {
-            if (data.data.available) {
+            /*alert(JSON.stringify(data))*/
+            if (data.result.available) {
                 alert("사용 가능한 아이디입니다.");
                 idCheckMessage.textContent = "* 중복 확인 완료";
                 idCheckMessage.style.color = "green";
+                idValid.value = "true";
                 return true;
             } else {
                 alert("이미 사용 중인 아이디입니다.");
                 idCheckMessage.textContent = "* 아이디 사용 불가";
                 idCheckMessage.style.color = "red";
+                idValid.value = "false";
                 return false;
             }
         })
         .catch(error => {
             console.error('Error:', error);
             alert("아이디 확인 중 오류가 발생했습니다.");
-            return false;
+            return true;
         });
 }
 
@@ -50,10 +53,11 @@ function checkPWD() {
 
 // 폼 제출 함수
 async function submitForm() {
-    let isValidID = await checkID();
+    event.preventDefault();
+    let isValidID = document.getElementById("idValid").value;
     let isValidPWD = checkPWD();
 
-    if (isValidID && isValidPWD) {
+    if (isValidID=="true" && isValidPWD) {
         let data = {
             userId: $("#userId").val(),
             passwd: $("#passwd").val(),
@@ -67,12 +71,13 @@ async function submitForm() {
 
         $.ajax({
             type: "POST",
-            url: "/api/signup",
+            url: "/user/api/signup",
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json"
         }).done(function(response) {
-            if (response.success) {
+            if (response.code === 200) {
+                localStorage.setItem('nickname', response.result.nickname);
                 window.location.href = '/user/signupSuccess'; // 성공 페이지로 리디렉션
             } else {
                 alert('회원가입 실패: ' + response.message);

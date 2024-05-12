@@ -17,29 +17,29 @@ public class UserVO extends BaseVO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "userId", nullable = false, unique = true)
+    @Column(name = "user_id", nullable = false, unique = true)
     private String userId;
 
-    @Column(name = "userPassWord", nullable = false)
+    @Column(name = "user_password", nullable = false)
     private String password;
 
-    @Column(name = "userNickName", nullable = false)
+    @Column(name = "user_nickName", nullable = false)
     private String nickname;
 
-    @Column(name = "userName", nullable = false)
+    @Column(name = "user_name", nullable = false)
     private String username;
 
-    @Column(name = "userBirthDate", nullable = false)
+    @Column(name = "user_birth_date", nullable = false)
     private String userBirth;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "userGender", nullable = false)
+    @Column(name = "user_gender", nullable = false)
     private Gender userGender;
 
     @Column(name = "tel", nullable = false)
     private String tel;
 
-    @Column(name= "userEmail", nullable = false)
+    @Column(name= "user_email", nullable = false)
     private String email;
 
     public enum Gender {

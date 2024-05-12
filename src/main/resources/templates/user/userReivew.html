@@ -4,35 +4,7 @@
     <meta charset="UTF-8">
     <title>내가 받은 후기</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <style>
-        body {
-            background-color: #FFD43B;
-            color: #333;
-            padding: 20px;
-        }
-        .user-review {
-            background-color: #ffffff;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-        }
-        .profile-pic {
-            background: url('/path/to/default/profile-pic.png');
-            background-size: cover;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            margin-right: 15px;
-        }
-        .review-content {
-            flex: 1;
-        }
-        .star-rating {
-            color: #ffc107;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/userReview.css}">
 </head>
 <body>
 <div class="container">

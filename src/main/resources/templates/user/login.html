@@ -1,19 +1,28 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="head">
+<head>
     <meta charset="UTF-8">
     <title>로그인</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login.css}">
+    <script th:src="@{/js/login.js}" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-    <h1>로그인</h1>
+    <h1>번개어때</h1>
     <hr>
-    <form name="login" th:action="@{/user/login}" method="POST">
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <form name="login" id="login" onsubmit="sendLoginRequest(); return false;" method="POST">
 
-        <input type="text" name="username" placeholder="아이디"><br><br>
-        <input type="password" name="password" placeholder="비밀번호"><br><br>
-        <button type="submit">로그인</button>
-        <a href="#" th:href="@{signup}"><button type="button">회원가입</button></a>
+        <div>
+            <input type="text" id="userId" name="userId" placeholder="아이디" required>
+        </div>
+        <br>
+        <div>
+            <input type="password" id="passwd" name="passwd" placeholder="비밀번호" required>
+        </div>
+        <br>
+
+        <button id="log_btn" type="submit">로그인</button>
+        <button id="signup_btn" th:onclick="|location.href='@{signup}'|">회원가입</button>
     </form>
 </body>
 </html>
