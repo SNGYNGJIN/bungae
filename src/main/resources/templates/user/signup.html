@@ -35,7 +35,7 @@
 
     <label for="tel">전화번호:</label>
     <input type="text" id="tel" name="tel" placeholder="010-1234-5678">
-    <button type="button" onclick="requestVerificationCode()">인증번호 받기</button><br><br>
+    <button type="button" th:onclick="|location.href='@{##}'|">인증번호 받기</button><br><br>
 
     <label for="gender">성별:</label>
     <select id="gender" name="gender">

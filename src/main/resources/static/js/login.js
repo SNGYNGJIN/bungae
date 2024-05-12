@@ -1,9 +1,10 @@
 function sendLoginRequest() {
-    event.preventDefault();
-    const data = {
-        userId: document.getElementById('userId').value,
-        passwd: document.getElementById('passwd').value
-    };
+    event.preventDefault();  // 폼 기본 제출 방지
+
+    // 입력 필드에서 아이디와 비밀번호 값 추출
+    const userId = document.getElementById('userId').value;
+    const passwd = document.getElementById('passwd').value;
+    const data = { userId, passwd };
 
     fetch('/user/api/login', {
         method: 'POST',
@@ -20,7 +21,8 @@ function sendLoginRequest() {
             if (data.code === 200) {
                 localStorage.setItem('accessToken', data.result.access_token);
                 localStorage.setItem('refreshToken', data.result.refresh_token);
-                window.location.href = '/map'; // 로그인 후 이동할 페이지
+                localStorage.setItem('userId', userId); // 'userId' 값을 로컬 스토리지에 저장
+                window.location.href = '/map';
             } else {
                 console.log('Login failed:', data.message);
                 alert('로그인 실패: ' + data.message);

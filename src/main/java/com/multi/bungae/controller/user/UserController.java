@@ -26,8 +26,13 @@ public class UserController {
         return "user/signupSuccess";
     }
 
-    @GetMapping("/myinfo")
+    @GetMapping("/profile")
     public String myPage() {
-        return "/user/myinfo";
+        return "user/profile";
+    }
+
+    @GetMapping("/editProfile")
+    public String editProfile() {
+        return "user/editProfile";
     }
 }

@@ -23,6 +23,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const nickname = localStorage.getItem('nickname');
+        const userId = localStorage.getItem(('userId'));
         const welcomeMessage = document.getElementById('welcomeMessage');
         if (nickname && welcomeMessage) {
             welcomeMessage.innerHTML = `<p>${nickname}님, 환영합니다!</p>`;

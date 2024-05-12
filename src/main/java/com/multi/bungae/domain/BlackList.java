@@ -1,20 +1,24 @@
 package com.multi.bungae.domain;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Table(name = "blackList")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "BLACKLIST")
 public class BlackList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "blackListId")
+    @Column(name = "blacklist_id")
     private int blackListId;
 
-    @ManyToOne
-    @JoinColumn(name = "blockerUserProfileId", nullable = false)
-    private UserProfile blockerUserProfile;
+    @JoinColumn(name = "blocker_id", nullable = false)
+    private String blockerId;
 
-    @ManyToOne
-    @JoinColumn(name = "blockedUserProfileId", nullable = false)
-    private UserProfile blockedUserProfile;
+    @JoinColumn(name = "blocked_id", nullable = false)
+    private String blockedId;
 }

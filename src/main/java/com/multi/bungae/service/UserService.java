@@ -2,8 +2,14 @@ package com.multi.bungae.service;
 
 import com.multi.bungae.config.BaseException;
 import com.multi.bungae.config.BaseExceptionStatus;
+import com.multi.bungae.domain.BlackList;
+import com.multi.bungae.domain.UserProfile;
+import com.multi.bungae.domain.UserReview;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.user.*;
+import com.multi.bungae.repository.UserProfileRepository;
+import com.multi.bungae.repository.UserReviewRepository;
+import com.multi.bungae.repository.BlackListRepository;
 import com.multi.bungae.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,6 +19,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +35,16 @@ import static com.multi.bungae.utils.ValidationRegex.*;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
     private final UserRepository userRepo;
+    private final UserProfileRepository userProfileRepo;
+    private final UserReviewRepository userReviewRepo;
+    private final BlackListRepository blackListRepo;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String usernickname) throws UsernameNotFoundException {
-        UserVO user = userRepo.findByUserId(usernickname)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + usernickname));
-        return new org.springframework.security.core.userdetails.User(user.getUserId(), user.getPassword(), new ArrayList<>());
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+        return null;
     }
+
 
     public CheckIdRes checkId(CheckIdReq checkIdReq) {
         return new CheckIdRes(!userRepo.existsUserByUserId(checkIdReq.getUserId()));
@@ -48,6 +60,19 @@ public class UserService implements UserDetailsService {
     }
     @Transactional
     public SignupRes signupRes(@RequestBody SignupReq signupReq) throws BaseException {
+
+        // 나이 계산
+// 나이 계산
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate birthDate = LocalDate.parse(signupReq.getBirth(), formatter);
+        LocalDate currentDate = LocalDate.now();
+
+        int age = currentDate.getYear() - birthDate.getYear();
+        if (birthDate.plusYears(age).isAfter(currentDate)) {
+            age--;
+        }
+
+
 
         if (signupReq.getUserId() == null || signupReq.getUserId().isEmpty()) {
             // userId가 null이거나 빈 문자열인 경우 처리
@@ -130,16 +155,64 @@ public class UserService implements UserDetailsService {
                 .build();
 
         userRepo.save(user);
+
+        // UserProfile 생성 및 저장
+        UserProfile userProfile = new UserProfile();
+        userProfile.setUser(user);  // 여기서 User 객체 연결
+        userProfile.setUserAge(age);
+        userProfile.setGender(user.getUserGender());
+        userProfile.setUserRating(0); // 초기 평점은 0
+        userProfile.setUserInfo(""); // 초기 자기소개는 빈 문자열
+        userProfile.setUserImage("http://localhost:8080/images/user.png"); // 초기 이미지 설정
+        userProfileRepo.save(userProfile);
+
+
         return new SignupRes(user.getId(), signupReq.getUserId(), signupReq.getNickname());
     }
 
 
     public FindIdRes findId(FindIdReq findIdReq) throws BaseException {
         List<UserVO> user_list = userRepo.findByEmail(findIdReq.getEmail());
-        if (user_list.isEmpty()){
+        if (user_list.isEmpty()) {
             throw new BaseException(BaseExceptionStatus.NOT_FOUND_EMAIL);
         }
         return new FindIdRes(user_list.get(0).getId());
     }
 
+    public UserVO getUserByUserId(String userId) {
+        Optional<UserVO> user = userRepo.findByUserId(userId);
+        if (!user.isPresent()) {
+            throw new UsernameNotFoundException("User not found with userId: " + userId);
+        }
+        return user.get();
+    }
+
+    public UserProfileDTO getUserProfileDtoById(int id) {
+        UserProfile userProfile = userProfileRepo.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
+        return toUserProfileDTO(userProfile);
+    }
+
+    private UserProfileDTO toUserProfileDTO(UserProfile userProfile) {
+        UserProfileDTO dto = new UserProfileDTO();
+
+        dto.setUserRating(userProfile.getUserRating());
+        dto.setUserAge(userProfile.getUserAge());
+        dto.setGender(userProfile.getGender());
+        dto.setUserInfo(userProfile.getUserInfo());
+        dto.setUserImage(userProfile.getUserImage());
+
+        return dto;
+    }
+
+
+
+    public List<UserReview> getUserReview(String userId) {
+        return userReviewRepo.findByUser_UserId(userId);
+    }
+
+
+    public List<BlackList> getUserBlacklist(String userId) {
+        return blackListRepo.findByBlockerId(userId);
+    }
 }

@@ -1,17 +1,22 @@
 package com.multi.bungae.domain;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Table(name = "my_page")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "USER_PROFILE")
 public class UserProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "profile_id", nullable = false, unique = true)
-    private int profileId;
+    private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true, foreignKey = @ForeignKey(name = "fk_user_id"))
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "id") // UserVO의 id를 참조
     private UserVO user;
 
     @Column(name = "user_avg_rating", nullable = false)
@@ -24,8 +29,8 @@ public class UserProfile {
     @Column(name = "user_gender", nullable = false)
     private UserVO.Gender gender;
 
-    @Column(name = "user_intro")
-    private String userIntro;
+    @Column(name = "user_info")
+    private String userInfo;
 
     @Column(name = "user_image")
     private String userImage; // UUID를 String으로 저장

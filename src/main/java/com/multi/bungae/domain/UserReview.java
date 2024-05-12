@@ -1,15 +1,23 @@
 package com.multi.bungae.domain;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Table(name = "USER_REVIEW")
 public class UserReview {
-
-    @ManyToOne
-    @JoinColumn(name = "profile_id", nullable = false, unique = true, foreignKey = @ForeignKey(name = "fk_profile_id"))
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "profile_id")
-    private UserProfile myPage;
+    private int id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id") // 리뷰를 받는 유저 ID
+    private UserVO user;
 
     @Column(name = "content")
     private String content;
