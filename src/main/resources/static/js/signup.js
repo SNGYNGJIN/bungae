@@ -44,10 +44,13 @@ function checkPWD() {
         pwdMessage.textContent = "비밀번호가 일치하지 않습니다";
         pwdMessage.style.color = "red";
         return false;
-    } else {
+    } else if (pass1.length > 0 && pass2.length > 0) {
         pwdMessage.textContent = "비밀번호가 일치합니다";
         pwdMessage.style.color = "green";
-        return true;
+        return true; // 비밀번호 일치
+    } else {
+        pwdMessage.textContent = ""; // 입력이 없을 때 메시지를 비웁니다.
+        return false; // 입력이 없는 경우에도 false를 반환
     }
 }
 
