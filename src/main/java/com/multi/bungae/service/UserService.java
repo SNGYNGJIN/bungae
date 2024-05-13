@@ -2,18 +2,30 @@ package com.multi.bungae.service;
 
 import com.multi.bungae.config.BaseException;
 import com.multi.bungae.config.BaseExceptionStatus;
+import com.multi.bungae.domain.BlackList;
+import com.multi.bungae.domain.UserProfile;
+import com.multi.bungae.domain.UserReview;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.user.*;
-import com.multi.bungae.repository.UserRepo;
+import com.multi.bungae.repository.UserProfileRepository;
+import com.multi.bungae.repository.UserReviewRepository;
+import com.multi.bungae.repository.BlackListRepository;
+import com.multi.bungae.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import java.io.File;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 import static com.multi.bungae.config.BaseExceptionStatus.INVALID_PASSWORD;
 import static com.multi.bungae.utils.ValidationRegex.*;
@@ -21,20 +33,51 @@ import static com.multi.bungae.utils.ValidationRegex.*;
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
-    private final UserRepo userRepo;
+    private final UserRepository userRepo;
+    private final UserProfileRepository userProfileRepo;
+    private final UserReviewRepository userReviewRepo;
+    private final BlackListRepository blackListRepo;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
         return null;
     }
-    BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
 
     public CheckIdRes checkId(CheckIdReq checkIdReq) {
-        return new CheckIdRes(!userRepo.existsUserById(checkIdReq.getId()));
+        return new CheckIdRes(!userRepo.existsUserByUserId(checkIdReq.getUserId()));
     }
 
-    public SignupRes signupRes(SignupReq signupReq) throws BaseException {
+    public LoginRes login(@RequestBody LoginReq loginReq) throws BaseException {
+        Optional<UserVO> userOpt = userRepo.findByUserId(loginReq.getUserId());
+        if (userOpt.isPresent() && passwordEncoder.matches(loginReq.getPasswd(), userOpt.get().getPassword())) {
+            return new LoginRes("access_token_OK", "refresh_token_OK"); // Replace with actual token generation
+        } else {
+            throw new BaseException(BaseExceptionStatus.LOGIN_FAILED);
+        }
+    }
+    @Transactional
+    public SignupRes signupRes(@RequestBody SignupReq signupReq) throws BaseException {
 
+        // 나이 계산
+// 나이 계산
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        LocalDate birthDate = LocalDate.parse(signupReq.getBirth(), formatter);
+        LocalDate currentDate = LocalDate.now();
+
+        int age = currentDate.getYear() - birthDate.getYear();
+        if (birthDate.plusYears(age).isAfter(currentDate)) {
+            age--;
+        }
+
+
+
+        if (signupReq.getUserId() == null || signupReq.getUserId().isEmpty()) {
+            // userId가 null이거나 빈 문자열인 경우 처리
+            System.out.println("userId값이 "+signupReq.getUserId() + "입니다.");
+            throw new BaseException(BaseExceptionStatus.EMPTY_ID);
+        }
         // id 빈 값인지 검사
         // id 정규표현: 입력받은 id가 영문 대소문자,숫자 4-16자리 형식인지 검사
         if (signupReq.getUserId().isEmpty() || !isRegexId(signupReq.getUserId())) {
@@ -53,8 +96,8 @@ public class UserService implements UserDetailsService {
 
         // 닉네임 빈 값인지 검사
         // 닉네임 정규표현: 입력받은 닉네임이 숫자와 영문, 한글로만 이루어졌는지 검사
-        if (signupReq.getNickname().isEmpty() || !isRegexNickname(signupReq.getName())) {
-            throw signupReq.getName().isEmpty() ?
+        if (signupReq.getNickname().isEmpty() || !isRegexNickname(signupReq.getNickname())) {
+            throw signupReq.getNickname().isEmpty() ?
                     new BaseException(BaseExceptionStatus.EMPTY_NICKNAME) :
                     new BaseException(BaseExceptionStatus.INVALID_NICKNAME);
         }
@@ -77,7 +120,7 @@ public class UserService implements UserDetailsService {
 
         // 생년월일 빈 값인지 검사
         // 입력받은 생년월일이 숫자로만 이루어졌는지 검사
-        if (signupReq.getBirth().isEmpty() || !isRegexBirthDate(signupReq.getName())) {
+        if (signupReq.getBirth().isEmpty() || !isRegexBirthDate(signupReq.getBirth())) {
             throw signupReq.getBirth().isEmpty() ?
                     new BaseException(BaseExceptionStatus.EMPTY_BIRTH) :
                     new BaseException(BaseExceptionStatus.INVALID_BIRTH);
@@ -85,7 +128,7 @@ public class UserService implements UserDetailsService {
 
         // 전화번호 빈 값인지 검사
         // 입력받은 번호가 숫자로만 이루어졌는지 검사
-        if (signupReq.getTel().isEmpty() || !isRegexTel(signupReq.getName())) {
+        if (signupReq.getTel().isEmpty() || !isRegexTel(signupReq.getTel())) {
             throw signupReq.getBirth().isEmpty() ?
                     new BaseException(BaseExceptionStatus.EMPTY_TEL) :
                     new BaseException(BaseExceptionStatus.INVALID_TEL);
@@ -99,10 +142,7 @@ public class UserService implements UserDetailsService {
                     new BaseException(BaseExceptionStatus.INVALID_GENDER);
         }
 
-        String uuid = UUID.randomUUID().toString();
-
         UserVO user = UserVO.builder()
-                .id(uuid)
                 .userId(signupReq.getUserId())
                 .password(passwordEncoder.encode(signupReq.getPasswd()))
                 .nickname(signupReq.getNickname())
@@ -114,20 +154,103 @@ public class UserService implements UserDetailsService {
                 .build();
 
         userRepo.save(user);
-        return new SignupRes(user.getId(), signupReq.getUserId());
+
+        // UserProfile 생성 및 저장
+        UserProfile userProfile = new UserProfile();
+        userProfile.setUser(user);
+        userProfile.setUserAge(age);
+        userProfile.setGender(user.getUserGender());
+        userProfile.setUserRating(0); // 초기 평점은 0
+        userProfile.setUserInfo(""); // 초기 자기소개는 빈 문자열
+        userProfile.setUserImage("http://localhost:8080/images/user.png"); // 초기 이미지 설정
+        userProfileRepo.save(userProfile);
+
+
+        return new SignupRes(user.getId(), signupReq.getUserId(), signupReq.getNickname());
     }
 
 
     public FindIdRes findId(FindIdReq findIdReq) throws BaseException {
         List<UserVO> user_list = userRepo.findByEmail(findIdReq.getEmail());
-        if (user_list.isEmpty()){
+        if (user_list.isEmpty()) {
             throw new BaseException(BaseExceptionStatus.NOT_FOUND_EMAIL);
         }
         return new FindIdRes(user_list.get(0).getId());
     }
 
-    public LoginRes login(LoginReq loginReq) throws BaseException {
-        return new LoginRes("d", "d");
+    /*
+        유저 테이블에서 모든 정보 출력
+     */
+    public UserVO getUserByUserId(String userId) {
+        Optional<UserVO> user = userRepo.findByUserId(userId);
+        if (!user.isPresent()) {
+            throw new UsernameNotFoundException("User not found with userId: " + userId);
+        }
+        return user.get();
     }
 
+    /*
+        유저프로필 테이블에서 정보 출력
+     */
+    public UserProfileDTO getUserProfileDtoById(int id) {
+        UserProfile userProfile = userProfileRepo.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
+        return toUserProfileDTO(userProfile);
+    }
+
+    private UserProfileDTO toUserProfileDTO(UserProfile userProfile) {
+        UserProfileDTO dto = new UserProfileDTO();
+
+        dto.setUserRating(userProfile.getUserRating());
+        dto.setUserAge(userProfile.getUserAge());
+        dto.setGender(userProfile.getGender());
+        dto.setUserInfo(userProfile.getUserInfo());
+        dto.setUserImage(userProfile.getUserImage());
+
+        return dto;
+    }
+
+    /*
+        닉네임, 자기소개, 프사 업데이트 *** 유저이미지부분 고쳐야함
+     */
+    @Transactional
+    public ProfileUpdateDTO updateUserProfile(int id, ProfileUpdateDTO updateDTO) {
+        UserVO user = userRepo.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
+
+        UserProfile userProfile = userProfileRepo.findById(user.getId())
+                .orElseThrow(() -> new UsernameNotFoundException("UserProfile not found for user id: " + id));
+
+        boolean isUpdated = false;
+
+        if (updateDTO.getNickname() != null && !updateDTO.getNickname().isEmpty()) {
+            user.setNickname(updateDTO.getNickname());
+            isUpdated = true; }
+        if (updateDTO.getUserInfo() != null && !updateDTO.getUserInfo().isEmpty()) {
+            userProfile.setUserInfo(updateDTO.getUserInfo());
+            isUpdated = true; }
+        if (updateDTO.getUserImage() != null && !updateDTO.getUserImage().isEmpty()) {
+            userProfile.setUserImage(updateDTO.getUserImage());
+            isUpdated = true; }
+
+        if (isUpdated) {
+            userRepo.save(user);
+            userProfileRepo.save(userProfile);
+        }
+
+        return new ProfileUpdateDTO(user.getNickname(), userProfile.getUserInfo(), userProfile.getUserImage());
+    }
+
+
+
+
+
+    public List<UserReview> getUserReview(String userId) {
+        return userReviewRepo.findByUser_UserId(userId);
+    }
+
+
+    public List<BlackList> getUserBlacklist(String userId) {
+        return blackListRepo.findByBlockerId(userId);
+    }
 }

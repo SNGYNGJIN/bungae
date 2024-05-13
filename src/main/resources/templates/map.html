@@ -24,56 +24,53 @@
         }
     };
 
-    var map = new naver.maps.Map('map', mapOptions);
+            var map = new naver.maps.Map('map', mapOptions);
 
 
 
-    var markerOptions = {
-        position: new naver.maps.LatLng(lat, lon),
-        map: map,
-        animation: naver.maps.Animation.DROP
-    };
+            var markerOptions = {
+                position: new naver.maps.LatLng(lat, lon),
+                map: map,
+                animation: naver.maps.Animation.DROP
+            };
 
-    var marker = new naver.maps.Marker(markerOptions);
+            var marker = new naver.maps.Marker(markerOptions);
 
-    var contentString = [
-    '<div class="iw_inner">',
-    '   <h3>test</h3>',
-    '   <p><br>',
-    '       <br>',
-    '       <br>',
-    '   </p>',
-    '</div>'
-    ].join('');
+            var contentString = [
+                '<div class="iw_inner">',
+                '   <h3>test</h3>',
+                '   <p><br>',
+                '       <br>',
+                '       <br>',
+                '   </p>',
+                '</div>'
+            ].join('');
 
 
 
-    var infowindow = new naver.maps.InfoWindow({
-        content: contentString
-    });
+            var infowindow = new naver.maps.InfoWindow({
+                content: contentString
+            });
 
-    naver.maps.Event.addListener(marker, "click", function(e) {
-        if (infowindow.getMap()) {
-            infowindow.close();
-        } else {
-            infowindow.open(map, marker);
-        }
-    });
-
+            naver.maps.Event.addListener(marker, "click", function(e) {
+                if (infowindow.getMap()) {
+                    infowindow.close();
+                } else {
+                    infowindow.open(map, marker);
+                }
+            });
     var locationBtnHtml= '<a href="#" class="btn_mylct"><img class="target" src="/images/target.png"/></a>';
     var customControl = new naver.maps.CustomControl(locationBtnHtml, {
     position: naver.maps.Position.RIGHT_CENTER
     });
 
-    naver.maps.Event.once(map, 'init', function() {
-    customControl.setMap(map);
-    naver.maps.Event.addDOMListener(customControl.getElement(), 'click', function() {
-        map.setCenter(new naver.maps.LatLng(lat, lon));
+            naver.maps.Event.once(map, 'init', function() {
+                customControl.setMap(map);
+                naver.maps.Event.addDOMListener(customControl.getElement(), 'click', function() {
+                    map.setCenter(new naver.maps.LatLng(lat, lon));
+                });
+            });
         });
-    });
-});
-
-
 </script>
 </main>
 <div th:replace="layout/footer :: footer"></div>

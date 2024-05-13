@@ -1,0 +1,54 @@
+.message {
+    font-size: 0.8em;
+    color: red;
+}
+body {
+    background-color: #FFD43B; /* 노란 배경 색상 */
+    font-family: Arial, sans-serif; /* 글꼴 설정 */
+}
+form {
+    background-color: white;
+    padding: 20px;
+    margin: 50px auto;
+    width: 500px; /* 폼의 너비 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+}
+input[type="text"], input[type="password"], input[type="email"], select {
+    width: 69%;
+    padding: 8px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* 박스 사이징 */
+}
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 29%;
+}
+button#btn-save {
+    width: 90%;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+button:hover {
+    opacity: 0.8;
+}
+.container {
+    text-align: center;
+}
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+/* 추가 스타일 */
+label {
+    margin-top: 10px;
+    display: block;
+    font-weight: bold;
+}
