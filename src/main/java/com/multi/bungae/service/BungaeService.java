@@ -12,11 +12,13 @@ public interface BungaeService {
     //    Bungae createBungae(BungaeDTO bungaeDTO, UserVO userVO);
     Bungae createBungae(BungaeDTO bungaeDTO);
 
-    List<Bungae> bungaeList();
+    List<BungaeDTO> bungaeList();
 
-    List<Bungae> findBungaeNearby(Point userLocation, double radius);
+    List<BungaeDTO> findBungaeNearby(Point userLocation, double radius);
 
     Bungae editBungae(Long bungaeId, BungaeDTO bungaeDTO);
 
     void cancelBungae(Long bungaeId);
+
+    Bungae cancelBungae2(Long bungaeId);
 }

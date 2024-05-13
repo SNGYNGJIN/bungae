@@ -36,10 +36,12 @@ public class BungaeController {
     }
 
     @PostMapping("/create_bungae")
-    public String createBungae(BungaeDTO bungaeDTO, HttpSession session) {
+    public String createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, HttpSession session) {
 
 //        UserVO user = (UserVO) session.getAttribute("loggedInUser"); // 로그인된 유저 연결
 //        Bungae bungae = bungaeService.createBungae(bungaeDTO, user);
+        Point location = new GeometryFactory().createPoint(new Coordinate(longitude, latitude));
+        bungaeDTO.setBungaeLocation(location);
         Bungae bungae = bungaeService.createBungae(bungaeDTO);
         logger.info("bungae: " + bungae);
 
@@ -51,7 +53,7 @@ public class BungaeController {
      */
     @RequestMapping(value = "/getList", produces = "application/json; charset=UTF-8")
     @ResponseBody
-    public List<Bungae> getList() {
+    public List<BungaeDTO> getList() {
         return bungaeService.bungaeList();
     }
 
@@ -63,8 +65,9 @@ public class BungaeController {
         return "bungaeList";
     }
 
-    @GetMapping("/find/nearby")
-    public List<Bungae> findBungaeNearby(@RequestParam double lat, @RequestParam double lon, @RequestParam double radius) {
+    @GetMapping(value = "/find/nearby", produces = "application/json; charset=UTF-8")
+    @ResponseBody
+    public List<BungaeDTO> findBungaeNearby(@RequestParam double lat, @RequestParam double lon, @RequestParam double radius) {
         Point location = new GeometryFactory().createPoint(new Coordinate(lon, lat));
         return bungaeService.findBungaeNearby(location, radius);
     }

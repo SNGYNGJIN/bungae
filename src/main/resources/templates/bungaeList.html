@@ -11,10 +11,12 @@
                 type: 'GET',
                 dataType: 'json',
                 success: function (data) {
-                    $.each(data, function (index, item) {
-                        let list = `<p>ID: ${item.bungaeId}, Type: ${item.bungaeType},
-                                    Name: ${item.bungaeName}, Members: ${item.bungaeMaxMember},
-                                    Start: ${item.bungaeStartTime}</p>`;
+                    $.each(data, function (i, bungae) {
+                        let list = `<p>ID: ${bungae.bungaeId}, Type: ${bungae.bungaeType},
+                                    Name: ${bungae.bungaeName}, MaxMember: ${bungae.bungaeMaxMember},
+                                    StartTime: ${bungae.bungaeStartTime}, Age: ${bungae.bungaeMinAge} ~ ${bungae.bungaeMaxAge},
+                                    Location: [경도: ${bungae.bungaeLocation.latitude}, 위도: ${bungae.bungaeLocation.longitude}]
+                                    </p>`;
                         $('#bungaeInfo').append(list);
                     });
                 },

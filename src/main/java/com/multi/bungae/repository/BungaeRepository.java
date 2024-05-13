@@ -16,5 +16,5 @@ public interface BungaeRepository extends JpaRepository<Bungae, Long> {
      * 근처에 있는 번개모임 찾는 쿼리
      */
     @Query(value = "SELECT * FROM Bungae WHERE ST_Distance_Sphere(bungae_location, :location) <= :radius", nativeQuery = true)
-    List<Bungae> findBungaeNearby(@Param("bungae_location") Point location, @Param("radius") double radius);
+    List<Bungae> findBungaeNearby(@Param("location") Point location, @Param("radius") double radius);
 }

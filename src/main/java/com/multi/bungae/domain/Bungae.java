@@ -53,6 +53,7 @@ public class Bungae {
     private Integer bungaeMaxAge;
 
     @Column(name = "bungae_status")
-    private Integer bungaeStatus;
+    @Enumerated(EnumType.STRING)
+    private BungaeStatus bungaeStatus;
 
 }
