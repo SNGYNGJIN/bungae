@@ -14,7 +14,7 @@ header{
     width: 100%;
     display: flex;
     background-color:#00FF80;
-    border-bottom: 2px solid #333;
+    border-bottom: 1px solid #333;
 }
 .logo{
   flex-grow: 1;
@@ -47,9 +47,8 @@ nav ul li a:hover {
   color: #006aff;
 }
 
-
 footer{
-    border-top: 2px solid #333;
+    border-top: 1px solid #333;
     text-align: center;
     background-color:#00FF80;
 }
@@ -75,4 +74,46 @@ footer{
     background:#fcfcfd;
     width:20px;
     height:20px;
+}
+.main{
+    width: 100%;
+    height: 600px;
+    display:flex;
+}
+
+#map {
+    height: 600px;
+}
+#infoPanel {
+    width: 350px;
+    height: 600px;
+    position: relative;
+    float:left;
+    border-right: solid 1px #333;
+}
+#search{
+    width: 350px;
+    height: 50px;
+    margin-top: 20px;
+    border-bottom: solid 1px #333;
+}
+#input{
+    width: 80%;
+    height: 50px;
+    float: left;
+    text-align: center;
+    overflow: hidden;
+}
+#input_btn{
+    width: 20%;
+    height: 50px;
+    float: right;
+    text-align: center;
+    overflow: hidden;
+}
+#searchInput{
+    width:220px;
+    overflow: hidden;
+}
+#searchBtn{
 }

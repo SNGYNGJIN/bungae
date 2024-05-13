@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
-  <link rel="stylesheet" href="/css/map.css">
+  <link rel="stylesheet" href="/css/main.css">
 </head>
 
 <body>
@@ -25,58 +25,33 @@
       </div>
     </div>
   </nav>
-  <div class="" style="">
+  <div class="py-5 text-center">
     <div class="container">
       <div class="row">
-        <div class="col-md-4" style="">
-          <form class="form-inline mx-auto my-2">
-            <div class="input-group mx-auto">
-              <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="Search">
-              <div class="input-group-append"><button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button></div>
+        <div class="mx-auto col-lg-6 col-10">
+          <h1>번개 생성</h1>
+          <form class="text-left" style="">
+            <div class="form-group"> <label for="form16">번개명</label> <input type="text" class="form-control" id="form16"> </div>
+            <div class="form-group">
+              <div class="form-group"><label>번개 주제</label><select id="subjectSelect" class="custom-select">
+                  <option selected="" value="주제를 선택하세요">주제를 선택하세요</option>
+                  <option value="">1</option>
+                  <option value="">2</option>
+                  <option value="">3</option>
+                  <option value="">4</option>
+                  <option value="">5</option>
+                  <option value="">6</option>
+                </select></div>
             </div>
+            <div class="form-group"> <label for="form16">번개 내용</label> <input type="text" class="form-control" id="form16"> </div>
+            <div class="form-group"> <label for="form17">번개 일시</label> <input type="date" class="form-control" id="form17"> </div>
+            <div class="form-group"> <label for="form18">번개 위치</label> <input type="text" class="form-control" id="form18"> </div>
+            <div class="form-group"> <label for="form16">연령대</label> <input type="range" class="form-control" id="form16"> </div>
+            <div class="form-group"> <label for="form18">인원 수</label> <input type="number" class="form-control" id="form18" style=""> </div>
+            <div class="form-group"> <label for="form18">대표 사진</label> <input type="file" class="form-control-file" id="form18"> </div>
+            <button type="submit" class="btn btn-primary mt-3" style="	transform:  translateX(150px) ;">생성</button><button type="submit" class="btn btn-primary mt-3" style="	transform:  translateX(250px) ;">취소</button>
           </form>
-          <div class="list-group">
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
-              </div>
-            </a>
-            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
-              </div>
-            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
-              </div>
-            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
-              </div>
-            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
-              </div>
-            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
-              </div>
-            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
-              </div>
-            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
-              </div>
-            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-              <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
-              </div>
-            </a>
-          </div>
         </div>
-        <div class="col-md-8" id="map" style="	height: 600px;"></div>
       </div>
     </div>
   </div>
