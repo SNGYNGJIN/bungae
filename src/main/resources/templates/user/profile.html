@@ -24,7 +24,7 @@
         <div class="input-group">
             <p id="userInfo">자기소개란</p>
         </div>
-        <button class="btn btn-secondary mt-2" type="button">프로필 수정</button><br>
+        <button th:onclick="|location.href='@{editProfile}'|" class="btn btn-secondary mt-2" type="button">프로필 수정</button><br>
         <button class="btn btn-secondary mt-2" type="button">후기 관리</button><br>
         <button class="btn btn-secondary mt-2" type="button">블랙리스트 관리</button><br>
     </div>

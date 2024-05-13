@@ -1,0 +1,27 @@
+.profile-container {
+    width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.button-container {
+    text-align: center;
+    margin-top: 10px;
+}
+
+#delete-image-btn {
+    display: block;
+    margin: 0 auto;
+}
+
+#delete-image-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+
+

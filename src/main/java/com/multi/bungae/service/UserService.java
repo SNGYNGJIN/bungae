@@ -20,11 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.io.File;
 import java.time.LocalDate;
-import java.time.Period;
 import java.time.format.DateTimeFormatter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -158,7 +157,7 @@ public class UserService implements UserDetailsService {
 
         // UserProfile 생성 및 저장
         UserProfile userProfile = new UserProfile();
-        userProfile.setUser(user);  // 여기서 User 객체 연결
+        userProfile.setUser(user);
         userProfile.setUserAge(age);
         userProfile.setGender(user.getUserGender());
         userProfile.setUserRating(0); // 초기 평점은 0
@@ -179,6 +178,9 @@ public class UserService implements UserDetailsService {
         return new FindIdRes(user_list.get(0).getId());
     }
 
+    /*
+        유저 테이블에서 모든 정보 출력
+     */
     public UserVO getUserByUserId(String userId) {
         Optional<UserVO> user = userRepo.findByUserId(userId);
         if (!user.isPresent()) {
@@ -187,6 +189,9 @@ public class UserService implements UserDetailsService {
         return user.get();
     }
 
+    /*
+        유저프로필 테이블에서 정보 출력
+     */
     public UserProfileDTO getUserProfileDtoById(int id) {
         UserProfile userProfile = userProfileRepo.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
@@ -204,6 +209,39 @@ public class UserService implements UserDetailsService {
 
         return dto;
     }
+
+    /*
+        닉네임, 자기소개, 프사 업데이트 *** 유저이미지부분 고쳐야함
+     */
+    @Transactional
+    public ProfileUpdateDTO updateUserProfile(int id, ProfileUpdateDTO updateDTO) {
+        UserVO user = userRepo.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
+
+        UserProfile userProfile = userProfileRepo.findById(user.getId())
+                .orElseThrow(() -> new UsernameNotFoundException("UserProfile not found for user id: " + id));
+
+        boolean isUpdated = false;
+
+        if (updateDTO.getNickname() != null && !updateDTO.getNickname().isEmpty()) {
+            user.setNickname(updateDTO.getNickname());
+            isUpdated = true; }
+        if (updateDTO.getUserInfo() != null && !updateDTO.getUserInfo().isEmpty()) {
+            userProfile.setUserInfo(updateDTO.getUserInfo());
+            isUpdated = true; }
+        if (updateDTO.getUserImage() != null && !updateDTO.getUserImage().isEmpty()) {
+            userProfile.setUserImage(updateDTO.getUserImage());
+            isUpdated = true; }
+
+        if (isUpdated) {
+            userRepo.save(user);
+            userProfileRepo.save(userProfile);
+        }
+
+        return new ProfileUpdateDTO(user.getNickname(), userProfile.getUserInfo(), userProfile.getUserImage());
+    }
+
+
 
 
 

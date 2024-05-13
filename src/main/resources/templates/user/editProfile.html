@@ -5,34 +5,37 @@
     <title>프로필 설정</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <script th:src="@{/js/editProfile.js}" type="text/javascript"></script>
+    <link rel="stylesheet" th:href="@{/css/editprofile.css}">
+    <script th:src="@{/js/editProfile.js}" defer></script>
 </head>
 <body>
 <div th:replace="layout/header :: header"></div>
-<main><form name="signup" th:action="@{/user/api/edit_profile}" method="post" onsubmit="return submitForm()">
-<div class="container">
-    <div class="profile-container">
-        <div class="profile-header">
-            <div class="profile-image"></div>
-            <h1>프로필 설정 업데이트</h1>
-        </div>
-        <form th:action="@{/updateProfile}" method="post">
+<main>
+    <form name="signup" onsubmit="return updateForm()">
+        <div id="errorContainer" style="display:none; color: red;"></div>
+        <div class="profile-container">
+            <div class="form-group">
+                <img id="profile-image" alt="Profile Image" th:src="${userImage}" onload="checkImageSource()" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover;"/><br>
+                <div class="button-group">
+                    <input type="file" id="image-upload" name="imageUpload" style="display: none;" onchange="previewImage(event)"><br>
+                    <button type="button" onclick="document.getElementById('image-upload').click()">사진 업로드하기</button>
+                </div>
+                <div class="button-container">
+                    <button type="button" id="delete-image-btn" onclick="deleteImage()" disabled>사진 삭제</button>
+                </div>
+            </div>
+
             <div class="form-group">
                 <label for="nickname">닉네임</label>
-                <input type="text" id="nickname" name="nickname" th:value="${nickname}" class="form-control" placeholder="닉네임 입력란"/>
-            </div>
-            <div class="form-group">
-                <label for="password">비밀번호</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="현재 비밀번호 입력란"/>
+                <input type="text" id="nickname" name="nickname" class="form-control" placeholder="닉네임 입력란"/>
             </div>
             <div class="form-group">
                 <label for="userInfo">자기소개</label>
-                <textarea id="userInfo" name="userInfo" th:text="${userInfo}" class="form-control" placeholder="자기소개 입력란"></textarea>
+                <textarea id="userInfo" name="userInfo" class="form-control" placeholder="자기소개 입력란"></textarea>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">프로필 설정 저장</button>
-        </form>
-    </div>
-</div>
+            <button type="submit" class="btn btn-primary btn-block">프로필 저장</button>
+        </div>
+    </form>
 </main>
 <div th:replace="layout/footer :: footer"></div>
 </body>
