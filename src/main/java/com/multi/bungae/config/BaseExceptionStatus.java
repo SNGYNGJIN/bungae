@@ -38,7 +38,9 @@ public enum BaseExceptionStatus {
     INVALID_BIRTH(1015, HttpStatus.BAD_REQUEST, "생년월일 정규 표현식 예외입니다."),
 
     INVALID_TEL(1016, HttpStatus.BAD_REQUEST, "핸드폰번호 정규 표현식 예외입니다."),
-    EMPTY_TEL(1017,HttpStatus.BAD_REQUEST, "전화번호 값이 비어있습니다.");
+    EMPTY_TEL(1017,HttpStatus.BAD_REQUEST, "전화번호 값이 비어있습니다."),
+
+    LOGIN_FAILED(1018, HttpStatus.BAD_REQUEST, "로그인 실패");
 
     private final int code;
     private final HttpStatus httpStatus;

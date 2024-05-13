@@ -1,17 +1,24 @@
 package com.multi.bungae.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.multi.bungae.domain.BungaeStatus;
+import com.multi.bungae.domain.BungaeType;
+import com.multi.bungae.utils.PointSerializer;
 import lombok.Data;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 
 @Data
 public class BungaeDTO {
 
-    private int id;
+    private Long bungaeId;
 
-    private int bungaeType;
+    private BungaeType bungaeType;
+    private String bungaeName;
 
-    // private 장소 bungaeLocation;
+    @JsonSerialize(using = PointSerializer.class)
+    private Point bungaeLocation;
 
     private String bungaeImageName;
     private String bungaeImagePath;
@@ -20,5 +27,5 @@ public class BungaeDTO {
     private LocalDateTime bungaeStartTime;
     private int bungaeMinAge;
     private int bungaeMaxAge;
-    private int bungaeStatus;
+    private BungaeStatus bungaeStatus;
 }

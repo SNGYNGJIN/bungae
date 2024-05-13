@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class SignupRes {
-    private String id;
+    private int id;
     private String userId;
     private String nickname;
     private String name;
@@ -21,8 +21,9 @@ public class SignupRes {
     private String email;
     private String tel;
 
-    public SignupRes(String id, String userId) {
+    public SignupRes(int id, String userId, String nickname) {
         this.id = id;
         this.userId = userId;
+        this.nickname = nickname;
     }
 }

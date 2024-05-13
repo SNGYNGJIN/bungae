@@ -1,3 +1,4 @@
+
 /*!
  * Bootstrap v4.3.1 (https://getbootstrap.com/)
  * Copyright 2011-2019 The Bootstrap Authors
@@ -7123,3 +7124,30 @@ a.text-dark:hover, a.text-dark:focus {
   .table .thead-dark th {
     color: inherit;
     border-color: #dee2e6; } }
+=======
+body {
+    background-color: #fff;
+    font-family: Arial, sans-serif;
+}
+.profile-container {
+    width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+#profile-image {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    background-size: cover;
+    border-radius: 50%;
+}
+.profile-info {
+    margin-top: 20px;
+}
+.input-group {
+    margin-top: 20px;
+}

@@ -1,3 +1,4 @@
+
 package com.multi.bungae.dto.user;
 
 import lombok.AllArgsConstructor;
@@ -11,5 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class LoginReq {
-    private String id;
+    private String userId;
+    private String passwd;
 }
