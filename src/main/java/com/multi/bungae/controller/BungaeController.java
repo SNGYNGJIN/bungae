@@ -9,6 +9,9 @@ import com.multi.bungae.service.BungaeMemberService;
 import com.multi.bungae.service.BungaeService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -33,26 +36,40 @@ public class BungaeController {
     }
 
     @PostMapping("/create_bungae")
-    public String createBungae(BungaeDTO bungaeDTO, HttpSession session) {
+    public String createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, HttpSession session) {
 
 //        UserVO user = (UserVO) session.getAttribute("loggedInUser"); // 로그인된 유저 연결
 //        Bungae bungae = bungaeService.createBungae(bungaeDTO, user);
+        Point location = new GeometryFactory().createPoint(new Coordinate(longitude, latitude));
+        bungaeDTO.setBungaeLocation(location);
         Bungae bungae = bungaeService.createBungae(bungaeDTO);
         logger.info("bungae: " + bungae);
 
-        return "redirect:/index.html";
+        return "redirect:/bungae/bungaeList";
     }
 
-    @GetMapping(value = "/bungaeList", produces = "application/json; charset=UTF-8")
+    /**
+     * 번개 목록을 불러와서 json으로 바꿔서 반환
+     */
+    @RequestMapping(value = "/getList", produces = "application/json; charset=UTF-8")
     @ResponseBody
-    public List<Bungae> bungaeList() {
-        List<Bungae> list = bungaeService.bungaeList();
-        return list;
+    public List<BungaeDTO> getList() {
+        return bungaeService.bungaeList();
     }
 
-    @GetMapping("/find/location")
-    public Bungae findBungaeByLocation(@RequestParam("location") String location) {
-        return null;
+    /**
+     * bungaeList.html 호출
+     */
+    @GetMapping("/bungaeList")
+    public String bungaeList() {
+        return "bungaeList";
+    }
+
+    @GetMapping(value = "/find/nearby", produces = "application/json; charset=UTF-8")
+    @ResponseBody
+    public List<BungaeDTO> findBungaeNearby(@RequestParam double lat, @RequestParam double lon, @RequestParam double radius) {
+        Point location = new GeometryFactory().createPoint(new Coordinate(lon, lat));
+        return bungaeService.findBungaeNearby(location, radius);
     }
 
     @GetMapping("/find/type")
@@ -65,13 +82,17 @@ public class BungaeController {
         return null;
     }
 
-    @PostMapping("/editBungae/{bungaeId}")
-    public Bungae editBungae(/*주최자일때만*/@PathVariable Long bungaeId) {
-        return null;
+    /**
+     * 수정, 삭제 주최자가 로그인 했을 때만 가능하게 수정해야함
+     */
+    @PutMapping("/{bungaeId}")
+    public Bungae editBungae(/*주최자일때만*/@PathVariable Long bungaeId, @RequestBody BungaeDTO bungaeDTO) {
+        return bungaeService.editBungae(bungaeId, bungaeDTO);
     }
 
     @DeleteMapping("/{bungaeId}")
-    public void cancelBungae(/*주최자일때만*/@PathVariable Long bungaeID) {
-
+    public String cancelBungae(/*주최자일때만*/@PathVariable Long bungaeId) {
+        bungaeService.cancelBungae(bungaeId);
+        return "redirect:/bungae/bungaeList";
     }
 }

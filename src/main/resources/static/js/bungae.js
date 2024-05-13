@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("Cg_code").addEventListener("change", function () {
+    document.getElementById("bungaeType").addEventListener("change", function () {
         let selectedTopic = this.value;
         let minAgeInput = document.getElementById("bungaeMinAge");
-        if (selectedTopic === '술자리') {
+        if (selectedTopic === 'DRINK') {
             minAgeInput.value = 20;
             minAgeInput.min = 20;
             minAgeInput.readOnly = true;
