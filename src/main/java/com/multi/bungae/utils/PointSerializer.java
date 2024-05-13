@@ -16,8 +16,8 @@ public class PointSerializer extends StdSerializer<Point> {
     @Override
     public void serialize(Point point, JsonGenerator gen, SerializerProvider provider) throws IOException {
         gen.writeStartObject();
-        gen.writeNumberField("latitude", point.getX());
-        gen.writeNumberField("longitude", point.getY());
+        gen.writeNumberField("longitude", point.getX());
+        gen.writeNumberField("latitude", point.getY());
         gen.writeEndObject();
     }
 }
