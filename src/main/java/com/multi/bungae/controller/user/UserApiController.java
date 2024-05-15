@@ -3,22 +3,24 @@ package com.multi.bungae.controller.user;
 import com.multi.bungae.config.BaseException;
 import com.multi.bungae.config.BaseResponse;
 import com.multi.bungae.domain.BlackList;
+import com.multi.bungae.domain.UserProfile;
 import com.multi.bungae.domain.UserReview;
 import com.multi.bungae.domain.UserVO;
-import com.multi.bungae.dto.user.*;
 import com.multi.bungae.service.UserService;
+import com.multi.bungae.dto.user.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -26,6 +28,7 @@ import java.util.List;
 @RequestMapping("/user/api")
 public class UserApiController {
 
+    @Autowired
     private final UserService userService;
 
     /*
@@ -93,28 +96,95 @@ public class UserApiController {
     /*
         자기소개, 프로필 사진, 닉네임의 수정사항을 업데이트하는 API
      */
-    @PostMapping("/profile/update/{id}")
-    @ResponseBody
-    public BaseResponse<ProfileUpdateDTO> updateUserProfile(@PathVariable("id") int id, @RequestBody ProfileUpdateDTO updateDTO) {
-        ProfileUpdateDTO pu = userService.updateUserProfile(id, updateDTO);
-        return new BaseResponse<>(pu);
+    @PostMapping("/updateProfile/{userId}")
+    public ResponseEntity<?> updateProfile(@PathVariable String userId,
+                                           @RequestParam(value = "nickname", required = false) String nickname,
+                                           @RequestParam(value = "userInfo", required = false) String userInfo,
+                                           @RequestParam(value = "imageUpload", required = false) MultipartFile file) {
+        try {
+            UserProfile userProfile = userService.getUserProfileByUserId(userId);
+
+            if (userProfile == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            if (nickname != null && !nickname.isEmpty()) {
+                userProfile.getUser().setNickname(nickname);
+            }
+            if (userInfo != null && !userInfo.isEmpty()) {
+                userProfile.setUserInfo(userInfo);
+            }
+
+            String filename = "";
+            if (file != null && !file.isEmpty()) {
+                filename = storeFile(file);
+                userProfile.setUserImage(filename); // 파일 경로 저장
+            }
+
+            UserProfileDTO up = userService.saveUserProfile(userProfile);
+
+            if (!filename.isEmpty()) {
+                int index = filename.lastIndexOf("/") + 1;
+                String fname = filename.substring(index); // 마지막 파일명만 추출
+                up.setUserImage(fname);
+            }
+
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(up);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error updating profile"));
+        }
     }
 
-/*    @PostMapping("/upload")
-    public String handleFileUpload(@RequestParam("image") MultipartFile file) {
-        String directory = "/src/main/resources/static/image";
-        try {
-            if (!file.isEmpty()) {
-                String fileName = file.getOriginalFilename();
-                Path path = Paths.get(directory + File.separator + fileName);
-                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                return "redirect:/successPage";
-            }
-        } catch (IOException e) {
+
+    /* 파일 저장 */
+    private String storeFile(MultipartFile file) throws Exception {
+        String extension = getFileExtension(file.getOriginalFilename());
+        String filename = UUID.randomUUID().toString() + "." + extension;
+        Path storageDirectory = Paths.get(System.getProperty("user.dir"),"uploads");
+        if (!Files.exists(storageDirectory)) {
+            Files.createDirectories(storageDirectory);
+        }
+        Path destinationPath = storageDirectory.resolve(filename);
+        try{
+            file.transferTo(destinationPath);
+            System.out.println("업로드 성공");
+        }catch(Exception e){
             e.printStackTrace();
         }
-        return "redirect:/errorPage";
-    }*/
+        filename = "/uploads/" + filename;
+        return filename;
+    }
+    /* 파일 확장자 추출 */
+    private String getFileExtension(String fileName) {
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+    /*
+        <사진 삭제> 버튼을 통해 UserImage를 기본 이미지로 수정하는 API
+     */
+    @PostMapping("/deleteProfileImage/{userId}")
+    public ResponseEntity<?> deleteProfileImage(@PathVariable String userId, @RequestBody Map<String, String> body) {
+        try {
+            UserProfile userProfile = userService.getUserProfileByUserId(userId);
+            if (userProfile == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            String defaultImageSrc = body.get("userImage");
+            userProfile.setUserImage(defaultImageSrc);
+            userService.saveUserProfile(userProfile); // 변경된 userProfile 저장
+
+            return ResponseEntity.ok().body(Map.of("message", "프로필 이미지 삭제 성공"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "프로필 이미지 삭제 실패"));
+        }
+    }
+
 
     /*
         userID를 통해 user_review 테이블의 모든 리뷰를 가져오는 API
