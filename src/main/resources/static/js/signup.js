@@ -54,6 +54,17 @@ function checkPWD() {
     }
 }
 
+function updateModalWithNickname() {
+    var nickname = document.getElementById("nickname").value;  // 닉네임 입력값 가져오기
+    var welcomeMessage = document.getElementById("welcomeMessage");  // 모달 내 메시지 요소 선택
+    welcomeMessage.innerHTML = `${nickname}님, 환영합니다 😊`;  // 메시지 업데이트
+}
+
+function showSuccessModal() {
+    updateModalWithNickname();  // 모달 메시지 업데이트 함수 호출
+    $('#signupSuccessModal').modal('show');
+}
+
 // 폼 제출 함수
 async function submitForm() {
     event.preventDefault();
@@ -81,7 +92,8 @@ async function submitForm() {
         }).done(function(response) {
             if (response.code === 200) {
                 localStorage.setItem('nickname', response.result.nickname);
-                window.location.href = '/user/signupSuccess'; // 성공 페이지로 리디렉션
+                // window.location.href = '/user/signupSuccess'; // 성공 페이지로 리디렉션
+                showSuccessModal();
             } else {
                 alert('회원가입 실패: ' + response.message);
             }

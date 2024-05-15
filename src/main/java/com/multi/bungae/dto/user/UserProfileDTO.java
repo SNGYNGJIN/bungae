@@ -13,6 +13,7 @@ import org.apache.catalina.User;
 @AllArgsConstructor
 public class UserProfileDTO {
 
+    private int id;
     private double userRating;
     private int userAge;
     private UserVO.Gender gender;

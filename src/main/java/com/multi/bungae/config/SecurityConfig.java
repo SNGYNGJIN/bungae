@@ -17,7 +17,7 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer assetCustomizer() {
-        return (web -> web.ignoring().requestMatchers("/templates/**","/static/**","/css/**", "/script/**", "image/**", "/fonts/**", "lib/**"));
+        return (web -> web.ignoring().requestMatchers("/uploads/images/**","/templates/**","/static/**","/css/**", "/script/**", "image/**", "/fonts/**", "lib/**"));
     }
 
     @Bean
