@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>createBungae</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/bungae.css}">
+    <script th:src="@{/js/bungae.js}" type="text/javascript"></script>
 </head>
 <body>
 <div class="container">
@@ -13,42 +14,66 @@
             <tr>
                 <th>모임 주제</th>
                 <td>
-                    <select name="upCg_code" id="upCg_code" class="form-control">
+                    <select name="bungaeType" id="bungaeType" required class="form-control">
                         <option disabled selected>::카테고리::</option>
-                        <option>술자리</option>
-                        <option>축구</option>
-                        <option>자전거</option>
-                        <option>러닝</option>
-                        <option>공부</option>
-                        <option>농구</option>
+                        <option value="DRINK">술자리</option>
+                        <option value="SOCCER">축구</option>
+                        <option value="CYCLE">자전거</option>
+                        <option value="RUNNING">러닝</option>
+                        <option value="STUDY">공부</option>
+                        <option value="BASKETBALL">농구</option>
                     </select>
                 </td>
             </tr>
             <tr>
                 <th>모임명</th>
-                <td><input type="text" name="pname" id="pname" class="form-control"></td>
+                <td><input type="text" name="bungaeName" id="bungaeName" required class="form-control"></td>
             </tr>
             <tr>
-                <th>일시</th>
-                <td><input type="text" name="pcompany" id="pcompany" class="form-control"></td>
+                <th>일시(현재시간 1시간 이후부터)</th>
+                <td><input type="datetime-local" name="bungaeStartTime" id="bungaeStartTime" required
+                           class="form-control"></td>
             </tr>
             <tr>
                 <th>위치</th>
-                <td></td>
+                <td>
+                    <label for="latitude">위도:</label>
+                    <input type="text" id="latitude" name="latitude" required>
+
+                    <label for="longitude">경도:</label>
+                    <input type="text" id="longitude" name="longitude" required>
+                </td>
             </tr>
             <tr>
                 <th>모임 대표 이미지</th>
                 <td>
-                    <input type="file" name="pimage" accept="images/*" class="form-control">
+                    <input type="file" name="bungaeImage" accept="images/*" class="form-control">
                 </td>
             </tr>
             <tr>
                 <th>인원</th>
-                <td><input type="number" name="pqty" id="pqty" min="1" max="100" class="form-control"></td>
+                <td>
+                    <select name="bungaeMaxMember" id="bungaeMaxMember" required class="form-control">
+                        <option disabled selected>::인원::</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                    </select>
+                </td>
             </tr>
             <tr>
                 <th>나이 설정</th>
-                <td><input type="number" name="price" id="price" min="0" required class="form-control"></td>
+                <td>
+                    <input type="number" name="bungaeMinAge" id="bungaeMinAge" min="0" required class="form-control"> ~
+                    <input type="number" name="bungaeMaxAge" id="bungaeMaxAge" min="0" required class="form-control">
+                </td>
             </tr>
             <tr>
                 <td colspan="2" class="btn-group">

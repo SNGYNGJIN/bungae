@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 
@@ -16,23 +17,43 @@ import java.time.LocalDateTime;
 public class Bungae {
 
     @Id
-    @Column(name = "bungaeId")
+    @Column(name = "bungae_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bungaeId;
 
-    @Column
-    private Integer bungaeType;
+    @Column(name = "bungae_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private BungaeType bungaeType;
 
-    // private 장소 bungaeLocation;
+    @Column(name = "bungae_name", nullable = false)
+    private String bungaeName;
 
+    @Column(name = "bungae_location", nullable = false)
+    private Point bungaeLocation;
+
+    @Column(name = "bungae_image_name")
     private String bungaeImageName;
-    private String bungaeImagePath;
-    private Integer bungaeMaxMember;
-    private LocalDateTime bungaeCreateTime;
-    private LocalDateTime bungaeStartTime;
-    private Integer bungaeMinAge;
-    private Integer bungaeMaxAge;
-    private Integer bungaeStatus;
 
+    @Column(name = "bungae_image_path")
+    private String bungaeImagePath;
+
+    @Column(name = "bungae_max_member", nullable = false)
+    private Integer bungaeMaxMember;
+
+    @Column(name = "bungae_create_time", nullable = false)
+    private LocalDateTime bungaeCreateTime;
+
+    @Column(name = "bungae_start_time", nullable = false)
+    private LocalDateTime bungaeStartTime;
+
+    @Column(name = "bungae_min_age")
+    private Integer bungaeMinAge;
+
+    @Column(name = "bungae_max_age")
+    private Integer bungaeMaxAge;
+
+    @Column(name = "bungae_status")
+    @Enumerated(EnumType.STRING)
+    private BungaeStatus bungaeStatus;
 
 }

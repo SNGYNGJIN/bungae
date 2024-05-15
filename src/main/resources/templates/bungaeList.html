@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bungae List</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                url: '/bungae/getList',
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    $.each(data, function (i, bungae) {
+                        let list = `<p>ID: ${bungae.bungaeId}, Type: ${bungae.bungaeType},
+                                    Name: ${bungae.bungaeName}, MaxMember: ${bungae.bungaeMaxMember},
+                                    StartTime: ${bungae.bungaeStartTime}, Age: ${bungae.bungaeMinAge} ~ ${bungae.bungaeMaxAge},
+                                    Location: [위도: ${bungae.bungaeLocation.latitude}, 경도: ${bungae.bungaeLocation.longitude}]
+                                    </p>`;
+                        $('#bungaeInfo').append(list);
+                    });
+                },
+                error: function (err) {
+                    alert('Error: ' + err);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+<h1>번개 리스트</h1>
+<div id="bungaeInfo"></div>
+</body>
+</html>

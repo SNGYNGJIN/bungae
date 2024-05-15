@@ -17,10 +17,10 @@ header{
     border-bottom: 2px solid #333;
 }
 .logo{
-    flex-grow: 1;
+  flex-grow: 1;
 }
 .menu{
-    text-align: center;
+  text-align: center;
 }
 .bungae-logo{
     width:200px;
@@ -38,13 +38,13 @@ nav ul li {
 }
 
 nav ul li a {
-    text-decoration: none;
-    color: black;
-    transition: color 0.3s ease;
+  text-decoration: none;
+  color: black;
+  transition: color 0.3s ease;
 }
 
 nav ul li a:hover {
-    color: #006aff;
+  color: #006aff;
 }
 
 
@@ -76,3 +76,4 @@ footer{
     width:20px;
     height:20px;
 }
+
