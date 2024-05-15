@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface UserProfileRepository extends JpaRepository<UserProfile, Integer> {
-    Optional<UserProfile> findById(int id);  // UserVO의 userId를 기반으로 UserProfile을 조회
+    UserProfile findByUser_UserId(String userId);
 }

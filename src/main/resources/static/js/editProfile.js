@@ -8,8 +8,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }).then(response => response.json()).then(data => {
         if (data.code === 200) {
             document.getElementById('nickname').value = data.result.nickname;
+
             localStorage.setItem('id', data.result.id);
-            userProfileRequest(data.result.id); // 사용자 프로필 정보 요청
+            const id = parseInt(localStorage.getItem('id'), 10);
+
+            userProfileRequest(id); // 사용자 프로필 정보 요청
         } else {
             console.error('Failed to fetch user info:', data.message);
         }
@@ -18,6 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// userProfile에서 자기소개와 프로필 사진 가져오기
 function userProfileRequest(id) {
     fetch(`/user/api/info/profile/${id}`, { // 프로필 정보 요청
         method: 'GET',
@@ -34,6 +38,7 @@ function userProfileRequest(id) {
     });
 }
 
+// 사용자가 가져온 사진 미리 보여주기
 function previewImage(event) {
     var reader = new FileReader();
     reader.onload = function() {
@@ -44,86 +49,86 @@ function previewImage(event) {
     reader.readAsDataURL(event.target.files[0]);
 }
 
+// 등록된 프로필 사진 삭제
 function deleteImage() {
     var defaultImageSrc = 'http://localhost:8080/images/user.png';
     document.getElementById('profile-image').src = defaultImageSrc;
     document.getElementById('delete-image-btn').disabled = true; // 이미지 삭제 후 버튼 비활성화
 
-    fetch('/api/deleteProfileImage', { method: 'POST' }).then(response => response.json()).then(data => {
-        console.log("서버에서 이미지 삭제 처리: ", data.message);
-    }).catch(error => {
-        console.error("서버 이미지 삭제 실패: ", error);
-    });
-}
+    // 사용자 ID를 포함하여 요청을 보낸다.
+    const userId = localStorage.getItem('userId'); // 사용자 ID를 로컬 스토리지에서 가져옵니다.
 
-function checkImageSource() { // 이미지 소스 확인
-    var currentImageSrc = document.getElementById('profile-image').src;
-    var defaultImageSrc = 'http://localhost:8080/images/user.png';
-    document.getElementById('delete-image-btn').disabled = (currentImageSrc === defaultImageSrc);
-}
-
-function updateForm() {
-    const id = localStorage.getItem('id');
-    const image = document.getElementById("profile-image").src;
-    const nickname = document.getElementById("nickname").value;
-    const userInfo = document.getElementById("userInfo").value;
-
-    let formData = new FormData(d);
-    formData.append("image", image);
-    formData.append("nickname", nickname);
-    formData.append("userInfo", userInfo);
-
-    fetch(`/user/api/profile/update/${id}`, {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.code === 200) {
-                alert('프로필이 성공적으로 업데이트되었습니다.');
-                window.location.href = '/profile'; // 프로필 페이지로 리디렉션
-            } else {
-                alert(`프로필 정보 업데이트 실패: ${data.message}`);
-            }
-        })
-        .catch(error => {
-            alert(`프로필 정보 업데이트 중 오류 발생: ${error.message}`);
-        });
-
-    return false; // 기본 HTML 폼 제출을 방지
-}
-
-function updateForm() {
-    const id = localStorage.getItem('id');
-    const image = document.getElementById("profile-image").src;
-    const nickname = document.getElementById("nickname").value;
-    const userInfo = document.getElementById("userInfo").value;
-
-    let data = {
-        image: image,
-        nickname: nickname,
-        userInfo: userInfo
-    };
-
-    fetch(`/user/api/profile/update/${id}`, {
+    fetch(`/user/api/deleteProfileImage/${userId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ userImage: defaultImageSrc })
     })
         .then(response => response.json())
         .then(data => {
-            if (data.code === 200) {
+            console.log("서버에서 이미지 삭제 처리: ", data.message);
+        })
+        .catch(error => {
+            console.error("서버 이미지 삭제 실패: ", error);
+        });
+}
+
+
+// 이미지 소스 확인해서 <이미지 삭제 버튼> 비활성화/활성화
+function checkImageSource() {
+    var currentImageSrc = document.getElementById('profile-image').src;
+    var defaultImageSrc = 'http://localhost:8080/images/user.png';
+    var isDefault = currentImageSrc === defaultImageSrc;
+    document.getElementById('delete-image-btn').disabled = isDefault;
+    return isDefault;
+}
+
+
+// 수정된 사항 적용
+function updateForm() {
+    event.preventDefault();
+
+    const userId = localStorage.getItem('userId');
+    let image = document.getElementById("image-upload").files[0];
+    const nickname = document.getElementById("nickname").value;
+    const userInfo = document.getElementById("userInfo").value;
+
+    let formData = new FormData();
+    if (image) {
+        formData.append("imageUpload", image);  // 'imageUpload'는 컨트롤러에서 기대하는 파라미터 이름
+    }
+    formData.append("nickname", nickname);
+    formData.append("userInfo", userInfo);
+
+    fetch(`/user/api/updateProfile/${userId}`, {  // 수정된 API 경로
+        method: 'POST',
+        body: formData,
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // alert(JSON.stringify(data));
+            if (data.userImage) {
                 alert('프로필이 성공적으로 업데이트되었습니다.');
-                window.location.href = '/user/profile';
+                document.getElementById('profile-image').src = data.userImage; // 이미지 경로
+                window.location.href = '/user/profile' // 성공시 사용자를 프로필 페이지로 리디렉션
             } else {
                 alert(`프로필 정보 업데이트 실패: ${data.message}`);
             }
         })
         .catch(error => {
-            alert(`프로필 정보 업데이트 중 오류 발생: ${error.message}`);
+            alert(`프로필 정보 업데이트 중 오류 발생: ${error.message} ${error.status}`);
+            console.error(error)
         });
 
-    return false; // 기본 HTML 폼 제출을 방지
+    console.log("Image: ", image);
+    console.log("Nickname: ", nickname);
+    console.log("User Info: ", userInfo);
+
+    return false;  // 기본 HTML 폼 제출을 방지
 }

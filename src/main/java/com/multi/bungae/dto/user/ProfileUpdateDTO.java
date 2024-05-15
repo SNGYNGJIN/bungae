@@ -1,8 +1,7 @@
 package com.multi.bungae.dto.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -10,5 +9,6 @@ import lombok.NoArgsConstructor;
 public class ProfileUpdateDTO {
     private String nickname;   // UserVO의 닉네임
     private String userInfo;   // UserProfile의 자기소개
-    private String userImage;  // UserProfile의 이미지 URL
+    private String userImage;  // 유저 이미지 파일 경로
 }
+
