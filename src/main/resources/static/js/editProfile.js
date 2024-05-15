@@ -116,7 +116,7 @@ function updateForm() {
             if (data.userImage) {
                 alert('프로필이 성공적으로 업데이트되었습니다.');
                 document.getElementById('profile-image').src = data.userImage; // 이미지 경로
-                window.location.href = '/user/profile' // 성공시 사용자를 프로필 페이지로 리디렉션
+                window.location.href = 'profile' // 성공시 사용자를 프로필 페이지로 리디렉션
             } else {
                 alert(`프로필 정보 업데이트 실패: ${data.message}`);
             }
