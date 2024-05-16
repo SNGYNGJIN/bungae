@@ -9,8 +9,7 @@ import java.util.List;
 
 public interface BungaeService {
 
-    //    Bungae createBungae(BungaeDTO bungaeDTO, UserVO userVO);
-    Bungae createBungae(BungaeDTO bungaeDTO);
+    Bungae createBungae(BungaeDTO bungaeDTO, UserVO userVO);
 
     List<BungaeDTO> bungaeList();
 

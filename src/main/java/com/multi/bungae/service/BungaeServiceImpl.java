@@ -22,34 +22,9 @@ public class BungaeServiceImpl implements BungaeService {
     private final BungaeRepository bungaeRepository;
     private final BungaeMemberService bungaeMemberService;
 
-//    @Override
-//    public Bungae createBungae(BungaeDTO bungaeDTO, UserVO user) {
-//
-//        LocalDateTime createTime = LocalDateTime.now();
-//
-//        Bungae bungae = new Bungae(
-//                null,  // 생성 시 자동으로 할당
-//                bungaeDTO.getBungaeType(),
-//                bungaeDTO.getBungaeName(),
-//                bungaeDTO.getBungaeLocation(),
-//                bungaeDTO.getBungaeImageName(),
-//                bungaeDTO.getBungaeImagePath(),
-//                bungaeDTO.getBungaeMaxMember(),
-//                createTime,
-//                bungaeDTO.getBungaeStartTime(),
-//                bungaeDTO.getBungaeMinAge(),
-//                bungaeDTO.getBungaeMaxAge(),
-//                bungaeDTO.getBungaeStatus()
-//        );
-//
-//        bungaeMemberService.createBungaeMember(bungae, user, true);
-//
-//        return bungaeRepository.save(bungae);
-//    }
-
     @Override
     @Transactional
-    public Bungae createBungae(BungaeDTO bungaeDTO) {
+    public Bungae createBungae(BungaeDTO bungaeDTO, UserVO user) {
 
         LocalDateTime createTime = LocalDateTime.now();
 
@@ -57,16 +32,19 @@ public class BungaeServiceImpl implements BungaeService {
                 null,  // 생성 시 자동으로 할당
                 bungaeDTO.getBungaeType(),
                 bungaeDTO.getBungaeName(),
+                bungaeDTO.getBungaeDescription(),
                 bungaeDTO.getBungaeLocation(),
-                bungaeDTO.getBungaeImageName(),
                 bungaeDTO.getBungaeImagePath(),
                 bungaeDTO.getBungaeMaxMember(),
                 createTime,
                 bungaeDTO.getBungaeStartTime(),
                 bungaeDTO.getBungaeMinAge(),
                 bungaeDTO.getBungaeMaxAge(),
-                BungaeStatus.ACTIVE
+                BungaeStatus.ACTIVE,
+                null
         );
+
+        bungaeMemberService.createBungaeMember(bungae, user, true);
 
         return bungaeRepository.save(bungae);
     }
@@ -137,8 +115,8 @@ public class BungaeServiceImpl implements BungaeService {
     private void updateBungaeData(Bungae bungae, BungaeDTO bungaeDTO) {
         bungae.setBungaeType(bungaeDTO.getBungaeType());
         bungae.setBungaeName(bungaeDTO.getBungaeName());
+        bungae.setBungaeDescription(bungaeDTO.getBungaeDescription());
         bungae.setBungaeLocation(bungaeDTO.getBungaeLocation());
-        bungae.setBungaeImageName(bungaeDTO.getBungaeImageName());
         bungae.setBungaeImagePath(bungae.getBungaeImagePath());
         bungae.setBungaeMaxMember(bungaeDTO.getBungaeMaxMember());
         bungae.setBungaeCreateTime(bungaeDTO.getBungaeCreateTime());
@@ -152,8 +130,8 @@ public class BungaeServiceImpl implements BungaeService {
         dto.setBungaeId(bungae.getBungaeId());
         dto.setBungaeType(bungae.getBungaeType());
         dto.setBungaeName(bungae.getBungaeName());
+        dto.setBungaeDescription(bungae.getBungaeDescription());
         dto.setBungaeLocation(bungae.getBungaeLocation());
-        dto.setBungaeImageName(bungae.getBungaeImageName());
         dto.setBungaeImagePath(bungae.getBungaeImagePath());
         dto.setBungaeMaxMember(bungae.getBungaeMaxMember());
         dto.setBungaeCreateTime(bungae.getBungaeCreateTime());
