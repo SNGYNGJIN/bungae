@@ -1,6 +1,7 @@
 package com.multi.bungae.controller.user;
 
 import com.multi.bungae.config.BaseException;
+import com.multi.bungae.config.BaseExceptionStatus;
 import com.multi.bungae.config.BaseResponse;
 import com.multi.bungae.domain.BlackList;
 import com.multi.bungae.domain.UserProfile;
@@ -8,6 +9,7 @@ import com.multi.bungae.domain.UserReview;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.service.UserService;
 import com.multi.bungae.dto.user.*;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -36,10 +39,11 @@ public class UserApiController {
     */
     @PostMapping("/login")
     @ResponseBody
-    public BaseResponse<LoginRes> login(@RequestBody LoginReq loginReq) throws BaseException {
-        LoginRes loginRes = userService.login(loginReq);
+    public BaseResponse<LoginRes> login(@RequestBody LoginReq loginReq, HttpSession session) throws BaseException {
+        LoginRes loginRes = userService.login(loginReq, session);
         return new BaseResponse<>(loginRes);
     }
+
 
     /*
         중복 아이디 체크 API

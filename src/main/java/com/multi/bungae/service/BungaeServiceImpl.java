@@ -1,12 +1,16 @@
 package com.multi.bungae.service;
 
+import com.multi.bungae.controller.BungaeController;
 import com.multi.bungae.domain.Bungae;
 import com.multi.bungae.domain.BungaeStatus;
+import com.multi.bungae.domain.ChatMessage;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.BungaeDTO;
 import com.multi.bungae.repository.BungaeRepository;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,44 +19,29 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.lang.Boolean.TRUE;
+
 @Service
 @RequiredArgsConstructor
 public class BungaeServiceImpl implements BungaeService {
 
     private final BungaeRepository bungaeRepository;
     private final BungaeMemberService bungaeMemberService;
+    private final ChatService chatService;
+    private static final Logger logger = LoggerFactory.getLogger(BungaeController.class);
 
-//    @Override
-//    public Bungae createBungae(BungaeDTO bungaeDTO, UserVO user) {
-//
-//        LocalDateTime createTime = LocalDateTime.now();
-//
-//        Bungae bungae = new Bungae(
-//                null,  // 생성 시 자동으로 할당
-//                bungaeDTO.getBungaeType(),
-//                bungaeDTO.getBungaeName(),
-//                bungaeDTO.getBungaeLocation(),
-//                bungaeDTO.getBungaeImageName(),
-//                bungaeDTO.getBungaeImagePath(),
-//                bungaeDTO.getBungaeMaxMember(),
-//                createTime,
-//                bungaeDTO.getBungaeStartTime(),
-//                bungaeDTO.getBungaeMinAge(),
-//                bungaeDTO.getBungaeMaxAge(),
-//                bungaeDTO.getBungaeStatus()
-//        );
-//
-//        bungaeMemberService.createBungaeMember(bungae, user, true);
-//
-//        return bungaeRepository.save(bungae);
-//    }
 
     @Override
     @Transactional
-    public Bungae createBungae(BungaeDTO bungaeDTO) {
+    public Bungae createBungae(BungaeDTO bungaeDTO, UserVO user) {
+        logger.info("Creating Bungae with type: {}, name: {}", bungaeDTO.getBungaeType(), bungaeDTO.getBungaeName());
+        if (bungaeDTO == null || user == null) {
+            logger.error("BungaeDTO or UserVO is null");
+            throw new IllegalArgumentException("BungaeDTO and UserVO must not be null");
+        }
 
         Bungae bungae = new Bungae(
-                null,  // 생성 시 자동으로 할당
+                null,
                 bungaeDTO.getBungaeType(),
                 bungaeDTO.getBungaeName(),
                 bungaeDTO.getBungaeLocation(),
@@ -66,8 +55,19 @@ public class BungaeServiceImpl implements BungaeService {
                 BungaeStatus.ACTIVE
         );
 
-        return bungaeRepository.save(bungae);
+        bungae = bungaeRepository.save(bungae);
+        logger.info("Bungae object created successfully with ID: {}", bungae.getBungaeId());
+
+        // 채팅방 생성
+        chatService.createChat(bungae.getBungaeId(), user.getId());
+
+        // BungaeMember 생성
+        bungaeMemberService.createBungaeMember(bungae, user, true);
+
+        // 최종적으로 Bungae 객체 반환
+        return bungae;
     }
+
 
     @Override
     @Transactional
@@ -161,8 +161,8 @@ public class BungaeServiceImpl implements BungaeService {
         return dto;
     }
 
-    @Override
+/*    @Override
     public List<Bungae> findBungaeNearby(Point userLocation, double radius) {
         return bungaeRepository.findBungaeNearby(userLocation, radius);
-    }
+    }*/
 }

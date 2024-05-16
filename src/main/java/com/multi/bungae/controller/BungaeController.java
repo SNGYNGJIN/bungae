@@ -5,15 +5,18 @@ import com.multi.bungae.domain.BungaeMember;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.BungaeDTO;
 import com.multi.bungae.dto.BungaeMemberDTO;
+import com.multi.bungae.repository.UserRepository;
 import com.multi.bungae.service.BungaeMemberService;
 import com.multi.bungae.service.BungaeService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +30,8 @@ public class BungaeController {
 
     private final BungaeService bungaeService;
     private final BungaeMemberService bungaeMemberService;
+    @Autowired
+    private UserRepository userRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(BungaeController.class);
 
@@ -37,13 +42,21 @@ public class BungaeController {
 
     @PostMapping("/create_bungae")
     public String createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, HttpSession session) {
+        Integer id = (Integer) session.getAttribute("loggedInId");
+        logger.info("Session ID retrieved: {}", id);
+        if (id == null) {
+            logger.error("No ID found in session, redirecting to login.");
+            return "redirect:/login";
+        }
 
-//        UserVO user = (UserVO) session.getAttribute("loggedInUser"); // 로그인된 유저 연결
-//        Bungae bungae = bungaeService.createBungae(bungaeDTO, user);
+        logger.info("Attempting to find user with ID: {}", id);
+        UserVO user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+        logger.info("User found: {}", user.getUsername());
+
         Point location = new GeometryFactory().createPoint(new Coordinate(longitude, latitude));
         bungaeDTO.setBungaeLocation(location);
-        Bungae bungae = bungaeService.createBungae(bungaeDTO);
-        logger.info("bungae: " + bungae);
+        Bungae bungae = bungaeService.createBungae(bungaeDTO, user);
+        logger.info("Bungae created: {}", bungae);
 
         return "redirect:/bungae/bungaeList";
     }
