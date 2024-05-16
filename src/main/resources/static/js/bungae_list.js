@@ -6,7 +6,7 @@ $(document).ready(function () {
         success: function (data) {
             let createListItem = function (bungae) {
                 return `
-              <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+              <a href="/bungae/bungae_detail/${bungae.bungaeId}" class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="row">
                   <div class="col-md-4">
                     <img class="d-block img-fluid" src="https://static.pingendo.com/img-placeholder-1.svg">

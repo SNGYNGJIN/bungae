@@ -24,6 +24,18 @@ public class BungaeServiceImpl implements BungaeService {
 
     @Override
     @Transactional
+    public Bungae getBungaeById(Long bungaeId) {
+        Optional<Bungae> bungaeOptional = bungaeRepository.findById(bungaeId);
+
+        if (bungaeOptional.isPresent()) {
+            return bungaeOptional.get();
+        } else {
+            throw new RuntimeException("해당 id를 가진 번개모임이 없음: " + bungaeId);
+        }
+    }
+
+    @Override
+    @Transactional
     public Bungae createBungae(BungaeDTO bungaeDTO, UserVO user) {
 
         LocalDateTime createTime = LocalDateTime.now();
@@ -65,7 +77,7 @@ public class BungaeServiceImpl implements BungaeService {
 
     @Override
     @Transactional
-    public Bungae editBungae(Long bungaeId, BungaeDTO bungaeDTO) {
+    public Bungae editBungae(Long bungaeId, BungaeDTO bungaeDTO, UserVO user) {
         Optional<Bungae> bungaeOptional = bungaeRepository.findById(bungaeId);
 
         if (bungaeOptional.isPresent()) {
@@ -84,7 +96,7 @@ public class BungaeServiceImpl implements BungaeService {
      */
     @Override
     @Transactional
-    public void cancelBungae(Long bungaeId) {
+    public void cancelBungae(Long bungaeId, UserVO user) {
 
         if (!bungaeRepository.existsById(bungaeId)) {
             throw new RuntimeException("해당 id를 가진 번개모임이 없음: " + bungaeId);
@@ -97,7 +109,7 @@ public class BungaeServiceImpl implements BungaeService {
      */
     @Override
     @Transactional
-    public Bungae cancelBungae2(Long bungaeId) {
+    public Bungae cancelBungae2(Long bungaeId, UserVO user) {
 
         Optional<Bungae> bungaeOptional = bungaeRepository.findById(bungaeId);
 

@@ -9,15 +9,17 @@ import java.util.List;
 
 public interface BungaeService {
 
+    Bungae getBungaeById(Long bungaeId);
+    
     Bungae createBungae(BungaeDTO bungaeDTO, UserVO userVO);
 
     List<BungaeDTO> bungaeList();
 
     List<BungaeDTO> findBungaeNearby(Point userLocation, double radius);
 
-    Bungae editBungae(Long bungaeId, BungaeDTO bungaeDTO);
+    Bungae editBungae(Long bungaeId, BungaeDTO bungaeDTO, UserVO userVO);
 
-    void cancelBungae(Long bungaeId);
+    void cancelBungae(Long bungaeId, UserVO userVO);
 
-    Bungae cancelBungae2(Long bungaeId);
+    Bungae cancelBungae2(Long bungaeId, UserVO userVO);
 }
