@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+    <link rel="stylesheet" href="/css/join.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+</head>
+<body>
+<h1>번개 리스트</h1>
+<div id="bungaeList"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('/bungae/getList')
+            .then(response => response.json())
+            .then(data => {
+                const bungaeListContainer = document.getElementById('bungaeList');
+                data.forEach(bungae => {
+                    const button = document.createElement('button');
+                    button.textContent = bungae.bungaeName;
+                    button.className = 'btn btn-primary mx-3';
+                    button.onclick = function() {
+                        startWebSocketConnection(bungae.bungaeId);
+                    };
+                    bungaeListContainer.appendChild(button);
+                });
+            })
+            .catch(error => {
+                console.error('Error loading bungae list:', error);
+                alert('번개 목록을 불러오는 중 오류가 발생했습니다.');
+            });
+    });
+
+    function startWebSocketConnection(chatRoomId) {
+        var socket = new SockJS('/ws');
+        var stompClient = Stomp.over(socket);
+        stompClient.connect({}, function(frame) {
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/chat/' + chatRoomId, function(message) {
+                console.log('Message received: ' + message.body);
+            });
+            window.location.href = '/chat/' + chatRoomId; // 리다이렉트 이동
+        });
+    }
+</script>
+
+
+</body>
+</html>
