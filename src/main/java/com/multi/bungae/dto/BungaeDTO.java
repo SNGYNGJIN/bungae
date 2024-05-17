@@ -1,11 +1,8 @@
 package com.multi.bungae.dto;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.multi.bungae.domain.BungaeStatus;
 import com.multi.bungae.domain.BungaeType;
-import com.multi.bungae.utils.PointSerializer;
 import lombok.Data;
-import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
 
@@ -17,7 +14,7 @@ public class BungaeDTO {
     private BungaeType bungaeType;
     private String bungaeName;
     private String bungaeDescription;
-    private String bungaeLocation;
+    private LocationDTO bungaeLocation;
     private String bungaeImagePath;
     private int bungaeMaxMember;
     private LocalDateTime bungaeCreateTime;
