@@ -22,51 +22,39 @@ public class BungaeServiceImpl implements BungaeService {
     private final BungaeRepository bungaeRepository;
     private final BungaeMemberService bungaeMemberService;
 
-//    @Override
-//    public Bungae createBungae(BungaeDTO bungaeDTO, UserVO user) {
-//
-//        LocalDateTime createTime = LocalDateTime.now();
-//
-//        Bungae bungae = new Bungae(
-//                null,  // 생성 시 자동으로 할당
-//                bungaeDTO.getBungaeType(),
-//                bungaeDTO.getBungaeName(),
-//                bungaeDTO.getBungaeLocation(),
-//                bungaeDTO.getBungaeImageName(),
-//                bungaeDTO.getBungaeImagePath(),
-//                bungaeDTO.getBungaeMaxMember(),
-//                createTime,
-//                bungaeDTO.getBungaeStartTime(),
-//                bungaeDTO.getBungaeMinAge(),
-//                bungaeDTO.getBungaeMaxAge(),
-//                bungaeDTO.getBungaeStatus()
-//        );
-//
-//        bungaeMemberService.createBungaeMember(bungae, user, true);
-//
-//        return bungaeRepository.save(bungae);
-//    }
+    @Override
+    @Transactional
+    public Bungae getBungaeById(Long bungaeId) {
+        Optional<Bungae> bungaeOptional = bungaeRepository.findById(bungaeId);
+
+        if (bungaeOptional.isPresent()) {
+            return bungaeOptional.get();
+        } else {
+            throw new RuntimeException("해당 id를 가진 번개모임이 없음: " + bungaeId);
+        }
+    }
 
     @Override
     @Transactional
-    public Bungae createBungae(BungaeDTO bungaeDTO) {
-
-        LocalDateTime createTime = LocalDateTime.now();
+    public Bungae createBungae(BungaeDTO bungaeDTO, UserVO user) {
 
         Bungae bungae = new Bungae(
                 null,  // 생성 시 자동으로 할당
                 bungaeDTO.getBungaeType(),
                 bungaeDTO.getBungaeName(),
+                bungaeDTO.getBungaeDescription(),
                 bungaeDTO.getBungaeLocation(),
-                bungaeDTO.getBungaeImageName(),
                 bungaeDTO.getBungaeImagePath(),
                 bungaeDTO.getBungaeMaxMember(),
-                createTime,
+                bungaeDTO.getBungaeCreateTime(),
                 bungaeDTO.getBungaeStartTime(),
                 bungaeDTO.getBungaeMinAge(),
                 bungaeDTO.getBungaeMaxAge(),
-                BungaeStatus.ACTIVE
+                BungaeStatus.ACTIVE,
+                null
         );
+
+        bungaeMemberService.createBungaeMember(bungae, user, true);
 
         return bungaeRepository.save(bungae);
     }
@@ -87,7 +75,7 @@ public class BungaeServiceImpl implements BungaeService {
 
     @Override
     @Transactional
-    public Bungae editBungae(Long bungaeId, BungaeDTO bungaeDTO) {
+    public Bungae editBungae(Long bungaeId, BungaeDTO bungaeDTO, UserVO user) {
         Optional<Bungae> bungaeOptional = bungaeRepository.findById(bungaeId);
 
         if (bungaeOptional.isPresent()) {
@@ -106,7 +94,7 @@ public class BungaeServiceImpl implements BungaeService {
      */
     @Override
     @Transactional
-    public void cancelBungae(Long bungaeId) {
+    public void cancelBungae(Long bungaeId, UserVO user) {
 
         if (!bungaeRepository.existsById(bungaeId)) {
             throw new RuntimeException("해당 id를 가진 번개모임이 없음: " + bungaeId);
@@ -119,7 +107,7 @@ public class BungaeServiceImpl implements BungaeService {
      */
     @Override
     @Transactional
-    public Bungae cancelBungae2(Long bungaeId) {
+    public Bungae cancelBungae2(Long bungaeId, UserVO user) {
 
         Optional<Bungae> bungaeOptional = bungaeRepository.findById(bungaeId);
 
@@ -137,8 +125,8 @@ public class BungaeServiceImpl implements BungaeService {
     private void updateBungaeData(Bungae bungae, BungaeDTO bungaeDTO) {
         bungae.setBungaeType(bungaeDTO.getBungaeType());
         bungae.setBungaeName(bungaeDTO.getBungaeName());
+        bungae.setBungaeDescription(bungaeDTO.getBungaeDescription());
         bungae.setBungaeLocation(bungaeDTO.getBungaeLocation());
-        bungae.setBungaeImageName(bungaeDTO.getBungaeImageName());
         bungae.setBungaeImagePath(bungae.getBungaeImagePath());
         bungae.setBungaeMaxMember(bungaeDTO.getBungaeMaxMember());
         bungae.setBungaeCreateTime(bungaeDTO.getBungaeCreateTime());
@@ -152,8 +140,8 @@ public class BungaeServiceImpl implements BungaeService {
         dto.setBungaeId(bungae.getBungaeId());
         dto.setBungaeType(bungae.getBungaeType());
         dto.setBungaeName(bungae.getBungaeName());
+        dto.setBungaeDescription(bungae.getBungaeDescription());
         dto.setBungaeLocation(bungae.getBungaeLocation());
-        dto.setBungaeImageName(bungae.getBungaeImageName());
         dto.setBungaeImagePath(bungae.getBungaeImagePath());
         dto.setBungaeMaxMember(bungae.getBungaeMaxMember());
         dto.setBungaeCreateTime(bungae.getBungaeCreateTime());
@@ -161,5 +149,10 @@ public class BungaeServiceImpl implements BungaeService {
         dto.setBungaeMinAge(bungae.getBungaeMinAge());
         dto.setBungaeMaxAge(bungae.getBungaeMaxAge());
         return dto;
+    }
+
+    @Override
+    public List<Bungae> findBungaeNearby(Point userLocation, double radius) {
+        return bungaeRepository.findBungaeNearby(userLocation, radius);
     }
 }

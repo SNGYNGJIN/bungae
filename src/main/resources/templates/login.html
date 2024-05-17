@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
-
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
-  <link rel="stylesheet" href="/css/login.css">
+  <link rel="stylesheet" th:href="@{/css/login.css}">
+  <script th:src="@{/js/login.js}" type="text/javascript"></script>
 </head>
 
 <body>
@@ -20,7 +20,7 @@
           <li class="nav-item"> <a class="nav-link" href="bungae_create">번개생성</a> </li>
           <li class="nav-item"> <a class="nav-link" href="bungae_list">번개목록</a> </li>
           <li class="nav-item"> <a class="nav-link" href="bungae_ing">참여목록</a> </li>
-          <li class="nav-item"> <a class="nav-link" href="profile">프로필</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="/user/profile" th:href="@{user/profile}">프로필</a> </li>
         </ul> <a class="btn navbar-btn ml-md-2 btn-light text-dark" href="login">로그인<br></a>
       </div>
     </div>
@@ -30,12 +30,21 @@
       <div class="row">
         <div class="mx-auto col-md-6 col-10 bg-white p-5">
           <h1 class="mb-4">로그인</h1>
-          <form>
-            <div class="form-group"> <input type="text" class="form-control" placeholder="ID" id="form9"> </div>
-            <div class="form-group mb-3"> <input type="password" class="form-control" id="form10" placeholder="Password"> <small class="form-text text-muted text-right">
+
+          <form name="login" id="login" onsubmit="sendLoginRequest(); return false;" method="POST">
+            <div class="form-group">
+              <input id="userId" name="userId" type="text" class="form-control" placeholder="ID" required>
+            </div>
+            <div class="form-group mb-3">
+              <input id="passwd" name="passwd" type="password" class="form-control" placeholder="Password" required>
+              <small class="form-text text-muted text-right">
                 <a href="#">아이디 찾기</a>
-              </small> </div><button type="submit" class="btn btn-primary mr-3">로그인</button><button type="submit" class="btn btn-primary ml-3">회원가입</button>
+              </small>
+            </div>
+            <button id="log_btn" type="submit" class="btn btn-primary mr-3">로그인</button>
+            <button id="signup_btn" th:onclick="|location.href='@{join}'|" class="btn btn-primary ml-3">회원가입</button>
           </form>
+
         </div>
       </div>
     </div>

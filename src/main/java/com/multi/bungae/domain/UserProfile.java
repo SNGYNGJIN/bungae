@@ -4,10 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Data
 @Builder
 @Table(name = "USER_PROFILE")
 public class UserProfile {
@@ -32,6 +31,12 @@ public class UserProfile {
     @Column(name = "user_info")
     private String userInfo;
 
-    @Column(name = "user_image")
+    @Column(name = "user_image", length = 1000, nullable = false)
     private String userImage; // UUID를 String으로 저장
+
+    @Builder
+    public UserProfile(String userInfo, String userImage) {
+        this.userInfo = userInfo;
+        this.userImage = userImage;
+    }
 }

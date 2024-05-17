@@ -6,11 +6,9 @@ import com.multi.bungae.domain.BlackList;
 import com.multi.bungae.domain.UserProfile;
 import com.multi.bungae.domain.UserReview;
 import com.multi.bungae.domain.UserVO;
+
 import com.multi.bungae.dto.user.*;
-import com.multi.bungae.repository.UserProfileRepository;
-import com.multi.bungae.repository.UserReviewRepository;
-import com.multi.bungae.repository.BlackListRepository;
-import com.multi.bungae.repository.UserRepository;
+import com.multi.bungae.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,14 +16,23 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.multi.bungae.config.BaseExceptionStatus.INVALID_PASSWORD;
 import static com.multi.bungae.utils.ValidationRegex.*;
@@ -37,6 +44,7 @@ public class UserService implements UserDetailsService {
     private final UserProfileRepository userProfileRepo;
     private final UserReviewRepository userReviewRepo;
     private final BlackListRepository blackListRepo;
+    //private final ImageRepository imageRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
@@ -57,11 +65,11 @@ public class UserService implements UserDetailsService {
             throw new BaseException(BaseExceptionStatus.LOGIN_FAILED);
         }
     }
+
     @Transactional
     public SignupRes signupRes(@RequestBody SignupReq signupReq) throws BaseException {
 
         // 나이 계산
-// 나이 계산
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         LocalDate birthDate = LocalDate.parse(signupReq.getBirth(), formatter);
         LocalDate currentDate = LocalDate.now();
@@ -71,11 +79,9 @@ public class UserService implements UserDetailsService {
             age--;
         }
 
-
-
         if (signupReq.getUserId() == null || signupReq.getUserId().isEmpty()) {
             // userId가 null이거나 빈 문자열인 경우 처리
-            System.out.println("userId값이 "+signupReq.getUserId() + "입니다.");
+            System.out.println("userId값이 " + signupReq.getUserId() + "입니다.");
             throw new BaseException(BaseExceptionStatus.EMPTY_ID);
         }
         // id 빈 값인지 검사
@@ -136,7 +142,7 @@ public class UserService implements UserDetailsService {
 
         // 성별 빈 값인지 검사
         // 입력받은 성별이 FEMALE, MALE로만 이루어졌는지 검사
-        if (signupReq.getGender()==null || !isRegexGender(signupReq.getGender().name())) {
+        if (signupReq.getGender() == null || !isRegexGender(signupReq.getGender().name())) {
             throw signupReq.getBirth().isEmpty() ?
                     new BaseException(BaseExceptionStatus.EMPTY_GENDER) :
                     new BaseException(BaseExceptionStatus.INVALID_GENDER);
@@ -151,6 +157,7 @@ public class UserService implements UserDetailsService {
                 .userBirth(signupReq.getBirth())  // 생년월일 문자열 직접 사용
                 .tel(signupReq.getTel())
                 .userGender(signupReq.getGender())
+                .bungaeMembers(new HashSet<>())
                 .build();
 
         userRepo.save(user);
@@ -211,38 +218,24 @@ public class UserService implements UserDetailsService {
     }
 
     /*
-        닉네임, 자기소개, 프사 업데이트 *** 유저이미지부분 고쳐야함
+        닉네임, 자기소개, 프사 업데이트
      */
-    @Transactional
-    public ProfileUpdateDTO updateUserProfile(int id, ProfileUpdateDTO updateDTO) {
-        UserVO user = userRepo.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with id: " + id));
 
-        UserProfile userProfile = userProfileRepo.findById(user.getId())
-                .orElseThrow(() -> new UsernameNotFoundException("UserProfile not found for user id: " + id));
+    public UserProfile getUserProfileByUserId(String userId) {
+        return userProfileRepo.findByUser_UserId(userId);
 
-        boolean isUpdated = false;
-
-        if (updateDTO.getNickname() != null && !updateDTO.getNickname().isEmpty()) {
-            user.setNickname(updateDTO.getNickname());
-            isUpdated = true; }
-        if (updateDTO.getUserInfo() != null && !updateDTO.getUserInfo().isEmpty()) {
-            userProfile.setUserInfo(updateDTO.getUserInfo());
-            isUpdated = true; }
-        if (updateDTO.getUserImage() != null && !updateDTO.getUserImage().isEmpty()) {
-            userProfile.setUserImage(updateDTO.getUserImage());
-            isUpdated = true; }
-
-        if (isUpdated) {
-            userRepo.save(user);
-            userProfileRepo.save(userProfile);
-        }
-
-        return new ProfileUpdateDTO(user.getNickname(), userProfile.getUserInfo(), userProfile.getUserImage());
     }
 
+    public UserProfileDTO saveUserProfile(UserProfile userProfile) {
+        UserProfileDTO dto = new UserProfileDTO();
+        UserProfile up = userProfileRepo.save(userProfile);
 
 
+        dto.setUserInfo(up.getUserInfo());
+        dto.setUserImage(up.getUserImage());
+
+        return dto;
+    }
 
 
     public List<UserReview> getUserReview(String userId) {

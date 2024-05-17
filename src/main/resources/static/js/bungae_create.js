@@ -43,7 +43,53 @@ document.addEventListener("DOMContentLoaded", function () {
         let koreanTime = new Date(minStartTime.getTime() + 1000 * 60 * 60 * 9);
 
         if (selectedDateTime < minStartTime) {
-            inputElement.value = koreanTime.toISOString().slice(0, 16);
+            let time = new Date(koreanTime.getTime());
+            inputElement.value = time.toISOString().slice(0, 16);
         }
     });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("createBungaeForm").addEventListener("submit", sendCreateBungaeRequest);
+});
+
+function sendCreateBungaeRequest(event) {
+    event.preventDefault();
+
+    const form = document.getElementById("createBungaeForm");
+    const formData = new FormData(form);
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+        alert("로그인이 필요합니다.");
+        window.location.href = "/user/login";
+        return;
+    }
+
+    formData.append("userId", userId);
+
+    fetch("/bungae/create_bungae", {
+        method: "POST",
+        body: formData
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(`서버 오류 발생: ${response.status} ${response.statusText}, ${JSON.stringify(errorData)}`);
+                });
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            if (data.status === "success") {
+                window.location.href = data.url;
+            } else {
+                alert("번개모임 생성 중 오류가 발생했습니다.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert(`서버 오류가 발생했습니다: ${error.message}`);
+        });
+}
