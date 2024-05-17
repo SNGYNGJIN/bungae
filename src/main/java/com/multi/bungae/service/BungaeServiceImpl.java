@@ -38,8 +38,6 @@ public class BungaeServiceImpl implements BungaeService {
     @Transactional
     public Bungae createBungae(BungaeDTO bungaeDTO, UserVO user) {
 
-        LocalDateTime createTime = LocalDateTime.now();
-
         Bungae bungae = new Bungae(
                 null,  // 생성 시 자동으로 할당
                 bungaeDTO.getBungaeType(),
@@ -48,7 +46,7 @@ public class BungaeServiceImpl implements BungaeService {
                 bungaeDTO.getBungaeLocation(),
                 bungaeDTO.getBungaeImagePath(),
                 bungaeDTO.getBungaeMaxMember(),
-                createTime,
+                bungaeDTO.getBungaeCreateTime(),
                 bungaeDTO.getBungaeStartTime(),
                 bungaeDTO.getBungaeMinAge(),
                 bungaeDTO.getBungaeMaxAge(),
@@ -151,5 +149,10 @@ public class BungaeServiceImpl implements BungaeService {
         dto.setBungaeMinAge(bungae.getBungaeMinAge());
         dto.setBungaeMaxAge(bungae.getBungaeMaxAge());
         return dto;
+    }
+
+    @Override
+    public List<Bungae> findBungaeNearby(Point userLocation, double radius) {
+        return bungaeRepository.findBungaeNearby(userLocation, radius);
     }
 }

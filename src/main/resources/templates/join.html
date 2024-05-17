@@ -1,60 +1,118 @@
 <!DOCTYPE html>
-<html>
-
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
   <link rel="stylesheet" href="/css/join.css">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script th:src="@{/js/signup.js}" type="text/javascript"></script>
 </head>
 
 <body>
-  <nav class="navbar navbar-dark bg-primary">
-    <div class="container d-flex justify-content-center"> <a class="navbar-brand" href="#"><img src="/images/bungae.png" width="100" height="30" class="d-inline-block align-top" alt=""></a> </div>
-  </nav>
-  <div class="py-5 text-center">
-    <div class="container">
-      <div class="row" style="">
-        <div class="mx-auto col-lg-6 col-10" style="">
-          <h1>회원가입</h1>
-          <form class="text-left">
-            <div class="form-group"> <label for="form16">이름</label> <input type="text" class="form-control" id="form16"> </div>
-            <div class="form-group"> <label for="form17">아이디</label> <input type="text" class="form-control" id="form17"> </div>
-            <button type="submit" class="btn btn-primary">아이디 중복 체크</button>
-            <div class="form-group pt-2"> <label for="form17">닉네임</label> <input type="text" class="form-control" id="form17"> </div>
-            <div class="form-group"> <label for="form18">이메일</label> <input type="email" class="form-control" id="form18"> </div>
-            <div class="form-row">
-              <div class="form-group col-md-6"> <label for="form19">비밀번호</label> <input type="password" class="form-control" id="form19" placeholder="••••"> </div>
-              <div class="form-group col-md-6"> <label for="form20">비밀번호 확인</label> <input type="password" class="form-control" id="form20" placeholder="••••"> </div>
-            </div>
-            <div class="form-group">
-              <div class="form-group"> <label for="form18">닉네임<br></label> <input type="text" class="form-control" id="form18"> </div>
-              <div class="form-group">
-                <div class="form-group"><label>성별</label><select class="custom-select" id="genderSelect">
-                    <option selected="" value="성별을 선택하세요">성별을 선택하세요</option>
-                    <option value="male">남성</option>
-                    <option value="female">여성</option>
-                    <option value="other">기타</option>
-                  </select></div>
-              </div>
-              <div class="form-group"> <label for="form18">생년월일<br></label> <input type="date" class="form-control" id="form18"> </div>
-              <div class="form-group"> <label for="form18">휴대폰 번호<br></label> <input type="text" class="form-control" id="form18"> </div>
-            </div><button type="submit" class="btn btn-primary">휴대폰 인증</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="text-center">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12"><button type="submit" class="btn btn-primary">회원가입</button></div>
-      </div>
-    </div>
-  </div>
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-</body>
+<nav class="navbar navbar-dark bg-primary">
+  <div class="container d-flex justify-content-center"> <a class="navbar-brand" href="#"><img src="/images/bungae.png" width="100" height="30" class="d-inline-block align-top" alt=""></a> </div>
+</nav>
+<div class="py-5 text-center">
+  <div class="container">
+    <div class="row">
+      <div class="mx-auto col-lg-6 col-10">
+        <h1>회원가입</h1>
+        <form name="signup" class="text-left" th:action="@{/user/api/signup}" method="post" onsubmit="return submitForm()">
+          <div class="form-group">
+            <input type="hidden" id="idValid" name="idValid" th:value="false"/>
+            <label for="userId">아이디</label><br>
+            <input type="text" class="form-control" id="userId" name="userId">
+          </div>
+          <div>
+            <button type="button" th:onclick="checkID()" class="btn btn-primary">아이디 중복 체크</button>
+            <span id="idCheckMessage" class="message" style="color:red">* 아이디 중복 확인 필수</span>
+          </div><br>
 
+          <div class="form-group">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="passwd">비밀번호</label>
+                <input type="password" class="form-control" id="passwd" name="passwd" placeholder="••••">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="passwdCheck">비밀번호 확인</label>
+                <input type="password" class="form-control" id="passwdCheck" name="passwdCheck" onkeyup="checkPWD()" placeholder="••••">
+              </div>
+            </div>
+            <span id="passwordMessage" class="message"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="name">이름</label>
+            <input type="text" id="name" name="name" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="email">이메일</label>
+            <input type="email" class="form-control" id="email" name="email">
+          </div>
+
+          <div class="form-group">
+            <label for="nickname">닉네임</label>
+            <input type="text" class="form-control" id="nickname" name="nickname">
+          </div>
+
+          <div class="form-group">
+            <label for="gender">성별</label>
+            <select class="custom-select" id="gender" name="gender">
+              <option value="FEMALE">여성</option>
+              <option value="MALE">남성</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="birth">생년월일</label>
+            <input type="text" class="form-control" id="birth" name="birth">
+          </div>
+
+          <div class="form-group">
+            <label for="tel">휴대폰 번호</label>
+            <input type="text" class="form-control" id="tel" name="tel" placeholder="010-1234-5678">
+          </div>
+
+          <div class="text-center">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-12">
+                  <button id="btn-save" type="submit" class="btn btn-primary">회원가입</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<!-- 모달 추가 -->
+<div id="signupSuccessModal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">회원 가입 성공</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="welcomeMessage"></p>
+        <p>번개어때를 통해 모임을 시작하세요!</p>
+      </div>
+      <div class="modal-footer">
+        <a th:href="@{login}"><button type="button" class="btn btn-primary">로그인으로 이동</button></a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
 </html>
