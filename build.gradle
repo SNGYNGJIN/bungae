@@ -33,6 +33,7 @@ dependencies {
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 
 
+
     compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -43,8 +44,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-devtools'
     implementation group: 'org.hibernate.orm', name: 'hibernate-spatial', version: '6.4.4.Final'
 
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
+    tasks.named('test') {
+        useJUnitPlatform()
+    }
