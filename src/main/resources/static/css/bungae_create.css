@@ -7123,3 +7123,31 @@ a.text-dark:hover, a.text-dark:focus {
   .table .thead-dark th {
     color: inherit;
     border-color: #dee2e6; } }
+
+#placesList {
+    max-height: 400px;
+    overflow-y: auto;
+    background: #fff;
+    position: absolute;
+    width: -webkit-fill-available;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    z-index: 999;
+  	list-style: none;
+  	margin: 0;
+    padding: 0;
+}
+
+#placesList .item .info{
+      padding:10px 0 10px 0;
+  	  border-bottom: 1px solid #eee;
+}
+#placesList .item .info:hover{
+      background-color: #f0f0f0;
+}
+#placesList .info .info-title{
+  font-weight: bold;
+}
+#placesList .info .info-address{
+  color:gray;
+}

@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
           type="text/css">
-    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/bungae_create.css">
     <script th:src="@{/js/bungae_create.js}" type="text/javascript"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3ee55d752effcbc08eda7914b122df74&libraries=services"></script>
 </head>
 
 <body>
@@ -36,7 +37,7 @@
         <div class="row">
             <div class="mx-auto col-lg-6 col-10">
                 <h1>번개 생성</h1>
-                <form id="createBungaeForm" enctype="multipart/form-data">
+                <form th:action="@{/bungae/create_bungae}" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="bungaeName">번개 모임명</label>
                         <input type="text" name="bungaeName" id="bungaeName" required class="form-control">
@@ -67,10 +68,11 @@
                                class="form-control">
                     </div>
                     <div class="form-group">
-                        <label for="latitude">위도:</label>
-                        <input type="text" id="latitude" name="latitude" required>
-                        <label for="longitude">경도:</label>
-                        <input type="text" id="longitude" name="longitude" required>
+                        <label>번개 위치</label>
+                        <input type="text" id="keyword" name="bungaeLoc" placeholder="키워드를 입력하세요" required
+                               class="form-control">
+                        <input type="hidden" id="address">
+                        <ul id="placesList"></ul>
                     </div>
                     <div class="form-group">
                         <label>연령대</label>
@@ -137,6 +139,107 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+<script>
+    $('#keyword').change(function(){
+        searchPlaces();
+    });
+
+    //장소 검색 객체 생성
+    var ps = new kakao.maps.services.Places();
+
+    //검색 결과 목록 표출 함수
+    var listEl = document.getElementById('placesList');
+
+    //키워드 검색을 요청하는 함수
+    function searchPlaces() {
+
+        var keyword = document.getElementById('keyword').value;
+
+        if (!keyword.replace(/^\s+|\s+$/g, '')) {
+            removeAllChildNods(listEl);
+            return false;
+        }
+
+        ps.keywordSearch( keyword, placesSearchCB);
+    }
+
+    //장소검색이 완료됐을 때 호출되는 콜백함수
+    function placesSearchCB(data, status, pagination) {
+
+        if (status === kakao.maps.services.Status.OK) {
+
+            displayPlaces(data);
+
+        } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+            removeAllChildNods(listEl);
+            alert('검색 결과가 존재하지 않습니다.');
+            return;
+
+        } else if (status === kakao.maps.services.Status.ERROR) {
+
+            alert('검색 결과 중 오류가 발생했습니다.');
+            return;
+
+        }
+    }
+
+    //
+    function displayPlaces(places) {
+
+        var fragment = document.createDocumentFragment();
+
+        removeAllChildNods(listEl);
+
+        for ( var i=0; i<places.length; i++ ) {
+
+            var itemEl = getListItem(i, places[i]);
+
+            //장소를 선택했을 때 선택한 장소를 입력칸에 추가
+            (function(name, address){
+                itemEl.onclick = function(){
+                    var key = document.getElementById('keyword');
+                    var add = document.getElementById('address');
+                    key.value = name;
+                    add.value = address;
+
+                    removeAllChildNods(listEl);
+
+                }
+            })(places[i].place_name,places[i].road_address_name);
+
+            fragment.appendChild(itemEl);
+        }
+
+        listEl.appendChild(fragment);
+    }
+
+    //검색결과 항목을 Element로 반환하는 함수
+    function getListItem(index, places) {
+
+        var el = document.createElement('li'),
+        itemStr = '<span class="markerbg marker_' + (index+1) + '"></span>' +
+                    '<div class="info">' +
+                    '   <span class = "info-title"><b>' + places.place_name + '</b></span>';
+
+        if (places.road_address_name) {
+            itemStr += '    <br><span class = "info-address"><small>' + places.road_address_name + '</small></span>'
+        } else {
+            itemStr += '    <br><span class = "info-address"><small>' +  places.address_name  + '</small></span>';
+        }
+
+        el.innerHTML = itemStr;
+        el.className = 'item';
+
+        return el;
+    }
+    //검색결과 목록의 자식 Element를 제거하는 함수
+    function removeAllChildNods(el) {
+        while (el.hasChildNodes()) {
+            el.removeChild (el.lastChild);
+        }
+    }
+</script>
+
 </body>
 
 </html>
