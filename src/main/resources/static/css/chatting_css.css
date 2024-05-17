@@ -1,0 +1,59 @@
+.message-row {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: row; /* 기본 왼쪽 정렬 */
+    margin-bottom: 10px;
+}
+
+.my-message {
+    justify-content: flex-end; /* 내 메시지를 오른쪽으로 정렬 */
+}
+
+.their-message {
+    justify-content: flex-start; /* 다른 사람의 메시지를 왼쪽으로 정렬 */
+}
+
+.user-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px; /* 내 메시지의 경우 오른쪽 여백으로 변경 */
+}
+
+.message-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column; /* 메시지 정보를 열 방향으로 정렬 */
+}
+
+.nickname {
+    font-weight: bold;
+    display: block;
+}
+
+.message-content {
+    background-color: #e5e5e5;
+    border-radius: 15px;
+    padding: 8px 12px;
+    display: inline-block;
+    word-wrap: break-word;
+    margin-bottom: 2px;
+}
+
+.my-message .message-content {
+    background-color: #DCF8C6; /* 내 메시지 배경 색상 */
+    margin-left: auto; /* 오른쪽 정렬 */
+    margin-right: 10px; /* 우측 여백 */
+}
+
+.their-message .message-content {
+    margin-right: auto; /* 왼쪽 정렬 */
+}
+
+
+.message-time {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 2px;
+    align-self: flex-end; /* 시간을 메시지의 끝으로 정렬 */
+}

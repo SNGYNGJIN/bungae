@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
@@ -59,6 +60,12 @@ public class UserService implements UserDetailsService {
             throw new BaseException(BaseExceptionStatus.LOGIN_FAILED);
         }
     }
+
+/*    public String loginSuccess(HttpSession session, Model model) {
+        String userId = (String) session.getAttribute("loggedInUserId");
+        model.addAttribute("userId", userId);
+    }*/
+
     @Transactional
     public SignupRes signupRes(@RequestBody SignupReq signupReq) throws BaseException {
 
@@ -213,6 +220,7 @@ public class UserService implements UserDetailsService {
         닉네임, 자기소개, 프사 업데이트
      */
     public UserProfile getUserProfileByUserId(String userId) {
+
         return userProfileRepo.findByUser_UserId(userId);
     }
 
