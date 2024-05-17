@@ -8,6 +8,7 @@ import com.multi.bungae.dto.BungaeMemberDTO;
 import com.multi.bungae.repository.UserRepository;
 import com.multi.bungae.service.BungaeMemberService;
 import com.multi.bungae.service.BungaeService;
+import com.multi.bungae.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
@@ -16,12 +17,18 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,20 +36,23 @@ import java.util.List;
 public class BungaeController {
 
     private final BungaeService bungaeService;
+    private final UserService userService;
     private final BungaeMemberService bungaeMemberService;
     @Autowired
     private UserRepository userRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(BungaeController.class);
 
-    @GetMapping("/bungaeForm")
+    @GetMapping("/bungae_create")
     public String bungaeForm() {
-        return "bungaeForm";
+        return "bungae_create";
     }
 
     @PostMapping("/create_bungae")
+
     public String createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, HttpSession session) {
-        Integer id = (Integer) session.getAttribute("loggedInId"); // userId(X), id(O)
+        
+      /*Integer id = (Integer) session.getAttribute("loggedInId"); // userId(X), id(O)
 
         if (id == null) {
             return "redirect:/login";
@@ -55,6 +65,19 @@ public class BungaeController {
         bungaeService.createBungae(bungaeDTO, user); // 여기선 user table의 id
 
         return "redirection:/bungae/bungaeList";
+*/
+    public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, @RequestParam String userId) {
+
+        UserVO user = userService.getUserByUserId(userId); // userId로 사용자 정보 조회
+        Point location = new GeometryFactory().createPoint(new Coordinate(longitude, latitude));
+        bungaeDTO.setBungaeLocation(location);
+        bungaeService.createBungae(bungaeDTO, user);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("url", "/bungae/bungae_list");
+        return ResponseEntity.ok(response);
+
     }
 
     /**
@@ -69,9 +92,16 @@ public class BungaeController {
     /**
      * bungaeList.html 호출
      */
-    @GetMapping("/bungaeList")
+    @GetMapping("/bungae_list")
     public String bungaeList() {
-        return "bungaeList";
+        return "bungae_list";
+    }
+
+    @GetMapping("/bungae_detail/{bungaeId}")
+    public String bungaeDetail(@PathVariable Long bungaeId, Model model) {
+        Bungae bungae = bungaeService.getBungaeById(bungaeId);
+        model.addAttribute("bungae", bungae);
+        return "bungae_detail";
     }
 
     @GetMapping(value = "/find/nearby", produces = "application/json; charset=UTF-8")
@@ -95,13 +125,15 @@ public class BungaeController {
      * 수정, 삭제 주최자가 로그인 했을 때만 가능하게 수정해야함
      */
     @PutMapping("/{bungaeId}")
-    public Bungae editBungae(/*주최자일때만*/@PathVariable Long bungaeId, @RequestBody BungaeDTO bungaeDTO) {
-        return bungaeService.editBungae(bungaeId, bungaeDTO);
+    public Bungae editBungae(@PathVariable Long bungaeId, @RequestBody BungaeDTO bungaeDTO, @RequestParam String userId) {
+        UserVO user = userService.getUserByUserId(userId);
+        return bungaeService.editBungae(bungaeId, bungaeDTO, user);
     }
 
     @DeleteMapping("/{bungaeId}")
-    public String cancelBungae(/*주최자일때만*/@PathVariable Long bungaeId) {
-        bungaeService.cancelBungae(bungaeId);
+    public String cancelBungae(@PathVariable Long bungaeId, @RequestParam String userId) {
+        UserVO user = userService.getUserByUserId(userId);
+        bungaeService.cancelBungae(bungaeId, user);
         return "redirect:/bungae/bungaeList";
     }
 }
