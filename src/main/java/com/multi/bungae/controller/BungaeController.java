@@ -5,6 +5,7 @@ import com.multi.bungae.domain.BungaeMember;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.BungaeDTO;
 import com.multi.bungae.dto.BungaeMemberDTO;
+import com.multi.bungae.dto.LocationDTO;
 import com.multi.bungae.repository.UserRepository;
 import com.multi.bungae.service.BungaeMemberService;
 import com.multi.bungae.service.BungaeService;
@@ -67,8 +68,10 @@ public class BungaeController {
         }
 */
     @PostMapping("/create_bungae")
-    public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam String userId) {
+    public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam String keyword, @RequestParam String address, @RequestParam String userId) {
 
+        LocationDTO locationDTO = new LocationDTO(keyword, address);
+        bungaeDTO.setBungaeLocation(locationDTO);
         UserVO user = userService.getUserByUserId(userId); // userId로 사용자 정보 조회
         bungaeService.createBungae(bungaeDTO, user);
 

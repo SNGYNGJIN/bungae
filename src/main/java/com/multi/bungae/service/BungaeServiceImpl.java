@@ -6,6 +6,7 @@ import com.multi.bungae.domain.BungaeStatus;
 import com.multi.bungae.domain.ChatMessage;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.BungaeDTO;
+import com.multi.bungae.dto.LocationDTO;
 import com.multi.bungae.repository.BungaeRepository;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
@@ -62,7 +63,7 @@ public class BungaeServiceImpl implements BungaeService {
                 bungaeDTO.getBungaeType(),
                 bungaeDTO.getBungaeName(),
                 bungaeDTO.getBungaeDescription(),
-                bungaeDTO.getBungaeLocation(),
+                LocationDTO.toEntity(bungaeDTO.getBungaeLocation()),
                 bungaeDTO.getBungaeImagePath(),
                 bungaeDTO.getBungaeMaxMember(),
                 createTime,
@@ -158,7 +159,7 @@ public class BungaeServiceImpl implements BungaeService {
         bungae.setBungaeType(bungaeDTO.getBungaeType());
         bungae.setBungaeName(bungaeDTO.getBungaeName());
         bungae.setBungaeDescription(bungaeDTO.getBungaeDescription());
-        bungae.setBungaeLocation(bungaeDTO.getBungaeLocation());
+        bungae.setBungaeLocation(LocationDTO.toEntity(bungaeDTO.getBungaeLocation()));
         bungae.setBungaeImagePath(bungae.getBungaeImagePath());
         bungae.setBungaeMaxMember(bungaeDTO.getBungaeMaxMember());
         bungae.setBungaeCreateTime(bungaeDTO.getBungaeCreateTime());
@@ -173,7 +174,7 @@ public class BungaeServiceImpl implements BungaeService {
         dto.setBungaeType(bungae.getBungaeType());
         dto.setBungaeName(bungae.getBungaeName());
         dto.setBungaeDescription(bungae.getBungaeDescription());
-        dto.setBungaeLocation(bungae.getBungaeLocation());
+        dto.setBungaeLocation(LocationDTO.fromEntity(bungae.getBungaeLocation()));
         dto.setBungaeImagePath(bungae.getBungaeImagePath());
         dto.setBungaeMaxMember(bungae.getBungaeMaxMember());
         dto.setBungaeCreateTime(bungae.getBungaeCreateTime());
