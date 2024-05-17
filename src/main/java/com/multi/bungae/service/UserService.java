@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,11 +62,6 @@ public class UserService implements UserDetailsService {
         }
     }
 
-/*    public String loginSuccess(HttpSession session, Model model) {
-        String userId = (String) session.getAttribute("loggedInUserId");
-        model.addAttribute("userId", userId);
-    }*/
-
     @Transactional
     public SignupRes signupRes(@RequestBody SignupReq signupReq) throws BaseException {
 
@@ -81,7 +77,7 @@ public class UserService implements UserDetailsService {
 
         if (signupReq.getUserId() == null || signupReq.getUserId().isEmpty()) {
             // userId가 null이거나 빈 문자열인 경우 처리
-            System.out.println("userId값이 "+signupReq.getUserId() + "입니다.");
+            System.out.println("userId값이 " + signupReq.getUserId() + "입니다.");
             throw new BaseException(BaseExceptionStatus.EMPTY_ID);
         }
         // id 빈 값인지 검사
@@ -142,7 +138,7 @@ public class UserService implements UserDetailsService {
 
         // 성별 빈 값인지 검사
         // 입력받은 성별이 FEMALE, MALE로만 이루어졌는지 검사
-        if (signupReq.getGender()==null || !isRegexGender(signupReq.getGender().name())) {
+        if (signupReq.getGender() == null || !isRegexGender(signupReq.getGender().name())) {
             throw signupReq.getBirth().isEmpty() ?
                     new BaseException(BaseExceptionStatus.EMPTY_GENDER) :
                     new BaseException(BaseExceptionStatus.INVALID_GENDER);
@@ -157,6 +153,7 @@ public class UserService implements UserDetailsService {
                 .userBirth(signupReq.getBirth())  // 생년월일 문자열 직접 사용
                 .tel(signupReq.getTel())
                 .userGender(signupReq.getGender())
+                .bungaeMembers(new HashSet<>())
                 .build();
 
         userRepo.save(user);
@@ -220,7 +217,6 @@ public class UserService implements UserDetailsService {
         닉네임, 자기소개, 프사 업데이트
      */
     public UserProfile getUserProfileByUserId(String userId) {
-
         return userProfileRepo.findByUser_UserId(userId);
     }
 

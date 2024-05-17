@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>지도 화면</title>
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=k495h0yzln&submodules=geocoder"></script>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div th:replace="layout/header :: header"></div>
+    <main>
+
+        <div id="infoPanel">
+            <div id="search">
+                <div id="input">
+                    <input type="text" id="searchInput" placeholder="키워드를 입력해 주세요.">
+                </div>
+                <div id="input_btn">
+                    <button id="searchBtn" onclick="searchItems()">검색</button>
+                </div>
+            </div>
+            <ul id="items">
+                <!-- 검색 결과 목록이 여기에 표시됩니다 -->
+            </ul>
+        </div>
+        <div id="map"></div>
+    </main>
+
+<script>
+
+    navigator.geolocation.getCurrentPosition(function(position) {
+    var lat = position.coords.latitude,
+        lon = position.coords.longitude;
+    var mapOptions = {
+        center: new naver.maps.LatLng(lat, lon),
+        zoom: 15,
+        zoomControl: true,
+        zoomControlOptions: {
+        position: naver.maps.Position.TOP_RIGHT,
+        style: naver.maps.ZoomControlStyle.SMALL
+        }
+    };
+
+    var map = new naver.maps.Map('map', mapOptions);
+
+
+
+    var markerOptions = {
+        position: new naver.maps.LatLng(lat, lon),
+        map: map,
+        animation: naver.maps.Animation.DROP
+    };
+
+    var marker = new naver.maps.Marker(markerOptions);
+
+
+
+    var locationBtnHtml= '<a href="#" class="btn_mylct"><img class="target" src="/images/target.png"/></a>';
+    var customControl = new naver.maps.CustomControl(locationBtnHtml, {
+    position: naver.maps.Position.RIGHT_CENTER
+    });
+
+    naver.maps.Event.once(map, 'init', function() {
+    customControl.setMap(map);
+    naver.maps.Event.addDOMListener(customControl.getElement(), 'click', function() {
+        map.setCenter(new naver.maps.LatLng(lat, lon));
+        });
+    });
+
+    function searchItems() {
+            // 검색 기능 구현
+            alert("검색 기능은 구현되지 않았습니다.");
+        }
+
+});
+
+
+</script>
+
+<div th:replace="layout/footer :: footer"></div>
+</body>
+</html>

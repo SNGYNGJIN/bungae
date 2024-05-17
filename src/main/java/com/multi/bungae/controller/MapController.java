@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Controller
 public class MapController {
+
 
     @Value("${naver.map.client.id}")
     private String clientId;
@@ -58,5 +60,9 @@ public class MapController {
     @GetMapping("/profile_edit")
     public String profile_edit() {
         return "profile_edit";
+    }
+    @GetMapping("/testmap")
+    public String testmap() {
+        return "testmap";
     }
 }

@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -29,11 +30,11 @@ public class Bungae {
     @Column(name = "bungae_name", nullable = false)
     private String bungaeName;
 
+    @Column(name = "bungae_description")
+    private String bungaeDescription;
+
     @Column(name = "bungae_location", nullable = false)
     private Point bungaeLocation;
-
-    @Column(name = "bungae_image_name")
-    private String bungaeImageName;
 
     @Column(name = "bungae_image_path")
     private String bungaeImagePath;
@@ -58,4 +59,6 @@ public class Bungae {
     @Enumerated(EnumType.STRING)
     private BungaeStatus bungaeStatus;
 
+    @OneToMany(mappedBy = "bungae")
+    private Set<BungaeMember> bungaeMembers;
 }
