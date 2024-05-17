@@ -1,6 +1,7 @@
 package com.multi.bungae.repository;
 
 import com.multi.bungae.domain.Bungae;
+import com.multi.bungae.domain.UserVO;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BungaeRepository extends JpaRepository<Bungae, Long> {
@@ -17,4 +19,9 @@ public interface BungaeRepository extends JpaRepository<Bungae, Long> {
      */
     @Query(value = "SELECT * FROM Bungae WHERE ST_Distance_Sphere(bungae_location, :location) <= :radius", nativeQuery = true)
     List<Bungae> findBungaeNearby(@Param("location") Point location, @Param("radius") double radius);
+
+
+    Optional<Bungae> findById(Long id);
+
+
 }

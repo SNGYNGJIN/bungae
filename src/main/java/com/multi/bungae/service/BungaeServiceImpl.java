@@ -35,7 +35,7 @@ public class BungaeServiceImpl implements BungaeService {
     @Transactional
     public Bungae createBungae(BungaeDTO bungaeDTO, UserVO user) {
         logger.info("Creating Bungae with type: {}, name: {}", bungaeDTO.getBungaeType(), bungaeDTO.getBungaeName());
-        if (bungaeDTO == null || user == null) {
+        if (bungaeDTO == null || user == null) { // user의 id 값 받아온 것임 ex.1
             logger.error("BungaeDTO or UserVO is null");
             throw new IllegalArgumentException("BungaeDTO and UserVO must not be null");
         }
@@ -59,12 +59,11 @@ public class BungaeServiceImpl implements BungaeService {
         logger.info("Bungae object created successfully with ID: {}", bungae.getBungaeId());
 
         // 채팅방 생성
-        chatService.createChat(bungae.getBungaeId(), user.getId());
+        chatService.createChat(bungae.getBungaeId(), user.getUserId()); // 여기서 user의 userId 넣기
 
         // BungaeMember 생성
         bungaeMemberService.createBungaeMember(bungae, user, true);
 
-        // 최종적으로 Bungae 객체 반환
         return bungae;
     }
 

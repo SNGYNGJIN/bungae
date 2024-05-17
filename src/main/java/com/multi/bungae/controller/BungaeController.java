@@ -42,23 +42,19 @@ public class BungaeController {
 
     @PostMapping("/create_bungae")
     public String createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, HttpSession session) {
-        Integer id = (Integer) session.getAttribute("loggedInId");
-        logger.info("Session ID retrieved: {}", id);
+        Integer id = (Integer) session.getAttribute("loggedInId"); // userId(X), id(O)
+
         if (id == null) {
-            logger.error("No ID found in session, redirecting to login.");
             return "redirect:/login";
         }
 
-        logger.info("Attempting to find user with ID: {}", id);
         UserVO user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Authenticated user not found"));
-        logger.info("User found: {}", user.getUsername());
 
         Point location = new GeometryFactory().createPoint(new Coordinate(longitude, latitude));
         bungaeDTO.setBungaeLocation(location);
-        Bungae bungae = bungaeService.createBungae(bungaeDTO, user);
-        logger.info("Bungae created: {}", bungae);
+        bungaeService.createBungae(bungaeDTO, user); // 여기선 user table의 id
 
-        return "redirect:/bungae/bungaeList";
+        return "redirection:/bungae/bungaeList";
     }
 
     /**

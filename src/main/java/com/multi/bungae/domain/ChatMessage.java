@@ -27,7 +27,7 @@ public class ChatMessage {
     @JoinColumn(name = "sender_id", referencedColumnName = "user_id") // UserVO 엔티티 참조
     private UserVO sender;
 
-    @Column(name = "message")
+    @Column(name = "message", length = 300)
     private String message;
 
     @Column(name = "type")

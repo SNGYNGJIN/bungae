@@ -2,23 +2,15 @@ package com.multi.bungae.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.multi.bungae.dto.ChatDTO;
-import com.multi.bungae.dto.ChatRoomDTO;
 import com.multi.bungae.service.ChatService;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 
 /*
@@ -35,23 +27,13 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
     private static final Logger log = LoggerFactory.getLogger(WebSocketChatHandler.class);
 
     private final ObjectMapper mapper;
-
     private final ChatService service;
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
-        log.info("payload {}", payload);
-
-//        TextMessage textMessage = new TextMessage("Welcome Chatting Server");
-//        session.sendMessage(textMessage);
-
         ChatDTO chatMessage = mapper.readValue(payload, ChatDTO.class);
-        log.info("session {}", chatMessage.toString());
-
-        ChatRoomDTO room = service.findRoomById(chatMessage.getChatRoomId());
-        log.info("room {}", room.toString());
-
-        room.handleAction(session, chatMessage, service);
+        ChatDTO chatRoom = service.findRoomById(chatMessage.getChatRoomId());
+        chatRoom.handleAction(session, chatMessage, service);
     }
 }
