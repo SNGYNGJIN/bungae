@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name="USER")
+@Table(name = "USER")
 public class UserVO extends BaseVO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,10 +40,13 @@ public class UserVO extends BaseVO {
     @Column(name = "tel", nullable = false)
     private String tel;
 
-    @Column(name= "user_email", nullable = false)
+    @Column(name = "user_email", nullable = false)
     private String email;
 
     public enum Gender {
         FEMALE, MALE
     }
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<BungaeMember> bungaeMembers;
 }
