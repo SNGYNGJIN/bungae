@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
   <link rel="stylesheet" th:href="@{/css/profile.css}">
   <script th:src="@{/js/profile.js}" type="text/javascript"></script>
+  <script th:src="@{/js/chat.js}" type="text/javascript"></script>
+
 </head>
 
 <body>
@@ -39,7 +41,9 @@
       <p id="userInfo" class="text-center align-items-center">자기소개란</p>
     </div>
     <button th:onclick="|location.href='@{profile_edit}'|" class="btn btn-primary mx-3" type="button">프로필 수정</button><br>
-    <button class="btn btn-primary mx-3" type="button">후기 관리</button><br>
+    <button th:onclick="|location.href='@{chatting}'|"class="btn btn-primary mx-3" type="button">채팅방 입장</button><br>
+    <button th:onclick="|location.href='@{chat/example}'|" class="btn btn-primary mx-3" type="button">후기 관리</button><br>
+
     <button class="btn btn-primary mx-3" type="button">블랙리스트 관리</button><br>
   </div>
   <div class="py-3 border-top border-dark">

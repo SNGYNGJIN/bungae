@@ -5,6 +5,7 @@ import com.multi.bungae.domain.BungaeMember;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.BungaeDTO;
 import com.multi.bungae.dto.BungaeMemberDTO;
+import com.multi.bungae.repository.UserRepository;
 import com.multi.bungae.service.BungaeMemberService;
 import com.multi.bungae.service.BungaeService;
 import com.multi.bungae.service.UserService;
@@ -16,7 +17,10 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +38,8 @@ public class BungaeController {
     private final BungaeService bungaeService;
     private final UserService userService;
     private final BungaeMemberService bungaeMemberService;
+    @Autowired
+    private UserRepository userRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(BungaeController.class);
 
@@ -43,6 +49,23 @@ public class BungaeController {
     }
 
     @PostMapping("/create_bungae")
+
+    public String createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, HttpSession session) {
+        
+      /*Integer id = (Integer) session.getAttribute("loggedInId"); // userId(X), id(O)
+
+        if (id == null) {
+            return "redirect:/login";
+        }
+
+        UserVO user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+
+        Point location = new GeometryFactory().createPoint(new Coordinate(longitude, latitude));
+        bungaeDTO.setBungaeLocation(location);
+        bungaeService.createBungae(bungaeDTO, user); // 여기선 user table의 id
+
+        return "redirection:/bungae/bungaeList";
+*/
     public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, @RequestParam String userId) {
 
         UserVO user = userService.getUserByUserId(userId); // userId로 사용자 정보 조회
@@ -54,6 +77,7 @@ public class BungaeController {
         response.put("status", "success");
         response.put("url", "/bungae/bungae_list");
         return ResponseEntity.ok(response);
+
     }
 
     /**

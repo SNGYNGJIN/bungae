@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
@@ -41,6 +42,7 @@ public class Bungae {
     @Column(name = "bungae_max_member", nullable = false)
     private Integer bungaeMaxMember;
 
+    @CreationTimestamp
     @Column(name = "bungae_create_time", nullable = false)
     private LocalDateTime bungaeCreateTime;
 

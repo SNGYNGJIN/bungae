@@ -9,6 +9,7 @@ import com.multi.bungae.domain.UserVO;
 
 import com.multi.bungae.dto.user.*;
 import com.multi.bungae.repository.*;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,23 +17,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.multi.bungae.config.BaseExceptionStatus.INVALID_PASSWORD;
 import static com.multi.bungae.utils.ValidationRegex.*;
@@ -57,9 +49,12 @@ public class UserService implements UserDetailsService {
         return new CheckIdRes(!userRepo.existsUserByUserId(checkIdReq.getUserId()));
     }
 
-    public LoginRes login(@RequestBody LoginReq loginReq) throws BaseException {
+    public LoginRes login(@RequestBody LoginReq loginReq, HttpSession session) throws BaseException {
         Optional<UserVO> userOpt = userRepo.findByUserId(loginReq.getUserId());
         if (userOpt.isPresent() && passwordEncoder.matches(loginReq.getPasswd(), userOpt.get().getPassword())) {
+            session.setAttribute("loggedInUserId", userOpt.get().getUserId());
+            session.setAttribute("loggedInId", userOpt.get().getId());
+
             return new LoginRes("access_token_OK", "refresh_token_OK"); // Replace with actual token generation
         } else {
             throw new BaseException(BaseExceptionStatus.LOGIN_FAILED);
