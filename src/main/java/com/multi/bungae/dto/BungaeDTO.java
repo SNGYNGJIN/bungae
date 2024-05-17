@@ -17,10 +17,7 @@ public class BungaeDTO {
     private BungaeType bungaeType;
     private String bungaeName;
     private String bungaeDescription;
-
-    @JsonSerialize(using = PointSerializer.class)
-    private Point bungaeLocation;
-    
+    private String bungaeLocation;
     private String bungaeImagePath;
     private int bungaeMaxMember;
     private LocalDateTime bungaeCreateTime;
