@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +55,7 @@ public class BungaeServiceImpl implements BungaeService {
         }
 
 */
+        LocalDateTime createTime = LocalDateTime.now();
 
         Bungae bungae = new Bungae(
                 null,
@@ -63,7 +65,7 @@ public class BungaeServiceImpl implements BungaeService {
                 bungaeDTO.getBungaeLocation(),
                 bungaeDTO.getBungaeImagePath(),
                 bungaeDTO.getBungaeMaxMember(),
-                bungaeDTO.getBungaeCreateTime(),
+                createTime,
                 bungaeDTO.getBungaeStartTime(),
                 bungaeDTO.getBungaeMinAge(),
                 bungaeDTO.getBungaeMaxAge(),
@@ -181,8 +183,4 @@ public class BungaeServiceImpl implements BungaeService {
         return dto;
     }
 
-/*    @Override
-    public List<Bungae> findBungaeNearby(Point userLocation, double radius) {
-        return bungaeRepository.findBungaeNearby(userLocation, radius);
-    }*/
 }

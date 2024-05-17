@@ -48,11 +48,10 @@ public class BungaeController {
         return "bungae_create";
     }
 
-    @PostMapping("/create_bungae")
-
+    /* @PostMapping("/create_bungae")
     public String createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, HttpSession session) {
         
-      /*Integer id = (Integer) session.getAttribute("loggedInId"); // userId(X), id(O)
+      Integer id = (Integer) session.getAttribute("loggedInId"); // userId(X), id(O)
 
         if (id == null) {
             return "redirect:/login";
@@ -65,12 +64,12 @@ public class BungaeController {
         bungaeService.createBungae(bungaeDTO, user); // 여기선 user table의 id
 
         return "redirection:/bungae/bungaeList";
+        }
 */
-    public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, @RequestParam String userId) {
+    @PostMapping("/create_bungae")
+    public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam String userId) {
 
         UserVO user = userService.getUserByUserId(userId); // userId로 사용자 정보 조회
-        Point location = new GeometryFactory().createPoint(new Coordinate(longitude, latitude));
-        bungaeDTO.setBungaeLocation(location);
         bungaeService.createBungae(bungaeDTO, user);
 
         Map<String, String> response = new HashMap<>();
