@@ -77,7 +77,7 @@ public class BungaeController {
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
-        response.put("url", "/bungae/bungae_list");
+        response.put("url", "/bungae_list");
         return ResponseEntity.ok(response);
 
     }
@@ -113,9 +113,16 @@ public class BungaeController {
         return bungaeService.findBungaeNearby(location, radius);
     }
 
-    @GetMapping("/find/type")
-    public Bungae findBungaeByType(@RequestParam("type") String bungaeType) {
-        return null;
+    @RequestMapping(value = "/getListOfStartTime", produces = "application/json; charset=UTF-8")
+    @ResponseBody
+    public List<BungaeDTO> getListOfStartTime() {
+        return bungaeService.bungaeListOfStartTime();
+    }
+
+    @RequestMapping(value = "/getListOfCreateTime", produces = "application/json; charset=UTF-8")
+    @ResponseBody
+    public List<BungaeDTO> getListOfCreateTime() {
+        return bungaeService.bungaeListOfCreateTime();
     }
 
     @GetMapping("/find/age")
