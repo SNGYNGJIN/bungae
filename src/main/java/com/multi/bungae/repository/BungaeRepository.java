@@ -20,6 +20,9 @@ public interface BungaeRepository extends JpaRepository<Bungae, Long> {
     @Query(value = "SELECT * FROM Bungae WHERE ST_Distance_Sphere(bungae_location, :location) <= :radius", nativeQuery = true)
     List<Bungae> findBungaeNearby(@Param("location") Point location, @Param("radius") double radius);
 
+    List<Bungae> findAllByOrderByBungaeStartTimeAsc();
+
+    List<Bungae> findAllByOrderByBungaeCreateTimeDesc();
 
     Optional<Bungae> findById(Long id);
 

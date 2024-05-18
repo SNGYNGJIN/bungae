@@ -101,6 +101,20 @@ public class BungaeServiceImpl implements BungaeService {
 
     @Override
     @Transactional
+    public List<BungaeDTO> bungaeListOfStartTime() {
+        List<Bungae> bungaeList = bungaeRepository.findAllByOrderByBungaeStartTimeAsc();
+        return bungaeList.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<BungaeDTO> bungaeListOfCreateTime() {
+        List<Bungae> bungaeList = bungaeRepository.findAllByOrderByBungaeCreateTimeDesc();
+        return bungaeList.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
     public List<BungaeDTO> findBungaeNearby(Point userLocation, double radius) {
         List<Bungae> bungaeList = bungaeRepository.findBungaeNearby(userLocation, radius);
         return bungaeList.stream().map(this::convertToDTO).collect(Collectors.toList());
