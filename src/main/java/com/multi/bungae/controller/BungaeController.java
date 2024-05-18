@@ -5,6 +5,7 @@ import com.multi.bungae.domain.BungaeMember;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.BungaeDTO;
 import com.multi.bungae.dto.BungaeMemberDTO;
+import com.multi.bungae.dto.LocationDTO;
 import com.multi.bungae.repository.UserRepository;
 import com.multi.bungae.service.BungaeMemberService;
 import com.multi.bungae.service.BungaeService;
@@ -48,11 +49,10 @@ public class BungaeController {
         return "bungae_create";
     }
 
-    @PostMapping("/create_bungae")
-
+    /* @PostMapping("/create_bungae")
     public String createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, HttpSession session) {
-        
-      /*Integer id = (Integer) session.getAttribute("loggedInId"); // userId(X), id(O)
+
+      Integer id = (Integer) session.getAttribute("loggedInId"); // userId(X), id(O)
 
         if (id == null) {
             return "redirect:/login";
@@ -65,12 +65,14 @@ public class BungaeController {
         bungaeService.createBungae(bungaeDTO, user); // 여기선 user table의 id
 
         return "redirection:/bungae/bungaeList";
+        }
 */
-    public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, @RequestParam String userId) {
+    @PostMapping("/create_bungae")
+    public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam String keyword, @RequestParam String address, @RequestParam String userId) {
 
+        LocationDTO locationDTO = new LocationDTO(keyword, address);
+        bungaeDTO.setBungaeLocation(locationDTO);
         UserVO user = userService.getUserByUserId(userId); // userId로 사용자 정보 조회
-        Point location = new GeometryFactory().createPoint(new Coordinate(longitude, latitude));
-        bungaeDTO.setBungaeLocation(location);
         bungaeService.createBungae(bungaeDTO, user);
 
         Map<String, String> response = new HashMap<>();

@@ -7122,4 +7122,24 @@ a.text-dark:hover, a.text-dark:focus {
       border-color: #dee2e6; }
   .table .thead-dark th {
     color: inherit;
-    border-color: #dee2e6; } }
+    border-color: #dee2e6; }
+
+  .message-row {
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 10px;
+    width: fit-content;
+    max-width: 80%;
+  }
+
+  .my-message {
+    background-color: #DCF8C6; /* 라이트 그린 */
+    align-self: flex-end; /* 오른쪽 정렬 */
+  }
+
+  .their-message {
+    background-color: #ECECEC; /* 라이트 그레이 */
+    align-self: flex-start; /* 왼쪽 정렬 */
+  }
+
+}
