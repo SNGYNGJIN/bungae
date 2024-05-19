@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // "참가" 버튼 클릭 이벤트 리스너 추가
     goChatButton.addEventListener('click', function() {
         join(roomId, user);
-        window.location.href = '/chat/' + roomId; // 리다이렉트 이동
+        window.location.href = '/chat/' + roomId;
     });
 });
 
@@ -17,18 +17,19 @@ function getRoomIdFromUrl() {
     return match ? match[1] : null;
 }
 
-function join(chatRoomId, userId) {
-    const url = `/chat/api/join/${chatRoomId}?userId=${userId}`; // URL 조립
+// 번개 아이디에 해당하는 번개멤버에 유저 데이터 삽입
+async function join(chatRoomId, userId) {
+    const url = `/chat/api/join/${chatRoomId}?userId=${userId}`;
 
     try {
-        const response =fetch(url); // fetch 요청
+        const response = await fetch(url); // `await`를 추가하여 응답을 기다림
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`); // 응답 오류 처리
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = response.text(); // 응답 텍스트를 가져옴
+        const data = await response.text(); // `await`를 추가하여 텍스트 변환을 기다림
 
-        console.log(`API response: ${data}`); // 콘솔에 출력
+        console.log(`API response: ${data}`);
     } catch (error) {
-        console.error('Failed to fetch data:', error); // 에러 콘솔에 출력
+        console.error('Failed to fetch data:', error);
     }
 }

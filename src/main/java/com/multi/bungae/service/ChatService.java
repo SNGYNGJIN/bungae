@@ -15,6 +15,7 @@ import groovy.util.logging.Slf4j;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -32,6 +33,7 @@ import static java.lang.Boolean.FALSE;
 @Data
 @Service
 public class ChatService {
+    private SimpMessagingTemplate messagingTemplate;
     private final ObjectMapper mapper;
     private Map<Long, ChatDTO> chatRooms = new ConcurrentHashMap<>();
     private static final Logger log = LoggerFactory.getLogger(WebSocketChatHandler.class);
@@ -75,30 +77,28 @@ public class ChatService {
     public ChatDTO joinChat(Long chatRoomId, String userId) {
         UserVO user = userRepo.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Bungae bungae = bungaeRepo.findById(chatRoomId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
-        String nickname = user.getNickname(); // userId 기준으로 찾아서 닉네임 대입
+        String nickname = user.getNickname();
         String bungaeName = bungae.getBungaeName();
 
-        ChatDTO chat = ChatDTO.builder()
-                .chatRoomId(chatRoomId)
-                .sender(userId) // userId 대입 ex)user1234
-                .message("🔈[" + nickname + "]님이 <" + bungaeName + ">에 참가하였습니다.")
-                .type(ChatMessage.MessageType.ENTER)
-                .build();
-
-        // DTO를 Entity로 변환하기
-        ChatMessage chatMessage = convertToEntity(chat);
-        chatMessageRepo.save(chatMessage);
-        bungaeMemberService.createBungaeMember(chatRoomId, user.getId(), FALSE);
-
-        return chat;
+        boolean memberExists = bungaememberRepo.existsByBungaeIdAndUser(chatRoomId, user.getId());
+        if (!memberExists) {
+            ChatDTO chat = ChatDTO.builder()
+                    .chatRoomId(chatRoomId)
+                    .sender(userId)
+                    .message("🔈 [" + nickname + "]님이 <" + bungaeName + ">에 참가하였습니다.")
+                    .type(ChatMessage.MessageType.ENTER)
+                    .build();
+            ChatMessage chatMessage = convertToEntity(chat);
+            chatMessageRepo.save(chatMessage);
+            bungaeMemberService.createBungaeMember(chatRoomId, user.getId(), FALSE);
+            messagingTemplate.convertAndSend("/room/" + chatRoomId, chat);
+            return chat;
+        }
+        return null; // 회원이 이미 존재하면 null 반환
     }
 
-    public void ChatMessage(Long chatRoomId, String senderId, String message, ChatMessage.MessageType type) {
-        UserVO sender = userRepo.findByUserId(senderId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        Bungae chatRoom = bungaeRepo.findById(chatRoomId)
-                .orElseThrow(() -> new EntityNotFoundException("Chat room not found"));
+    public void ChatMessage(Long chatRoomId, String senderId, String message, ChatMessage.MessageType type) {
 
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setChatRoomId(chatRoomId);

@@ -37,7 +37,6 @@ public class ChatController {
 
     @GetMapping("/{chatRoomId}")
     public String getChatRoom(@PathVariable Long chatRoomId, Model model) {
-
         return "chatting"; // chatting.html 뷰 반환
     }
 

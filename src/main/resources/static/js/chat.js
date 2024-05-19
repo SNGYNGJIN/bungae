@@ -14,8 +14,9 @@ $(function () {
     stompClient.connect({}, function (frame) {
         // 구독하기
         stompClient.subscribe('/room/' + roomId, function (messageOutput) {
+            console.log("Received message: ", messageOutput.body);  // 로그 추가
             var message = JSON.parse(messageOutput.body);
-            showMessageOutput(message, currentUserId);
+            if (message) {showMessageOutput(message, currentUserId);}
         });
 
         // 페이지 로드 시 채팅 기록 불러오기
@@ -40,6 +41,7 @@ $(function () {
         var messageContent = document.getElementById("message").value;
         if (messageContent && stompClient) {
             var chatMessage = {
+                chatRoomId: roomId,
                 sender: currentUserId,
                 message: messageContent,
                 type: "TALK"

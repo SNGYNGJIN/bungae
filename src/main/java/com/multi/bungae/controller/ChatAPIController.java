@@ -1,9 +1,11 @@
 package com.multi.bungae.controller;
 
+import com.multi.bungae.domain.Bungae;
 import com.multi.bungae.domain.ChatMessage;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.ChatDTO;
 import com.multi.bungae.repository.BungaeMemberRepository;
+import com.multi.bungae.repository.BungaeRepository;
 import com.multi.bungae.repository.UserRepository;
 import com.multi.bungae.service.ChatService;
 import groovy.util.logging.Slf4j;
@@ -26,18 +28,23 @@ public class ChatAPIController {
     private SimpMessagingTemplate messagingTemplate;
     private final ChatService service;
     private final UserRepository userRepo;
-    private final BungaeMemberRepository bungaeMemberRepo;
+    private final BungaeRepository bungaeRepo;
 
     @GetMapping("/join/{chatRoomId}")
     public ResponseEntity<Boolean> joinChatRoom(@PathVariable Long chatRoomId, @RequestParam String userId) {
         UserVO user = userRepo.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Bungae bungae = bungaeRepo.findById(chatRoomId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
         boolean memberExists = service.checkMemberExists(chatRoomId, user.getId());
+
         if (!memberExists) {
-            ChatDTO chat = service.joinChat(chatRoomId, userId);
-            messagingTemplate.convertAndSend("/room/broadcast/" + chatRoomId, chat);
+            service.joinChat(chatRoomId, userId);
         }
+
         return ResponseEntity.ok(memberExists);
     }
+
+
+
 
 
     @GetMapping("/messages/{chatRoomId}")
@@ -45,10 +52,4 @@ public class ChatAPIController {
         List<ChatMessage> messages = service.getMessagesByChatRoomId(chatRoomId);
         return ResponseEntity.ok(messages);
     }
-
-
-/*    @PostMapping("/{chatRoomId}")
-    public chatDTO accessRoom(@RequestParam Long chatRoomId) {
-        return service.accessRoom(chatRoomId);
-    }*/
 }
