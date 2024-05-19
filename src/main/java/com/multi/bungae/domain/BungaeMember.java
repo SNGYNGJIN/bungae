@@ -15,13 +15,11 @@ public class BungaeMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bungaeMemberId;
 
-    @ManyToOne
-    @JoinColumn(name = "bungae_id")
-    private Bungae bungae;
+    @Column(name = "bungae_id")
+    private Long bungaeId;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserVO user;
+    @Column(name = "user_id")
+    private int user;
 
     private boolean isOrganizer;
 }

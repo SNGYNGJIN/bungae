@@ -19,13 +19,11 @@ public class ChatMessage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chatroom_id", referencedColumnName = "bungae_id") // Bungae 엔티티 참조
-    private Bungae chatRoomId;
+    @Column(name = "chatroom_id")
+    private Long chatRoomId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id", referencedColumnName = "user_id") // UserVO 엔티티 참조
-    private UserVO sender;
+    @JoinColumn(name = "sender_id")
+    private String sender;
 
     @Column(name = "message", length = 300)
     private String message;

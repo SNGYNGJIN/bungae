@@ -59,6 +59,6 @@ public class Bungae {
     @Enumerated(EnumType.STRING)
     private BungaeStatus bungaeStatus;
 
-    @OneToMany(mappedBy = "bungae")
+    @OneToMany(mappedBy = "bungaeId")
     private Set<BungaeMember> bungaeMembers;
 }

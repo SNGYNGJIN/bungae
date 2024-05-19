@@ -1,7 +1,5 @@
-var roomId = getRoomIdFromUrl();
+var roomId = getRoomIdFromUrl(); // roomId를 추출
 
-
-// localhost8080:chat/{chatRoomId}의 url에서 chatRoomId를 추출해내기
 function getRoomIdFromUrl() {
     const path = window.location.pathname;
     const match = path.match(/\/chat\/(\d+)/);
@@ -14,11 +12,28 @@ $(function () {
     var currentUserId = sessionStorage.getItem('loggedInUserId'); // 현재 사용자 ID 가져오기
 
     stompClient.connect({}, function (frame) {
-        var roomId = getRoomIdFromUrl();
+        // 구독하기
         stompClient.subscribe('/room/' + roomId, function (messageOutput) {
             var message = JSON.parse(messageOutput.body);
             showMessageOutput(message, currentUserId);
         });
+
+        // 페이지 로드 시 채팅 기록 불러오기
+        fetch(`/chat/api/messages/${roomId}`)
+            .then(response => response.json())
+            .then(data => {
+                // 서버로부터 받은 데이터가 배열인지 확인
+                if (Array.isArray(data)) {
+                    data.forEach(message => {
+                        showMessageOutput(message, currentUserId);
+                    });
+                } else {
+                    console.error('Received data is not an array:', data);
+                }
+            })
+            .catch(error => console.error('Error loading chat messages:', error));
+
+
     });
 
     window.sendMessage = function () {
@@ -26,9 +41,18 @@ $(function () {
         if (messageContent && stompClient) {
             var chatMessage = {
                 sender: currentUserId,
-                message: messageContent
+                message: messageContent,
+                type: "TALK"
             };
-            stompClient.send("/send/" + roomId, {}, JSON.stringify(chatMessage));
+            console.log("Before JSON.stringify:", chatMessage);
+            try {
+                var jsonString = JSON.stringify(chatMessage);
+                console.log("JSON String:", jsonString);
+                stompClient.send("/send/" + roomId, {}, jsonString);
+            } catch (e) {
+                console.error("JSON stringify error:", e);
+            }
+            //stompClient.send("/send/" + roomId, {}, JSON.stringify(chatMessage));
             document.getElementById("message").value = '';
         }
         return false;
@@ -38,53 +62,57 @@ $(function () {
         var messageList = document.getElementById('messageList');
         var messageElement = document.createElement('div');
         messageElement.className = 'message-row';
-        messageElement.classList.add(message.sender === currentUserId ? 'my-message' : 'their-message');
 
-        if (message.sender === currentUserId) {
-            // 내 메시지일 때
+        // 메시지 타입이 TALK가 아닐 경우
+        if (message.type !== "TALK") {
+            messageElement.classList.add('announcement-message'); // 공지사항용 클래스 추가
+
             var textNode = document.createElement('div');
             textNode.textContent = message.message;
-            textNode.className = 'message-content';
-            messageElement.appendChild(textNode); // 텍스트만 추가
-
+            textNode.className = 'announcement-content'; // 공지사항 내용을 위한 스타일
+            messageElement.appendChild(textNode); // 공지사항 텍스트 추가
         } else {
-            // 다른 사람의 메시지일 때
-            nicknameRequest(message.sender).then(userInfo => {
-                var imgElement = document.createElement('img');
-                imgElement.src = userInfo.userImage;
-                imgElement.className = 'user-image';
-
-                var messageInfo = document.createElement('div');
-                messageInfo.className = 'message-info';
-
-                var nicknameSpan = document.createElement('span');
-                nicknameSpan.textContent = userInfo.nickname;
-                nicknameSpan.className = 'nickname';
-
+            // 메시지 송신자가 현재 사용자인 경우
+            if (message.sender === currentUserId) {
+                messageElement.classList.add('my-message');
                 var textNode = document.createElement('div');
                 textNode.textContent = message.message;
                 textNode.className = 'message-content';
+                messageElement.appendChild(textNode); // 텍스트만 추가
+            } else {
+                // 다른 사람의 메시지일 때
+                messageElement.classList.add('their-message');
+                nicknameRequest(message.sender).then(userInfo => {
+                    var imgElement = document.createElement('img');
+                    imgElement.src = userInfo.userImage;
+                    imgElement.className = 'user-image';
 
-                messageInfo.appendChild(nicknameSpan);
-                messageInfo.appendChild(textNode);
+                    var messageInfo = document.createElement('div');
+                    messageInfo.className = 'message-info';
 
-                messageElement.appendChild(imgElement); // 이미지 추가
-                messageElement.appendChild(messageInfo);
+                    var nicknameSpan = document.createElement('span');
+                    nicknameSpan.textContent = userInfo.nickname;
+                    nicknameSpan.className = 'nickname';
 
-            }).catch(error => {
-                console.error("Error loading user info:", error);
-            });
+                    var textNode = document.createElement('div');
+                    textNode.textContent = message.message;
+                    textNode.className = 'message-content';
+
+                    messageInfo.appendChild(nicknameSpan);
+                    messageInfo.appendChild(textNode);
+
+                    messageElement.appendChild(imgElement);
+                    messageElement.appendChild(messageInfo);
+                }).catch(error => {
+                    console.error("Error loading user info:", error);
+                });
+            }
         }
 
+        // 메시지 목록에 메시지 요소 추가
         messageList.appendChild(messageElement);
-        messageList.scrollTop = messageList.scrollHeight;
+        messageList.scrollTop = messageList.scrollHeight; // 메시지 목록을 가장 아래로 스크롤
     }
-
-
-
-
-
-
     function nicknameRequest(userId) {
         return fetch(`/user/api/info/${userId}`, {
             method: 'GET',
@@ -115,7 +143,7 @@ $(function () {
 
 
 
-    // 프로필 사진 가져오기
+
 // 프로필 사진 가져오기
     function userImageRequest(id) {
         return fetch(`/user/api/info/profile/${id}`, {  // 여기에 return 추가
@@ -147,4 +175,3 @@ $(function () {
     }
 
 });
-

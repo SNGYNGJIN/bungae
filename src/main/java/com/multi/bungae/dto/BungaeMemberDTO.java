@@ -11,9 +11,9 @@ public class BungaeMemberDTO {
 
     private int bungaeMemberId;
 
-    private Bungae bungae;
+    private Long bungaeId;
 
-    private UserVO user;
+    private int user;
 
     private boolean isOrganizer;
 }

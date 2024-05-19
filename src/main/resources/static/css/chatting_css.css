@@ -51,9 +51,18 @@
 }
 
 
-.message-time {
-    font-size: 0.8em;
-    color: #666;
-    margin-top: 2px;
-    align-self: flex-end; /* 시간을 메시지의 끝으로 정렬 */
+.announcement-message {
+    justify-content: center; /* 메시지를 가운데로 정렬 */
+    width: auto; /* 텍스트 길이에 따라 가변적으로 너비 조정 */
+    max-width: 80%; /* 최대 너비 제한 */
 }
+
+.announcement-content {
+    background-color: #f2f2f2; /* 배경색 */
+    border-radius: 20px; /* 테두리를 동글동글하게 */
+    padding: 10px 20px; /* 텍스트 주변 여백 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+    word-wrap: break-word; /* 긴 텍스트 자동 줄바꿈 */
+    display: inline-block; /* 블록 요소 안에 인라인으로 표시 */
+}
+

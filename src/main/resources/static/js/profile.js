@@ -21,6 +21,7 @@ function userInfoRequest(userId) {
             if (data.code === 200) {
                 const { nickname, id } = data.result;
                 localStorage.setItem('nickname', nickname);
+                sessionStorage.setItem('nickname', nickname)
                 document.getElementById('userNickname').textContent = nickname;
                 userProfileRequest(id);  // ID를 사용하여 프로필 정보 요청
             } else {
