@@ -14,7 +14,6 @@ $(function () {
     stompClient.connect({}, function (frame) {
         // 구독하기
         stompClient.subscribe('/room/' + roomId, function (messageOutput) {
-            console.log("Received message: ", messageOutput.body);  // 로그 추가
             var message = JSON.parse(messageOutput.body);
             if (message) {showMessageOutput(message, currentUserId);}
         });
@@ -46,10 +45,8 @@ $(function () {
                 message: messageContent,
                 type: "TALK"
             };
-            console.log("Before JSON.stringify:", chatMessage);
             try {
                 var jsonString = JSON.stringify(chatMessage);
-                console.log("JSON String:", jsonString);
                 stompClient.send("/send/" + roomId, {}, jsonString);
             } catch (e) {
                 console.error("JSON stringify error:", e);
@@ -65,14 +62,14 @@ $(function () {
         var messageElement = document.createElement('div');
         messageElement.className = 'message-row';
 
-        // 메시지 타입이 TALK가 아닐 경우
+        // 메시지 타입이 TALK가 아닐 경우 - ENTER(+ LEAVE)
         if (message.type !== "TALK") {
             messageElement.classList.add('announcement-message'); // 공지사항용 클래스 추가
 
             var textNode = document.createElement('div');
             textNode.textContent = message.message;
-            textNode.className = 'announcement-content'; // 공지사항 내용을 위한 스타일
-            messageElement.appendChild(textNode); // 공지사항 텍스트 추가
+            textNode.className = 'announcement-content';
+            messageElement.appendChild(textNode);
         } else {
             // 메시지 송신자가 현재 사용자인 경우
             if (message.sender === currentUserId) {
@@ -125,7 +122,6 @@ $(function () {
             .then(response => response.json())
             .then(data => {
                 if (data.code === 200) {
-                    // userImageRequest 함수 호출 및 결과와 함께 객체 반환
                     return userImageRequest(data.result.id).then(userImage => {
                         return {
                             nickname: data.result.nickname,

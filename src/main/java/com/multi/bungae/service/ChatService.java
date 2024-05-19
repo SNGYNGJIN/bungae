@@ -80,24 +80,22 @@ public class ChatService {
         String nickname = user.getNickname();
         String bungaeName = bungae.getBungaeName();
 
-        boolean memberExists = bungaememberRepo.existsByBungaeIdAndUser(chatRoomId, user.getId());
-        if (!memberExists) {
-            ChatDTO chat = ChatDTO.builder()
-                    .chatRoomId(chatRoomId)
-                    .sender(userId)
-                    .message("🔈 [" + nickname + "]님이 <" + bungaeName + ">에 참가하였습니다.")
-                    .type(ChatMessage.MessageType.ENTER)
-                    .build();
-            ChatMessage chatMessage = convertToEntity(chat);
-            chatMessageRepo.save(chatMessage);
-            bungaeMemberService.createBungaeMember(chatRoomId, user.getId(), FALSE);
-            messagingTemplate.convertAndSend("/room/" + chatRoomId, chat);
-            return chat;
-        }
-        return null; // 회원이 이미 존재하면 null 반환
+        ChatDTO chat = ChatDTO.builder()
+                .chatRoomId(chatRoomId)
+                .sender(userId)
+                .message("🔈 [" + nickname + "]님이 <" + bungaeName + ">에 참가하였습니다.")
+                .type(ChatMessage.MessageType.ENTER)
+                .build();
+        ChatMessage chatMessage = convertToEntity(chat);
+        chatMessageRepo.save(chatMessage);
+        bungaeMemberService.createBungaeMember(chatRoomId, user.getId(), FALSE);
+
+        return chat;
     }
 
-
+    /*
+        chatMessage에 저장하고 프론트로 반환
+     */
     public void ChatMessage(Long chatRoomId, String senderId, String message, ChatMessage.MessageType type) {
 
         ChatMessage chatMessage = new ChatMessage();
@@ -131,18 +129,6 @@ public class ChatService {
         return chatMessage;
     }
 
-    public <T> void sendMessage(WebSocketSession session, T message) {
-        try{
-            session.sendMessage(new TextMessage(mapper.writeValueAsString(message)));
-        } catch (IOException e) {
-            log.error("Error sending message", e);
-        }
-    }
-
-/*    public List<ChatMessage> getMessagesByChatRoomId(Bungae chatRoomId) {
-        List<ChatMessage> message = chatMessageRepo.findByChatRoomIdOrderBySendTimeAsc(chatRoomId)
-        return chatMessageRepo.findByChatRoomIdOrderBySendTimeAsc(chatRoomId);
-    }*/
     public List<ChatMessage> getMessagesByChatRoomId(Long chatRoomId) {
 
         return chatMessageRepo.findByChatRoomId(chatRoomId);

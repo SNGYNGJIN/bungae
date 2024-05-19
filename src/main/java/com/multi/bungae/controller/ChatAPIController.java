@@ -30,23 +30,27 @@ public class ChatAPIController {
     private final UserRepository userRepo;
     private final BungaeRepository bungaeRepo;
 
+    /*
+        참가했을 경우 기존 채팅방 유저에게 입장 알림
+     */
     @GetMapping("/join/{chatRoomId}")
-    public ResponseEntity<Boolean> joinChatRoom(@PathVariable Long chatRoomId, @RequestParam String userId) {
+    public ResponseEntity<?> joinChatRoom(@PathVariable Long chatRoomId, @RequestParam String userId) {
         UserVO user = userRepo.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        Bungae bungae = bungaeRepo.findById(chatRoomId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
         boolean memberExists = service.checkMemberExists(chatRoomId, user.getId());
 
         if (!memberExists) {
-            service.joinChat(chatRoomId, userId);
+            ChatDTO chat = service.joinChat(chatRoomId, userId);
+            messagingTemplate.convertAndSend("/room/" + chatRoomId, chat);
+
+            return ResponseEntity.ok().body(chat);
         }
 
-        return ResponseEntity.ok(memberExists);
+        return ResponseEntity.ok().body("방 참가 여부 : " + memberExists);
     }
 
-
-
-
-
+    /*
+        chatRoomId에 해당하는 채팅메세지 불러오기 기능 (늦게 들어온 사람도 볼 수 있게)
+     */
     @GetMapping("/messages/{chatRoomId}")
     public ResponseEntity<List<ChatMessage>> getChatMessages(@PathVariable Long chatRoomId) {
         List<ChatMessage> messages = service.getMessagesByChatRoomId(chatRoomId);

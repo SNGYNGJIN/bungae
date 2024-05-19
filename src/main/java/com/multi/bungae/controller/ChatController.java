@@ -40,25 +40,12 @@ public class ChatController {
         return "chatting"; // chatting.html 뷰 반환
     }
 
-
     // WebSocket 핸들러는 메시지 브로드캐스트만 담당
     @MessageMapping("/{roomId}") //여기(send/{roomId})로 전송되면 메서드 호출 -> WebSocketConfig prefixes 에서 적용한건 앞에 생략
     @SendTo("/room/{roomId}")   //구독하고 있는 장소로 메시지 전송 (목적지)  -> WebSocketConfig Broker 에서 적용한건 앞에 붙어줘야됨
     public ChatDTO chat(@DestinationVariable Long roomId, ChatDTO input) {
         chatService.ChatMessage(roomId, input.getSender(), input.getMessage(), input.getType());
-        return input;  // 클라이언트로부터 받은 메시지를 그대로 반환
-    }
-
-    @MessageMapping("/join/{chatRoomId}")
-    @SendTo("/room/{chatRoomId}")
-    public boolean broadcast(@PathVariable Long chatRoomId, @RequestParam String userId) {
-        UserVO user = userRepo.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        boolean memberExists = chatService.checkMemberExists(chatRoomId, user.getId());
-
-        if (!memberExists) {
-            chatService.joinChat(chatRoomId, userId);
-        }
-        return memberExists;
+        return input;
     }
 
     private String filterMessage(String message) {
