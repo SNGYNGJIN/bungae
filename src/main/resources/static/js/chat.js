@@ -62,21 +62,23 @@ $(function () {
         var messageElement = document.createElement('div');
         messageElement.className = 'message-row';
 
-        // 메시지 타입이 TALK가 아닐 경우 - ENTER(+ LEAVE)
-        if (message.type !== "TALK") {
-            messageElement.classList.add('announcement-message'); // 공지사항용 클래스 추가
+        var textNode = document.createElement('div');
+        textNode.className = 'message-content';
+        textNode.textContent = message.message;
 
-            var textNode = document.createElement('div');
-            textNode.textContent = message.message;
-            textNode.className = 'announcement-content';
+        var timeSpan = document.createElement('span');
+        timeSpan.className = 'message-time';
+        var formattedTime = formatTime(message.sendTime);
+        timeSpan.textContent = formattedTime;
+
+        if (message.type !== "TALK") {
+            messageElement.classList.add('announcement-message');
             messageElement.appendChild(textNode);
         } else {
             // 메시지 송신자가 현재 사용자인 경우
             if (message.sender === currentUserId) {
                 messageElement.classList.add('my-message');
-                var textNode = document.createElement('div');
-                textNode.textContent = message.message;
-                textNode.className = 'message-content';
+                messageElement.appendChild(timeSpan);
                 messageElement.appendChild(textNode); // 텍스트만 추가
             } else {
                 // 다른 사람의 메시지일 때
@@ -97,21 +99,24 @@ $(function () {
                     textNode.textContent = message.message;
                     textNode.className = 'message-content';
 
+                    messageElement.classList.add('their-message');
                     messageInfo.appendChild(nicknameSpan);
                     messageInfo.appendChild(textNode);
+                    messageInfo.appendChild(timeSpan);
 
                     messageElement.appendChild(imgElement);
                     messageElement.appendChild(messageInfo);
+
                 }).catch(error => {
                     console.error("Error loading user info:", error);
                 });
             }
         }
-
-        // 메시지 목록에 메시지 요소 추가
-        messageList.appendChild(messageElement);
-        messageList.scrollTop = messageList.scrollHeight; // 메시지 목록을 가장 아래로 스크롤
+        messageList.appendChild(messageElement); // 메시지 목록에 메시지 요소 추가
+        messageList.scrollTop = messageList.scrollHeight; // 스크롤을 최하단으로
     }
+
+
     function nicknameRequest(userId) {
         return fetch(`/user/api/info/${userId}`, {
             method: 'GET',
@@ -172,4 +177,8 @@ $(function () {
         errorContainer.textContent = message; // 사용자 인터페이스에 오류 메시지 표시
     }
 
+    function formatTime(isoString) {
+        const date = new Date(isoString);
+        return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
 });

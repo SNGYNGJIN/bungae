@@ -56,4 +56,5 @@ public class ChatAPIController {
         List<ChatMessage> messages = service.getMessagesByChatRoomId(chatRoomId);
         return ResponseEntity.ok(messages);
     }
+
 }

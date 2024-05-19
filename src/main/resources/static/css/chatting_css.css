@@ -1,68 +1,79 @@
+.message-list {
+    overflow-y: scroll;
+    height: 500px;
+    padding: 10px;
+    background-color: #f4f4f4;
+}
+
 .message-row {
     display: flex;
-    align-items: flex-start;
-    flex-direction: row; /* 기본 왼쪽 정렬 */
+    align-items: center;
     margin-bottom: 10px;
+    padding: 5px;
+    position: relative;
 }
 
 .my-message {
-    justify-content: flex-end; /* 내 메시지를 오른쪽으로 정렬 */
+    flex-direction: row-reverse; /* 내 메시지를 오른쪽 정렬 */
 }
 
 .their-message {
-    justify-content: flex-start; /* 다른 사람의 메시지를 왼쪽으로 정렬 */
+    flex-direction: row; /* 상대방 메시지를 왼쪽 정렬 */
 }
 
 .user-image {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    margin-right: 10px; /* 내 메시지의 경우 오른쪽 여백으로 변경 */
-}
-
-.message-info {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column; /* 메시지 정보를 열 방향으로 정렬 */
-}
-
-.nickname {
-    font-weight: bold;
-    display: block;
+    margin: 0 10px; /* 양쪽 여백 */
 }
 
 .message-content {
-    background-color: #e5e5e5;
-    border-radius: 15px;
     padding: 8px 12px;
-    display: inline-block;
+    background-color: #DCF8C6; /* 내 메시지 배경 색상 */
+    border-radius: 15px;
+    position: relative;
     word-wrap: break-word;
-    margin-bottom: 2px;
 }
 
 .my-message .message-content {
-    background-color: #DCF8C6; /* 내 메시지 배경 색상 */
-    margin-left: auto; /* 오른쪽 정렬 */
-    margin-right: 10px; /* 우측 여백 */
+    background-color: #f0ffe5;
+    display: table-cell;
 }
 
 .their-message .message-content {
-    margin-right: auto; /* 왼쪽 정렬 */
+    background-color: #e0e0e0; /* 상대방 메시지 배경 색상 */
+    display: table-cell;
 }
 
+.their-message .nickname {
+    font-weight: bold;
+}
+.message-time {
+    font-size: 0.8em;
+    color: #666;
+    position: absolute;
+    bottom: -20px; /* 시간 위치 조정 */
+}
+
+.my-message .message-time {
+    right: 5px; /* 내 메시지 시간 위치 */
+}
+
+.their-message .message-time {
+    left: 10px; /* 상대방 메시지 시간 위치 */
+}
 
 .announcement-message {
-    justify-content: center; /* 메시지를 가운데로 정렬 */
-    width: auto; /* 텍스트 길이에 따라 가변적으로 너비 조정 */
-    max-width: 80%; /* 최대 너비 제한 */
+    justify-content: center;
+    width: 100%;
 }
 
 .announcement-content {
-    background-color: #f2f2f2; /* 배경색 */
-    border-radius: 20px; /* 테두리를 동글동글하게 */
-    padding: 10px 20px; /* 텍스트 주변 여백 */
-    text-align: center; /* 텍스트 중앙 정렬 */
-    word-wrap: break-word; /* 긴 텍스트 자동 줄바꿈 */
-    display: inline-block; /* 블록 요소 안에 인라인으로 표시 */
+    background-color: #f2f2f2;
+    border-radius: 20px;
+    padding: 10px 20px;
+    text-align: center;
+    display: inline-block;
+    max-width: 80%;
 }
-
