@@ -1,5 +1,6 @@
 package com.multi.bungae.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -17,6 +19,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class Bungae {
+
 
     @Id
     @Column(name = "bungae_id")
@@ -59,6 +62,7 @@ public class Bungae {
     @Enumerated(EnumType.STRING)
     private BungaeStatus bungaeStatus;
 
-    @OneToMany(mappedBy = "bungaeId")
-    private Set<BungaeMember> bungaeMembers;
+    @OneToMany(mappedBy = "bungae", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<BungaeMember> bungaeMembers = new HashSet<>();
 }

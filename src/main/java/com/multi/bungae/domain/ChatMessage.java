@@ -32,7 +32,6 @@ public class ChatMessage {
     @Enumerated(EnumType.STRING)
     private MessageType type; // 메시지 타입: 입장, 채팅
 
-    @CreationTimestamp
     @Column(name = "send_time", updatable = false, nullable = false) // 채팅 발송 시간
     private LocalDateTime sendTime;
 

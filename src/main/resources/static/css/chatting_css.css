@@ -39,6 +39,8 @@
 .my-message .message-content {
     background-color: #f0ffe5;
     display: table-cell;
+    margin-right: 10px;  /* 오른쪽 여백 추가 */
+    margin-top: 7px;  /* 위 여백 추가 */
 }
 
 .their-message .message-content {

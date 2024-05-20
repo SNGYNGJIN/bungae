@@ -85,7 +85,7 @@ public class BungaeServiceImpl implements BungaeService {
 
         return bungae;
 */      bungaeRepository.save(bungae);
-        bungaeMemberService.createBungaeMember(bungae.getBungaeId(), user.getId(), true);
+        bungaeMemberService.createBungaeMember(bungae, user, true);
         chatService.createChat(bungae.getBungaeId(), user.getUserId());
         return bungae;
 

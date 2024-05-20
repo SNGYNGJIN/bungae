@@ -24,10 +24,10 @@ public class BungaeMemberServiceImpl implements BungaeMemberService {
     }
 
     @Override
-    public BungaeMember createBungaeMember(Long bungae, int user, boolean isOrganizer) {
+    public BungaeMember createBungaeMember(Bungae bungae, UserVO user, boolean isOrganizer) {
 
         BungaeMember bungaeMember = new BungaeMember();
-        bungaeMember.setBungaeId(bungae);
+        bungaeMember.setBungae(bungae);
         bungaeMember.setUser(user);
         bungaeMember.setOrganizer(isOrganizer);
 

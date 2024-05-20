@@ -36,7 +36,9 @@ public class ChatAPIController {
     @GetMapping("/join/{chatRoomId}")
     public ResponseEntity<?> joinChatRoom(@PathVariable Long chatRoomId, @RequestParam String userId) {
         UserVO user = userRepo.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        boolean memberExists = service.checkMemberExists(chatRoomId, user.getId());
+        Bungae bungae = bungaeRepo.findById(chatRoomId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
+
+        boolean memberExists = service.checkMemberExists(bungae, user);
 
         if (!memberExists) {
             ChatDTO chat = service.joinChat(chatRoomId, userId);

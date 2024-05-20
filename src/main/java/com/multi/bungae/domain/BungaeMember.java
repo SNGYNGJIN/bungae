@@ -1,5 +1,6 @@
 package com.multi.bungae.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,11 +16,15 @@ public class BungaeMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bungaeMemberId;
 
-    @Column(name = "bungae_id")
-    private Long bungaeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bungae_id")
+    @JsonBackReference
+    private Bungae bungae;
 
-    @Column(name = "user_id")
-    private int user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private UserVO user;
 
     private boolean isOrganizer;
 }
