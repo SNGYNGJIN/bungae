@@ -10,6 +10,10 @@ $(function () {
     var socket = new SockJS('/ws');
     var stompClient = Stomp.over(socket);
     var currentUserId = sessionStorage.getItem('loggedInUserId'); // 현재 사용자 ID 가져오기
+    var organizer = document.getElementById('organizer');
+    var member = document.getElementById('member');
+
+
 
     stompClient.connect({}, function (frame) {
         // 구독하기
@@ -81,12 +85,41 @@ $(function () {
                 messageElement.appendChild(timeSpan);
                 messageElement.appendChild(textNode); // 텍스트만 추가
             } else {
+                // 사용자 상세 모달 가져오기
+                var userDetailsModal = document.getElementById("userDetailsModal");
+                var ModalImage = document.getElementById("mprofile-image")
+                var ModalNickname = document.getElementById("muserNickname");
+                var ModalAgeGender = document.getElementById("mAge-Gender");
+                var ModalInfo = document.getElementById("muserInfo")
+                var ModalReview = document.getElementById("muserReviewScore");
+
+                var closeModal = document.getElementsByClassName("close")[0];
+
+                // 모달 닫기 이벤트
+                closeModal.onclick = function() {
+                    userDetailsModal.style.display = "none";
+                }
+
+                window.onclick = function(event) {
+                    if (event.target == userDetailsModal) {
+                        userDetailsModal.style.display = "none";
+                    }
+                }
+
                 // 다른 사람의 메시지일 때
                 messageElement.classList.add('their-message');
                 nicknameRequest(message.sender).then(userInfo => {
                     var imgElement = document.createElement('img');
                     imgElement.src = userInfo.userImage;
                     imgElement.className = 'user-image';
+                    imgElement.addEventListener('click', function() {
+                        ModalImage.src = userInfo.userImage;
+                        ModalNickname.textContent = userInfo.nickname;
+                        ModalAgeGender.textContent = `${userInfo.userAge}세 / ${userInfo.usergender === 'FEMALE' ? '여' : '남'}`;
+                        ModalReview.textContent = `받은 후기들의 평점은 ${userInfo.userRating}점입니다.`;
+                        ModalInfo.textContent = userInfo.Info;
+                        userDetailsModal.style.display = "block";
+                    });
 
                     var messageInfo = document.createElement('div');
                     messageInfo.className = 'message-info';
@@ -127,12 +160,14 @@ $(function () {
             .then(response => response.json())
             .then(data => {
                 if (data.code === 200) {
-                    return userImageRequest(data.result.id).then(userImage => {
                         return {
                             nickname: data.result.nickname,
-                            userImage: userImage
+                            userRating : data.result.profile.userRating,
+                            usergender : data.result.profile.gender,
+                            userAge : data.result.profile.userAge,
+                            userImage: data.result.profile.userImage,
+                            Info : data.result.profile.userInfo
                         };
-                    });
                 } else {
                     displayError(`사용자 정보 가져오기 실패: ${data.message}`);
                     throw new Error(`사용자 정보 가져오기 실패: ${data.message}`);
@@ -141,32 +176,6 @@ $(function () {
             .catch(error => {
                 displayError(`사용자 정보 가져오기 중 오류 발생: ${error}`);
                 throw error; // 에러를 다시 throw 하여 체인을 중단
-            });
-    }
-
-
-
-
-// 프로필 사진 가져오기
-    function userImageRequest(id) {
-        return fetch(`/user/api/info/profile/${id}`, {  // 여기에 return 추가
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.code === 200) {
-                    return data.result.userImage;
-                } else {
-                    displayError(`프로필 정보 가져오기 실패: ${data.message}`);
-                    throw new Error(`프로필 정보 가져오기 실패: ${data.message}`);  // 에러를 throw 하여 Promise 체인이 거부됨
-                }
-            })
-            .catch(error => {
-                displayError(`프로필 정보 가져오기 중 오류 발생: ${error.message}`);
-                throw error;  // 에러를 다시 throw 하여 체인을 중단
             });
     }
 

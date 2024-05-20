@@ -10,87 +10,105 @@
 </head>
 
 <body style="">
-  <nav class="navbar navbar-expand-md bg-primary navbar-light border-bottom border-dark" style="	height: 80px;">
-    <div class="container"> <a class="navbar-brand" href="#"><img src="/images/bungae.png" width="100" height="30" class="d-inline-block align-top" alt=""></a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar16">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbar16">
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item"> <a class="nav-link" href="main">홈</a> </li>
-          <li class="nav-item"> <a class="nav-link" href="map">지도</a> </li>
-          <li class="nav-item"> <a class="nav-link" href="bungae_create">번개생성</a> </li>
-          <li class="nav-item"> <a class="nav-link" href="bungae_list">번개목록</a> </li>
-          <li class="nav-item"> <a class="nav-link" href="bungae_ing">참여목록</a> </li>
-          <li class="nav-item"> <a class="nav-link" href="profile">프로필</a> </li>
-        </ul> <a class="btn navbar-btn ml-md-2 btn-light text-dark" href="login">로그인<br></a>
-      </div>
-    </div>
-  </nav>
-
-  <div class="py-3">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12">
-          <h1 class="text-center mb-3">번개 채팅</h1>
-        </div>
-      </div>
+<nav class="navbar navbar-expand-md bg-primary navbar-light border-bottom border-dark" style="	height: 80px;">
+  <div class="container"> <a class="navbar-brand" href="#"><img src="/images/bungae.png" width="100" height="30" class="d-inline-block align-top" alt=""></a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar16">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+    <div class="collapse navbar-collapse" id="navbar16">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item"> <a class="nav-link" href="main">홈</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="map">지도</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="bungae_create">번개생성</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="bungae_list">번개목록</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="bungae_ing">참여목록</a> </li>
+        <li class="nav-item"> <a class="nav-link" href="profile">프로필</a> </li>
+      </ul> <a class="btn navbar-btn ml-md-2 btn-light text-dark" href="login">로그인<br></a>
     </div>
   </div>
-  <div id="errorMessage" style="color: red;"></div>
+</nav>
 
+<div class="py-3">
   <div class="container">
     <div class="row justify-content-center mb-3">
       <div class="col-md-8">
-        <div id="messageList" class="border border-dark" style="height: 400px; overflow-y: scroll;">
-          <!-- 메시지가 여기에 동적으로 추가됩니다 -->
-        </div>
+      <div id="bungaeInfo" class="border border-dark" >
+        <p id="organizer">주최자</p>
+        <p id="member">멤버</p>
       </div>
-    </div>
-    <div class="row justify-content-center">
-      <div class="col-md-8">
-        <form onsubmit="return sendMessage()" class="form-inline justify-content-center">
-          <input type="text" id="message" autocomplete="off" class="form-control form-control-lg mr-2" placeholder="내용을 입력하세요." style="flex-grow: 1;">
-          <button class="btn btn-primary" type="submit">전송</button>
-        </form>
       </div>
     </div>
   </div>
+</div>
+<div id="errorMessage" style="color: red;"></div>
 
-
-  <div class="py-3 border-top border-dark">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6" style=""><img src="/images/bungae.png" width="100" height="30" class="d-inline-block align-top" alt=""></div>
-        <div class="col-md-6 text-center d-md-flex align-items-center">
-          <ul class="nav mx-md-auto d-flex justify-content-center">
-            <li class="nav-item"> <a class="nav-link active" href="#">Home</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#">Features</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#">Pricing</a> </li>
-            <li class="nav-item"> <a class="nav-link" href="#">About</a> </li>
-          </ul>
-          <div class="row">
-            <div class="col-md-12 d-flex align-items-center justify-content-md-between justify-content-center my-2"> <a href="#">
-                <i class="d-block fa fa-facebook-official text-muted fa-lg mx-2"></i>
-              </a> <a href="#">
-                <i class="d-block fa fa-instagram text-muted fa-lg mx-2"></i>
-              </a> <a href="#">
-                <i class="d-block fa fa-twitter text-muted fa-lg ml-2"></i>
-              </a> </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <p class="mt-2 mb-0" contenteditable="true">© 2024 CodeNinja. All rights reserved</p>
-        </div>
+<div class="container">
+  <div class="row justify-content-center mb-3">
+    <div class="col-md-8">
+      <div id="messageList" class="border border-dark" style="height: 500px; overflow-y: scroll;">
+        <!-- 메시지가 여기에 동적으로 추가됩니다 -->
       </div>
     </div>
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="/js/chat.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <form onsubmit="return sendMessage()" class="form-inline justify-content-center">
+        <input type="text" id="message" autocomplete="off" class="form-control form-control-lg mr-2" placeholder="내용을 입력하세요." style="flex-grow: 1;">
+        <button class="btn btn-primary" type="submit">전송</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 사용자 상세 정보 모달 -->
+<div id="userDetailsModal" class="modal">
+  <div class="modal-content">
+    <img id="mprofile-image" alt="Profile Image" />
+
+    <div class="profile-info">
+      <h3 id="muserNickname">사용자 이름</h3>
+      <p id="mAge-Gender">나이/성별</p>
+      <p id="muserReviewScore">평점란</p>
+      <hr>
+      <p id="muserInfo" class="text-center align-items-center">자기소개를 작성하지 않았습니다.</p>
+    </div>
+    <span class="close">&times;</span>
+  </div>
+</div>
+
+<div class="py-3 border-top border-dark">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6" style=""><img src="/images/bungae.png" width="100" height="30" class="d-inline-block align-top" alt=""></div>
+      <div class="col-md-6 text-center d-md-flex align-items-center">
+        <ul class="nav mx-md-auto d-flex justify-content-center">
+          <li class="nav-item"> <a class="nav-link active" href="#">Home</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">Features</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">Pricing</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="#">About</a> </li>
+        </ul>
+        <div class="row">
+          <div class="col-md-12 d-flex align-items-center justify-content-md-between justify-content-center my-2"> <a href="#">
+            <i class="d-block fa fa-facebook-official text-muted fa-lg mx-2"></i>
+          </a> <a href="#">
+            <i class="d-block fa fa-instagram text-muted fa-lg mx-2"></i>
+          </a> <a href="#">
+            <i class="d-block fa fa-twitter text-muted fa-lg ml-2"></i>
+          </a> </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 text-center">
+        <p class="mt-2 mb-0" contenteditable="true">© 2024 CodeNinja. All rights reserved</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/chat.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 
 </html>
