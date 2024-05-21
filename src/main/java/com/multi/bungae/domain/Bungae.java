@@ -36,6 +36,7 @@ public class Bungae {
     @Column(name = "bungae_location", nullable = false)
     private Point bungaeLocation;
 
+
     @Column(name = "bungae_image_path")
     private String bungaeImagePath;
 

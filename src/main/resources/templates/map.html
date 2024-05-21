@@ -97,15 +97,7 @@
             <li class="nav-item"> <a class="nav-link" href="#">Pricing</a> </li>
             <li class="nav-item"> <a class="nav-link" href="#">About</a> </li>
           </ul>
-          <div class="row">
-            <div class="col-md-12 d-flex align-items-center justify-content-md-between justify-content-center my-2"> <a href="#">
-                <i class="d-block fa fa-facebook-official text-muted fa-lg mx-2"></i>
-              </a> <a href="#">
-                <i class="d-block fa fa-instagram text-muted fa-lg mx-2"></i>
-              </a> <a href="#">
-                <i class="d-block fa fa-twitter text-muted fa-lg ml-2"></i>
-              </a> </div>
-          </div>
+
         </div>
       </div>
       <div class="row">
@@ -189,6 +181,45 @@
         }
     });
 
+    var geocoder = new kakao.maps.services.Geocoder();
+    var positions = [
+        {
+          title: '카카오',
+          address: '제주특별자치도 제주시 첨단로 242'
+        }
+    ];
+    positions.forEach(function (position) { //추가한 코드
+    // 주소로 좌표를 검색합니다
+    geocoder.addressSearch(position.address, function(result, status) {
+
+      // 정상적으로 검색이 완료됐으면
+      if (status === kakao.maps.services.Status.OK) {
+
+        var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+        // 결과값으로 받은 위치를 마커로 표시합니다
+        var marker = new kakao.maps.Marker({
+          map: map,
+          position: coords
+        });
+
+
+      }
+    });
+  });
+
+    var bungae=/*[[${bungae}]]*/ [];
+    moims.forEach(function(bungae) {
+    new kakao.maps.services.Geocoder().addressSearch(bungae.bungaeAdd, function(result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+            new kakao.maps.Marker({
+                map: map,
+                position: coords
+            });
+        }
+    });
+});
   </script>
 </body>
 </html>
