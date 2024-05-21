@@ -13,7 +13,7 @@ header{
     align-items: center;
     width: 100%;
     display: flex;
-    background-color:#00FF80;
+    background-color:#FFAB91;
     border-bottom: 1px solid #333;
 }
 .logo{
@@ -50,7 +50,7 @@ nav ul li a:hover {
 footer{
     border-top: 1px solid #333;
     text-align: center;
-    background-color:#00FF80;
+    background-color:#FFAB91;
 }
 .bottom-logo{
     width:100px;

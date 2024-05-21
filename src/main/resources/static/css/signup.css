@@ -22,7 +22,7 @@ input[type="text"], input[type="password"], input[type="email"], select {
     box-sizing: border-box; /* 박스 사이징 */
 }
 button {
-    background-color: #4CAF50;
+    background-color: #FFAB91;
     color: white;
     padding: 10px 20px;
     margin: 8px 0;
