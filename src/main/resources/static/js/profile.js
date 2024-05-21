@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('loggedInUserId');
     if (!userId) {
         displayError("사용자 정보를 찾을 수 없습니다.");
         return;

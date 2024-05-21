@@ -1,27 +1,49 @@
-body {
-    background-color: #FFD43B;
-    color: #333;
-    padding: 20px;
-}
-.user-review {
-    background-color: #ffffff;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
+.wrap {
     display: flex;
+    justify-content: center;
     align-items: center;
+    flex-direction: column;
+    gap: 32px;
 }
-.profile-pic {
-    background: url('/path/to/default/profile-pic.png');
-    background-size: cover;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    margin-right: 15px;
+
+h1 {
+    font-size: 40px;
+    font-weight: 600;
 }
-.review-content {
-    flex: 1;
+
+.rating {
+    float: none;
+    width: 200px;
+    display: flex;
 }
-.star-rating {
-    color: #ffc107;
+.rating__input {
+    display: none;
+}
+.rating__label {
+    width: 20px;
+    overflow: hidden;
+    cursor: pointer;
+}
+.rating__label .star-icon {
+    width: 20px;
+    height: 40px;
+    display: block;
+    position: relative;
+    left: 0;
+    background-image: url("/images/notfilledStar.svg");
+    background-repeat: no-repeat;
+    background-size: 40px;
+}
+.rating__label .star-icon.filled {
+    background-image: url("/images/filledStar.svg");
+}
+.rating__label--full .star-icon {
+    background-position: right;
+}
+.rating__label--half .star-icon {
+    background-position: left;
+}
+.rating.readonly .star-icon {
+    opacity: 0.7;
+    cursor: default;
 }

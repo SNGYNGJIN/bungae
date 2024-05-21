@@ -193,12 +193,12 @@ public class UserApiController {
     /*
         userID를 통해 user_review 테이블의 모든 리뷰를 가져오는 API
     */
-    @GetMapping("/info/review/{userId}")
+/*    @GetMapping("/info/review/{userId}")
     @ResponseBody
     public BaseResponse<List<UserReview>> getUserReviews(@PathVariable String userId) throws BaseException{
         List<UserReview> reviews = userService.getUserReview(userId);
         return new BaseResponse<>(reviews);
-    }
+    }*/
 
     /*
         userID를 통해 blacklist 테이블의 모든 블랙리스트 항목을 가져오는 API

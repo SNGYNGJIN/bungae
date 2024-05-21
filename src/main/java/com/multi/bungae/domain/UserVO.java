@@ -19,12 +19,11 @@ import java.util.Set;
 public class UserVO extends BaseVO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;  // 단순 ID 필드
+    private int id;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private UserProfile profile;
-
 
     @Column(name = "user_id", nullable = false, unique = true)
     private String userId;

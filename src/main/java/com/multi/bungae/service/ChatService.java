@@ -113,7 +113,6 @@ public class ChatService {
         chatMessage.setMessage(message);
         chatMessage.setType(type);
         chatMessage.setSendTime(sendTime);
-
         chatMessageRepo.save(chatMessage);
 
         return new ChatDTO(chatRoomId, senderId, message, type, sendTime);

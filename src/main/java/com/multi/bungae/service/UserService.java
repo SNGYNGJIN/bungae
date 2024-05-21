@@ -231,9 +231,9 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public List<UserReview> getUserReview(String userId) {
+/*    public List<UserReview> getUserReview(String userId) {
         return userReviewRepo.findByUser_UserId(userId);
-    }
+    }*/
 
 
     public List<BlackList> getUserBlacklist(String userId) {

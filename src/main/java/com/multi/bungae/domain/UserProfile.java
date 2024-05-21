@@ -1,8 +1,12 @@
 package com.multi.bungae.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -35,5 +39,9 @@ public class UserProfile {
 
     @Column(name = "user_image", length = 1000, nullable = false)
     private String userImage; // UUID를 String으로 저장
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<UserReview> reviews = new HashSet<>();
 
 }
