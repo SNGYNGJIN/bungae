@@ -33,8 +33,8 @@ public class Bungae {
     @Column(name = "bungae_description")
     private String bungaeDescription;
 
-    @Column(name = "bungae_location", nullable = false)
-    private Point bungaeLocation;
+    @Embedded
+    private Location bungaeLocation;
 
 
     @Column(name = "bungae_image_path")

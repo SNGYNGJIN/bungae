@@ -19,14 +19,14 @@
         </button>
         <div class="collapse navbar-collapse" id="navbar16">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="main.html">홈</a></li>
-                <li class="nav-item"><a class="nav-link" href="map.html">지도</a></li>
-                <li class="nav-item"><a class="nav-link" href="bungae_create.html">번개생성</a></li>
-                <li class="nav-item"><a class="nav-link" href="bungae_list.html">번개목록</a></li>
-                <li class="nav-item"><a class="nav-link" href="bungae_ing.html">참여목록</a></li>
-                <li class="nav-item"><a class="nav-link" href="profile.html">프로필</a></li>
+                <li class="nav-item"><a class="nav-link" href="/main">홈</a></li>
+                <li class="nav-item"><a class="nav-link" href="/map">지도</a></li>
+                <li class="nav-item"><a class="nav-link" href="/bungae_create">번개생성</a></li>
+                <li class="nav-item"><a class="nav-link" href="/bungae_list">번개목록</a></li>
+                <li class="nav-item"><a class="nav-link" href="/bungae_ing">참여목록</a></li>
+                <li class="nav-item"><a class="nav-link" href="/profile">프로필</a></li>
             </ul>
-            <a class="btn navbar-btn ml-md-2 btn-light text-dark" href="login.html">로그인<br></a>
+            <a class="btn navbar-btn ml-md-2 btn-light text-dark" href="/login">로그인<br></a>
         </div>
     </div>
 </nav>
@@ -59,7 +59,10 @@
                         </tr>
                         <tr>
                             <td>위치</td>
-                            <td th:text="${bungae.bungaeLocation}">(내용)</td>
+                            <td>
+                                <span th:text="${bungae.bungaeLocation.keyword}"></span><br>
+                                <span th:text="${bungae.bungaeLocation.address}"></span>
+                            </td>
                         </tr>
                         <tr>
                             <td>설명</td>

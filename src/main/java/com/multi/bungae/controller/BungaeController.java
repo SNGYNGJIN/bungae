@@ -5,6 +5,7 @@ import com.multi.bungae.domain.BungaeMember;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.BungaeDTO;
 import com.multi.bungae.dto.BungaeMemberDTO;
+import com.multi.bungae.dto.LocationDTO;
 import com.multi.bungae.repository.UserRepository;
 import com.multi.bungae.service.BungaeMemberService;
 import com.multi.bungae.service.BungaeService;
@@ -67,16 +68,16 @@ public class BungaeController {
         }
 */
     @PostMapping("/create_bungae")
-    public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, @RequestParam String userId) {
+    public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam String keyword, @RequestParam String address, @RequestParam String userId) {
 
+        LocationDTO locationDTO = new LocationDTO(keyword, address);
+        bungaeDTO.setBungaeLocation(locationDTO);
         UserVO user = userService.getUserByUserId(userId); // userId로 사용자 정보 조회
-        Point location = new GeometryFactory().createPoint(new Coordinate(longitude, latitude));
-        bungaeDTO.setBungaeLocation(location);
         bungaeService.createBungae(bungaeDTO, user);
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
-        response.put("url", "/bungae/bungae_list");
+        response.put("url", "/bungae_list");
         return ResponseEntity.ok(response);
 
     }
@@ -112,9 +113,16 @@ public class BungaeController {
         return bungaeService.findBungaeNearby(location, radius);
     }
 
-    @GetMapping("/find/type")
-    public Bungae findBungaeByType(@RequestParam("type") String bungaeType) {
-        return null;
+    @RequestMapping(value = "/getListOfStartTime", produces = "application/json; charset=UTF-8")
+    @ResponseBody
+    public List<BungaeDTO> getListOfStartTime() {
+        return bungaeService.bungaeListOfStartTime();
+    }
+
+    @RequestMapping(value = "/getListOfCreateTime", produces = "application/json; charset=UTF-8")
+    @ResponseBody
+    public List<BungaeDTO> getListOfCreateTime() {
+        return bungaeService.bungaeListOfCreateTime();
     }
 
     @GetMapping("/find/age")

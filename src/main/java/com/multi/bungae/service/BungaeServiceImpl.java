@@ -6,11 +6,13 @@ import com.multi.bungae.domain.BungaeStatus;
 import com.multi.bungae.domain.ChatMessage;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.BungaeDTO;
+import com.multi.bungae.dto.LocationDTO;
 import com.multi.bungae.repository.BungaeRepository;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,16 +56,17 @@ public class BungaeServiceImpl implements BungaeService {
         }
 
 */
+        LocalDateTime createTime = LocalDateTime.now();
 
         Bungae bungae = new Bungae(
                 null,
                 bungaeDTO.getBungaeType(),
                 bungaeDTO.getBungaeName(),
                 bungaeDTO.getBungaeDescription(),
-                bungaeDTO.getBungaeLocation(),
+                LocationDTO.toEntity(bungaeDTO.getBungaeLocation()),
                 bungaeDTO.getBungaeImagePath(),
                 bungaeDTO.getBungaeMaxMember(),
-                bungaeDTO.getBungaeCreateTime(),
+                createTime,
                 bungaeDTO.getBungaeStartTime(),
                 bungaeDTO.getBungaeMinAge(),
                 bungaeDTO.getBungaeMaxAge(),
@@ -93,6 +96,20 @@ public class BungaeServiceImpl implements BungaeService {
     @Transactional
     public List<BungaeDTO> bungaeList() {
         List<Bungae> bungaeList = bungaeRepository.findAll();
+        return bungaeList.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<BungaeDTO> bungaeListOfStartTime() {
+        List<Bungae> bungaeList = bungaeRepository.findAllByOrderByBungaeStartTimeAsc();
+        return bungaeList.stream().map(this::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<BungaeDTO> bungaeListOfCreateTime() {
+        List<Bungae> bungaeList = bungaeRepository.findAllByOrderByBungaeCreateTimeDesc();
         return bungaeList.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
@@ -156,7 +173,7 @@ public class BungaeServiceImpl implements BungaeService {
         bungae.setBungaeType(bungaeDTO.getBungaeType());
         bungae.setBungaeName(bungaeDTO.getBungaeName());
         bungae.setBungaeDescription(bungaeDTO.getBungaeDescription());
-        bungae.setBungaeLocation(bungaeDTO.getBungaeLocation());
+        bungae.setBungaeLocation(LocationDTO.toEntity(bungaeDTO.getBungaeLocation()));
         bungae.setBungaeImagePath(bungae.getBungaeImagePath());
         bungae.setBungaeMaxMember(bungaeDTO.getBungaeMaxMember());
         bungae.setBungaeCreateTime(bungaeDTO.getBungaeCreateTime());
@@ -171,7 +188,7 @@ public class BungaeServiceImpl implements BungaeService {
         dto.setBungaeType(bungae.getBungaeType());
         dto.setBungaeName(bungae.getBungaeName());
         dto.setBungaeDescription(bungae.getBungaeDescription());
-        dto.setBungaeLocation(bungae.getBungaeLocation());
+        dto.setBungaeLocation(LocationDTO.fromEntity(bungae.getBungaeLocation()));
         dto.setBungaeImagePath(bungae.getBungaeImagePath());
         dto.setBungaeMaxMember(bungae.getBungaeMaxMember());
         dto.setBungaeCreateTime(bungae.getBungaeCreateTime());
@@ -181,8 +198,4 @@ public class BungaeServiceImpl implements BungaeService {
         return dto;
     }
 
-/*    @Override
-    public List<Bungae> findBungaeNearby(Point userLocation, double radius) {
-        return bungaeRepository.findBungaeNearby(userLocation, radius);
-    }*/
 }
