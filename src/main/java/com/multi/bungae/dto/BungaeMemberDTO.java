@@ -5,15 +5,14 @@ import com.multi.bungae.domain.UserVO;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Data
 public class BungaeMemberDTO {
 
     private int bungaeMemberId;
-
     private Long bungaeId;
-
     private int user;
-
     private boolean isOrganizer;
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:overflow-y="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="utf-8">
@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
           type="text/css">
     <link rel="stylesheet" href="/css/bungae_detail.css">
+    <link rel="stylesheet" href="/css/userReview.css">
+    <link rel="stylesheet" href="/css/review_list.css">
     <script th:src="@{/js/bungae_detail.js}" type="text/javascript"></script>
 </head>
 
@@ -87,15 +89,103 @@
         <div class="row">
             <div class="col-md-12 text-center mt-3">
                 <button type="button" id="go_chat" class="btn btn-primary mx-5">참가</button>
-                <a class="btn btn-primary mx-5" href="#">수정</a></div>
+                <button type="button" id="go_review" class="btn btn-primary mx-5">수정</button></div>
         </div>
     </div>
 </div>
+
+<!-- 멤버 리스트 모달 추가 (예시) -->
+<div class="modal" id="reviewModal" tabindex="-1" role="dialog" style="overflow-y: scroll;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">리뷰 작성</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 사용자 정보를 동적으로 추가할 컨테이너 -->
+                <div id="usersContainer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 후기 모달 추가 (예시) -->
+<div class="modal" id="reviewModal2" tabindex="-1" role="dialog" style="overflow-y: scroll;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="mnickname2" class="modal-title">닉네임</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="wrap">
+                        <div class="rating">
+                            <label class="rating__label rating__label--half" for="starhalf">
+                                <input type="radio" id="starhalf" class="rating__input" name="rating" value="0.5">
+                                <span class="star-icon"></span>
+                            </label>
+                            <label class="rating__label rating__label--full" for="star1">
+                                <input type="radio" id="star1" class="rating__input" name="rating" value="1.0">
+                                <span class="star-icon"></span>
+                            </label>
+                            <label class="rating__label rating__label--half" for="star1half">
+                                <input type="radio" id="star1half" class="rating__input" name="rating" value="1.5">
+                                <span class="star-icon"></span>
+                            </label>
+                            <label class="rating__label rating__label--full" for="star2">
+                                <input type="radio" id="star2" class="rating__input" name="rating" value="2.0">
+                                <span class="star-icon"></span>
+                            </label>
+                            <label class="rating__label rating__label--half" for="star2half">
+                                <input type="radio" id="star2half" class="rating__input" name="rating" value="2.5">
+                                <span class="star-icon"></span>
+                            </label>
+                            <label class="rating__label rating__label--full" for="star3">
+                                <input type="radio" id="star3" class="rating__input" name="rating" value="3.0">
+                                <span class="star-icon"></span>
+                            </label>
+                            <label class="rating__label rating__label--half" for="star3half">
+                                <input type="radio" id="star3half" class="rating__input" name="rating" value="3.5" checked>
+                                <span class="star-icon"></span>
+                            </label>
+                            <label class="rating__label rating__label--full" for="star4">
+                                <input type="radio" id="star4" class="rating__input" name="rating" value="4.0">
+                                <span class="star-icon"></span>
+                            </label>
+                            <label class="rating__label rating__label--half" for="star4half">
+                                <input type="radio" id="star4half" class="rating__input" name="rating" value="4.5">
+                                <span class="star-icon"></span>
+                            </label>
+                            <label class="rating__label rating__label--full" for="star5">
+                                <input type="radio" id="star5" class="rating__input" name="rating" value="5.0">
+                                <span class="star-icon"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="reviewText" name="text" >
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary reviewSaveBtn" id="submitReview">리뷰 등록</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="py-3 border-top border-dark">
     <div class="container">
         <div class="row">
-            <div class="col-md-6" style=""><img src="/images/bungae.png" width="100" height="30"
-                                                class="d-inline-block align-top" alt=""></div>
+            <div class="col-md-6" style="">
+                <img src="/images/bungae.png" width="100" height="30" class="d-inline-block align-top" alt=""></div>
             <div class="col-md-6 text-center d-md-flex align-items-center">
                 <ul class="nav mx-md-auto d-flex justify-content-center">
                     <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
@@ -122,6 +212,7 @@
         </div>
     </div>
 </div>
+
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
@@ -131,6 +222,9 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+<script th:src="@{/js/member_review.js}" type="text/javascript"></script>
+<script th:src="@{/js/star.js}" type="text/javascript"></script>
+
 </body>
 
 </html>
