@@ -7123,17 +7123,6 @@ a.text-dark:hover, a.text-dark:focus {
   .table .thead-dark th {
     color: inherit;
     border-color: #dee2e6; } }
-    form {
-      background: #fff;
-      padding: 20px;
-      border-radius: 5px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      width: 300px; /* 폼 너비 조정 */
-      display: flex;
-      flex-direction: column;
-      align-items: center; /* 요소들을 중앙에 정렬 */
-  }
-  
   input[type="text"], input[type="password"] {
       padding: 10px;
       margin-bottom: 10px; /* 아래 간격 추가 */
@@ -7141,25 +7130,9 @@ a.text-dark:hover, a.text-dark:focus {
       border-radius: 5px;
       width: 100%; /* 너비를 100%로 설정하여 상위 컨테이너에 맞춤 */
   }
-  
-  button{
-      width: 100%; /* 모든 버튼과 버튼처럼 보이는 링크의 너비를 같게 설정 */
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      margin-top: 10px; /* 버튼 상단의 간격 조정 */
-      background-color: #FFD43B; /* 기본 배경색 */
-      text-align: center; /* 텍스트 중앙 정렬 */
-  }
-  
+
+
+
   button:hover {
       background-color: #eae487; /* 버튼 호버 색상 조정 */
   }
-  
-  #signup_btn { margin-top: 5px; } /* 회원가입 버튼 간격 추가 */
-  
-  
-  
