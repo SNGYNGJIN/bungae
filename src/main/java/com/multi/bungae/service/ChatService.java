@@ -95,7 +95,6 @@ public class ChatService {
 
         ChatMessage chatMessage = convertToEntity(chat);
         chatMessageRepo.save(chatMessage);
-        bungaeMemberService.createBungaeMember(bungae, user, FALSE);
 
         return chat;
     }
@@ -144,7 +143,9 @@ public class ChatService {
         return chatMessageRepo.findByChatRoomId(chatRoomId);
     }
 
-    public boolean checkMemberExists(Bungae bungae, UserVO userId) {
-        return bungaememberRepo.existsByBungaeAndUser(bungae, userId);
+    public boolean checkMemberExists(Long bungae, String userId) {
+        return chatMessageRepo.existsByChatRoomIdAndSenderAndType(bungae, userId, ChatMessage.MessageType.ENTER);
     }
+
+
 }

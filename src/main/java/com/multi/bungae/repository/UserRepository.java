@@ -1,7 +1,5 @@
 package com.multi.bungae.repository;
 
-import com.multi.bungae.domain.UserProfile;
-import com.multi.bungae.domain.UserReview;
 import com.multi.bungae.domain.UserVO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -32,7 +30,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<UserVO, Integer> {
     boolean existsUserByUserId(String userId);
-    List<UserVO> findByEmail(String email);
+    List<UserVO> findByEmailAndUserBirthAndUsername(String email, String birth, String name);
     Optional<UserVO> findByUserId(String userId);
     Optional<UserVO> findById(Integer id);
 }

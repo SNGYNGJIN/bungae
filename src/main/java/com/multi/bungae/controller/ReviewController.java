@@ -45,7 +45,8 @@ public class ReviewController {
                 .map(member -> new forReview(
                         member.getUser().getUserId(),
                         member.getUser().getNickname(),
-                        member.getUser().getProfile().getUserImage()
+                        member.getUser().getProfile().getUserImage(),
+                        member.isOrganizer()
                 ))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(userNicknames);

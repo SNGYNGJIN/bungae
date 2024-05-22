@@ -14,6 +14,7 @@ $(function () {
     var member = document.getElementById('member');
 
 
+    memberList();
 
     stompClient.connect({}, function (frame) {
         // 구독하기
@@ -189,5 +190,46 @@ $(function () {
     function formatTime(isoString) {
         const date = new Date(isoString);
         return date.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
+    }
+
+    function memberList() {
+        return fetch(`/chat/api/chatMember/${roomId}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                // 여기에서 데이터 구조를 확인하고 함수를 호출합니다.
+                updateMemberList(data);  // 직접 받은 데이터로 목록을 업데이트 (예: data.results, data 등 실제 구조에 맞춰야 함)
+            })
+            .catch(error => {
+                console.error(`사용자 정보 가져오기 중 오류 발생: ${error}`);
+            });
+    }
+
+    function updateMemberList(members) {
+        const organizerElement = document.getElementById('organizer');
+        const memberElement = document.getElementById('member');
+
+        // 초기화
+        organizerElement.innerHTML = '';
+        memberElement.innerHTML = '';
+
+        members.forEach(member => {
+            const userInfo = `
+            <div>
+                <img src="${member.userImage}" alt="User Image" style="width: 30px; height: 30px;">
+                <p>${member.nickname}</p>
+            </div>
+        `;
+
+            if (member.organizer) {
+                organizerElement.innerHTML += "주최자 : " + userInfo;
+            } else {
+                memberElement.innerHTML += "참여자 : " + userInfo;
+            }
+        });
     }
 });

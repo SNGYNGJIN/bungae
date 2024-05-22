@@ -1,9 +1,11 @@
 package com.multi.bungae.controller;
 
 import com.multi.bungae.domain.Bungae;
+import com.multi.bungae.domain.BungaeMember;
 import com.multi.bungae.domain.ChatMessage;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.ChatDTO;
+import com.multi.bungae.dto.user.forReview;
 import com.multi.bungae.repository.BungaeMemberRepository;
 import com.multi.bungae.repository.BungaeRepository;
 import com.multi.bungae.repository.UserRepository;
@@ -18,6 +20,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -29,6 +32,7 @@ public class ChatAPIController {
     private final ChatService service;
     private final UserRepository userRepo;
     private final BungaeRepository bungaeRepo;
+    private final BungaeMemberRepository bungaeMemberRepo;
 
     /*
         참가했을 경우 기존 채팅방 유저에게 입장 알림
@@ -38,7 +42,7 @@ public class ChatAPIController {
         UserVO user = userRepo.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Bungae bungae = bungaeRepo.findById(chatRoomId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
 
-        boolean memberExists = service.checkMemberExists(bungae, user);
+        boolean memberExists = service.checkMemberExists(chatRoomId, userId);
 
         if (!memberExists) {
             ChatDTO chat = service.joinChat(chatRoomId, userId);
@@ -59,4 +63,18 @@ public class ChatAPIController {
         return ResponseEntity.ok(messages);
     }
 
+    @ResponseBody
+    @GetMapping("/chatMember/{bungaeId}")
+    public ResponseEntity<List<forReview>> getBungaeMemberss(@PathVariable Long bungaeId) {
+        List<BungaeMember> members = bungaeMemberRepo.findByBungae_BungaeId(bungaeId);
+        List<forReview> userNicknames = members.stream()
+                .map(member -> new forReview(
+                        member.getUser().getUserId(),
+                        member.getUser().getNickname(),
+                        member.getUser().getProfile().getUserImage(),
+                        member.isOrganizer()
+                ))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(userNicknames);
+    }
 }

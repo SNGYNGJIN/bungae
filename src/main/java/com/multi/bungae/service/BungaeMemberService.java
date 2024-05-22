@@ -16,4 +16,6 @@ public interface BungaeMemberService {
 
     Bungae findBungaeById(int userId);
 
+    boolean isOrganizerTrue(Long bungaeId, String userId);
+    boolean isOrganizerFalse(Long bungaeId, String userId);
 }

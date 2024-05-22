@@ -14,4 +14,6 @@ public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> 
     List<ChatMessage> findByChatMessage_ChatRoomId(Long bungaeId);*/
 
     List<ChatMessage> findByChatRoomId(Long bungaeId);
+    boolean existsByChatRoomIdAndSenderAndType(Long chatRoomId, String sender, ChatMessage.MessageType type);
+
 }

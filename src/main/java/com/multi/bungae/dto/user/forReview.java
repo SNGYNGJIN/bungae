@@ -11,4 +11,6 @@ public class forReview {
     private String userId;
     private String nickname;
     private String userImage;
+    private boolean organizer;
+
 }

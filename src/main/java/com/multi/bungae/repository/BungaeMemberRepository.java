@@ -27,4 +27,7 @@ public interface BungaeMemberRepository extends JpaRepository<BungaeMember, Long
     boolean existsByBungaeAndUser(Bungae bungae, UserVO user);
 
     List<BungaeMember> findByBungae_BungaeId(Long bungaeId);
+
+    boolean existsByBungaeAndUserAndIsOrganizerTrue(Bungae bungae, UserVO user);
+    boolean existsByBungaeAndUserAndIsOrganizerFalse(Bungae bungae, UserVO user);
 }

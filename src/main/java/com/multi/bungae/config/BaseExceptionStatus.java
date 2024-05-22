@@ -23,7 +23,7 @@ public enum BaseExceptionStatus {
 
     EMPTY_EMAIL(1005, HttpStatus.BAD_REQUEST, "이메일 값이 비어있습니다."),
     INVALID_EMAIL(1006, HttpStatus.BAD_REQUEST , "이메일 형식이 올바르지 않습니다."),
-    NOT_FOUND_EMAIL(1007, HttpStatus.BAD_REQUEST , "가입된 이메일을 찾을 수 없습니다."),
+    NOT_FOUND_EMAIL(1007, HttpStatus.BAD_REQUEST , "일치하는 아이디를 찾을 수 없습니다."),
 
     EMPTY_NICKNAME(1008, HttpStatus.BAD_REQUEST, "닉네임 값이 비어있습니다."),
     INVALID_NICKNAME(1009, HttpStatus.BAD_REQUEST , "닉네임 형식이 올바르지 않습니다."),

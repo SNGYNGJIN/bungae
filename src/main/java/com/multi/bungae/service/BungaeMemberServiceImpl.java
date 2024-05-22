@@ -11,6 +11,7 @@ import com.multi.bungae.repository.ChatMessageRepository;
 import com.multi.bungae.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.catalina.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,6 +68,22 @@ public class BungaeMemberServiceImpl implements BungaeMemberService {
     @Transactional
     public Bungae findBungaeById(int userId) {
         return bungaeMemberRepository.findBungaeById(userId);
+    }
+
+    @Override
+    @Transactional
+    public boolean isOrganizerTrue(Long bungaeId, String userId){
+        UserVO user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Bungae bungae = bungaeRepository.findById(bungaeId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
+        return bungaeMemberRepository.existsByBungaeAndUserAndIsOrganizerTrue(bungae, user);
+    }
+
+    @Override
+    @Transactional
+    public boolean isOrganizerFalse(Long bungaeId, String userId){
+        UserVO user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Bungae bungae = bungaeRepository.findById(bungaeId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
+        return bungaeMemberRepository.existsByBungaeAndUserAndIsOrganizerFalse(bungae, user);
     }
 
     @Override

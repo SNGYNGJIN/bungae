@@ -172,13 +172,15 @@ public class UserService implements UserDetailsService {
         return new SignupRes(user.getId(), signupReq.getUserId(), signupReq.getNickname());
     }
 
-
+    /*
+        아이디 찾기
+     */
     public FindIdRes findId(FindIdReq findIdReq) throws BaseException {
-        List<UserVO> user_list = userRepo.findByEmail(findIdReq.getEmail());
+        List<UserVO> user_list = userRepo.findByEmailAndUserBirthAndUsername(findIdReq.getEmail(), findIdReq.getBirth(), findIdReq.getName());
         if (user_list.isEmpty()) {
             throw new BaseException(BaseExceptionStatus.NOT_FOUND_EMAIL);
         }
-        return new FindIdRes(user_list.get(0).getId());
+        return new FindIdRes(user_list.get(0).getUserId());
     }
 
     /*
