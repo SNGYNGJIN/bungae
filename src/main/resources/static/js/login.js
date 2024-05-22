@@ -29,4 +29,8 @@ function sendLoginRequest() {
                 alert('로그인 실패: ' + data.message);
             }
         })
+        .catch(error => {
+            console.error('Error during login:', error);
+            alert('로그인 처리 중 오류 발생');
+        });
 }

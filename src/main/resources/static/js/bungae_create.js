@@ -58,7 +58,7 @@ function sendCreateBungaeRequest(event) {
 
     const form = document.getElementById("createBungaeForm");
     const formData = new FormData(form);
-    const userId = localStorage.getItem("userId");
+    const userId = sessionStorage.getItem("loggedInUserId");
 
     if (!userId) {
         alert("로그인이 필요합니다.");

@@ -1,12 +1,10 @@
 package com.multi.bungae.service;
 
 import com.multi.bungae.controller.BungaeController;
-import com.multi.bungae.domain.Bungae;
-import com.multi.bungae.domain.BungaeStatus;
-import com.multi.bungae.domain.ChatMessage;
-import com.multi.bungae.domain.UserVO;
+import com.multi.bungae.domain.*;
 import com.multi.bungae.dto.BungaeDTO;
 import com.multi.bungae.dto.LocationDTO;
+import com.multi.bungae.repository.BungaeMemberRepository;
 import com.multi.bungae.repository.BungaeRepository;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
@@ -28,6 +26,7 @@ import static java.lang.Boolean.TRUE;
 public class BungaeServiceImpl implements BungaeService {
 
     private final BungaeRepository bungaeRepository;
+    private final BungaeMemberRepository bungaeMemberRepository;
     private final BungaeMemberService bungaeMemberService;
     private final ChatService chatService;
     private static final Logger logger = LoggerFactory.getLogger(BungaeController.class);
@@ -56,6 +55,11 @@ public class BungaeServiceImpl implements BungaeService {
         }
 
 */
+        Optional<BungaeMember> duplicatedMember = bungaeMemberRepository.findByUser(user);
+        if (duplicatedMember.isPresent()) {
+            throw new IllegalStateException("해당 유저가 이미 다른 번개 모임에 참여하고 있습니다.");
+        }
+
         LocalDateTime createTime = LocalDateTime.now();
 
         Bungae bungae = new Bungae(
@@ -70,7 +74,7 @@ public class BungaeServiceImpl implements BungaeService {
                 bungaeDTO.getBungaeStartTime(),
                 bungaeDTO.getBungaeMinAge(),
                 bungaeDTO.getBungaeMaxAge(),
-                BungaeStatus.ACTIVE,
+                BungaeStatus.SCHEDULED,
                 null
         );
 /* Hyeyeon
@@ -96,7 +100,30 @@ public class BungaeServiceImpl implements BungaeService {
     @Transactional
     public List<BungaeDTO> bungaeList() {
         List<Bungae> bungaeList = bungaeRepository.findAll();
-        return bungaeList.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return bungaeList.stream()
+                .filter(bungae -> bungae.getBungaeStatus() != BungaeStatus.ENDED)
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<BungaeDTO> bungaeListOfStartTime() {
+        List<Bungae> bungaeList = bungaeRepository.findAllByOrderByBungaeStartTimeAsc();
+        return bungaeList.stream()
+                .filter(bungae -> bungae.getBungaeStatus() != BungaeStatus.ENDED)
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<BungaeDTO> bungaeListOfCreateTime() {
+        List<Bungae> bungaeList = bungaeRepository.findAllByOrderByBungaeCreateTimeDesc();
+        return bungaeList.stream()
+                .filter(bungae -> bungae.getBungaeStatus() != BungaeStatus.ENDED)
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -147,7 +174,7 @@ public class BungaeServiceImpl implements BungaeService {
         if (bungaeOptional.isPresent()) {
             Bungae bungae = bungaeOptional.get();
 
-            bungae.setBungaeStatus(BungaeStatus.CANCELLED);
+            bungae.setBungaeStatus(BungaeStatus.ENDED);
             return bungaeRepository.save(bungae);
 
         } else {
@@ -184,4 +211,17 @@ public class BungaeServiceImpl implements BungaeService {
         return dto;
     }
 
+    public void updateBungaeStatus() {
+        List<Bungae> bungaeList = bungaeRepository.findAll();
+        LocalDateTime now = LocalDateTime.now();
+
+        for (Bungae bungae : bungaeList) {
+            if (bungae.getBungaeStatus() == BungaeStatus.SCHEDULED && bungae.getBungaeStartTime().isBefore(now)) {
+                bungae.setBungaeStatus(BungaeStatus.IN_PROGRESS);
+            } else if (bungae.getBungaeStatus() == BungaeStatus.IN_PROGRESS && bungae.getBungaeStartTime().plusHours(1).isBefore(now)) {
+                bungae.setBungaeStatus(BungaeStatus.ENDED);
+            }
+            bungaeRepository.save(bungae);
+        }
+    }
 }

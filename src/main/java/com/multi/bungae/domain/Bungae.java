@@ -39,6 +39,7 @@ public class Bungae {
     @Embedded
     private Location bungaeLocation;
 
+
     @Column(name = "bungae_image_path")
     private String bungaeImagePath;
 

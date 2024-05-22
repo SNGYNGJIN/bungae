@@ -1,35 +1,24 @@
-document.addEventListener('DOMContentLoaded', function() {
-    var roomId = getRoomIdFromUrl(); // roomId를 추출
-    var goChatButton = document.getElementById('go_chat');
-    var user = sessionStorage.getItem("loggedInUserId");
+$(document).ready(function () {
+    $('#joinButton').click(function () {
+        let bungaeId = $(this).data('bungae-id');
 
-    // "참가" 버튼 클릭 이벤트 리스너 추가
-    goChatButton.addEventListener('click', function() {
-        join(roomId, user);
-        window.location.href = '/chat/' + roomId;
+        $.ajax({
+            type: 'POST',
+            url: '/' + bungaeId + '/join',
+            success: function (response) {
+                alert('참가 완료!');
+            },
+            error: function (xhr) {
+                let errorMessage;
+                if (xhr.status === 400) {
+                    errorMessage = '잘못된 요청: ' + xhr.responseText;
+                } else if (xhr.status === 409) {
+                    errorMessage = '모임의 중복 참가는 불가능합니다. ' + xhr.responseText;
+                } else {
+                    errorMessage = '참가 실패. 다시 시도해주세요.';
+                }
+                alert(errorMessage);
+            }
+        });
     });
 });
-
-// url에서 bungae_id(chatRoomId) 찾기
-function getRoomIdFromUrl() {
-    const path = window.location.pathname;
-    const match = path.match(/\/bungae\/bungae_detail\/(\d+)/);
-
-    return match ? match[1] : null;
-}
-
-// 번개 아이디에 해당하는 번개멤버에 유저 데이터 삽입
-async function join(chatRoomId, userId) {
-    const url = `/chat/api/join/${chatRoomId}?userId=${userId}`;
-
-    try {
-        const response = await fetch(url); // `await`를 추가해 응답을 기다리기
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.text(); // `await`를 추가해서 텍스트 변환을기다리기
-        console.log(`API response: ${data}`);
-    } catch (error) {
-        console.error('Failed to fetch data:', error);
-    }
-}

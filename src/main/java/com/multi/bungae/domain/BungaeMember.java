@@ -22,12 +22,12 @@ public class BungaeMember {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long bungaeMemberId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bungae_id")
     @JsonBackReference
     private Bungae bungae;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserVO user;
 

@@ -11,11 +11,15 @@ public interface BungaeService {
 
 
     Bungae getBungaeById(Long bungaeId);
-    
+
     Bungae createBungae(BungaeDTO bungaeDTO, UserVO userVO);
 
 
     List<BungaeDTO> bungaeList();
+
+    List<BungaeDTO> bungaeListOfStartTime();
+
+    List<BungaeDTO> bungaeListOfCreateTime();
 
     List<BungaeDTO> findBungaeNearby(Point userLocation, double radius);
 
@@ -24,4 +28,6 @@ public interface BungaeService {
     void cancelBungae(Long bungaeId, UserVO userVO);
 
     Bungae cancelBungae2(Long bungaeId, UserVO userVO);
+
+    void updateBungaeStatus();
 }

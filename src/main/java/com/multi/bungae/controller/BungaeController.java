@@ -50,7 +50,7 @@ public class BungaeController {
 
     /* @PostMapping("/create_bungae")
     public String createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, HttpSession session) {
-        
+
       Integer id = (Integer) session.getAttribute("loggedInId"); // userId(X), id(O)
 
         if (id == null) {
@@ -67,7 +67,7 @@ public class BungaeController {
         }
 */
     @PostMapping("/create_bungae")
-    public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam String keyword, @RequestParam String address, @RequestParam String userId) {
+    public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam("keyword") String keyword, @RequestParam("address") String address, @RequestParam("userId") String userId) {
 
         LocationDTO locationDTO = new LocationDTO(keyword, address);
         bungaeDTO.setBungaeLocation(locationDTO);
@@ -76,7 +76,7 @@ public class BungaeController {
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
-        response.put("url", "/bungae/bungae_list");
+        response.put("url", "/bungae_list");
         return ResponseEntity.ok(response);
 
     }
@@ -112,9 +112,16 @@ public class BungaeController {
         return bungaeService.findBungaeNearby(location, radius);
     }
 
-    @GetMapping("/find/type")
-    public Bungae findBungaeByType(@RequestParam("type") String bungaeType) {
-        return null;
+    @RequestMapping(value = "/getListOfStartTime", produces = "application/json; charset=UTF-8")
+    @ResponseBody
+    public List<BungaeDTO> getListOfStartTime() {
+        return bungaeService.bungaeListOfStartTime();
+    }
+
+    @RequestMapping(value = "/getListOfCreateTime", produces = "application/json; charset=UTF-8")
+    @ResponseBody
+    public List<BungaeDTO> getListOfCreateTime() {
+        return bungaeService.bungaeListOfCreateTime();
     }
 
     @GetMapping("/find/age")
