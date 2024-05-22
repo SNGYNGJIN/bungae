@@ -1,0 +1,130 @@
+.message-list {
+    overflow-y: scroll;
+    height: 500px;
+    padding: 10px;
+    background-color: #f4f4f4;
+}
+
+.message-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 5px;
+    position: relative;
+}
+
+.my-message {
+    flex-direction: row-reverse; /* 내 메시지를 오른쪽 정렬 */
+}
+
+.their-message {
+    flex-direction: row; /* 상대방 메시지를 왼쪽 정렬 */
+}
+
+.user-image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 0 10px; /* 양쪽 여백 */
+}
+
+.message-content {
+    padding: 8px 12px;
+    background-color: #DCF8C6; /* 내 메시지 배경 색상 */
+    border-radius: 15px;
+    position: relative;
+    word-wrap: break-word;
+}
+
+.my-message .message-content {
+    background-color: #f0ffe5;
+    display: table-cell;
+    margin-right: 10px;  /* 오른쪽 여백 추가 */
+    margin-top: 7px;  /* 위 여백 추가 */
+}
+
+.their-message .message-content {
+    background-color: #e0e0e0; /* 상대방 메시지 배경 색상 */
+    display: table-cell;
+}
+
+.their-message .nickname {
+    font-weight: bold;
+}
+.message-time {
+    font-size: 0.8em;
+    color: #666;
+    position: absolute;
+    bottom: -20px; /* 시간 위치 조정 */
+}
+
+.my-message .message-time {
+    right: 5px; /* 내 메시지 시간 위치 */
+}
+
+.their-message .message-time {
+    left: 10px; /* 상대방 메시지 시간 위치 */
+}
+
+.announcement-message {
+    justify-content: center;
+    width: 100%;
+}
+
+.announcement-content {
+    background-color: #f2f2f2;
+    border-radius: 20px;
+    padding: 10px 20px;
+    text-align: center;
+    display: inline-block;
+    max-width: 80%;
+}
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    /* background-color: rgba(0, 0, 0, 0.4); */
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+}
+
+#mprofile-image {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    background-size: cover;
+    border-radius: 50%;
+    text-align: center;
+}
+.profile-info {
+    margin-top: 20px;
+    text-align: center;
+}
+.userInfo {
+    margin-top: 20px;
+    text-align: center;
+}
+.close {
+    color: #aaa;
+    float: left;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+    text-decoration: none;
+}

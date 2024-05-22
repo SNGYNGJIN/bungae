@@ -20,6 +20,7 @@ import java.util.Set;
 @Setter
 public class Bungae {
 
+
     @Id
     @Column(name = "bungae_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

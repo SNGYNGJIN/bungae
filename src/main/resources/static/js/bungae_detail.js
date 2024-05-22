@@ -1,12 +1,17 @@
 $(document).ready(function () {
     $('#joinButton').click(function () {
         let bungaeId = $(this).data('bungae-id');
+        var user = sessionStorage.getItem("loggedInUserId");
 
         $.ajax({
             type: 'POST',
             url: '/' + bungaeId + '/join',
             success: function (response) {
-                alert('참가 완료!');
+                if (response === "새로운 참여자") {
+                    alert('참가 완료!');
+                }
+                joinChat(bungaeId, user);
+                window.location.href = '/chat/' + bungaeId;
             },
             error: function (xhr) {
                 let errorMessage;
@@ -22,3 +27,19 @@ $(document).ready(function () {
         });
     });
 });
+
+// 번개 아이디에 해당하는 번개멤버 채팅 참가 시키기
+async function joinChat(chatRoomId, userId) {
+    const url = `/chat/api/join/${chatRoomId}?userId=${userId}`;
+
+    try {
+        const response = await fetch(url); // `await`를 추가해 응답을 기다리기
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.text(); // `await`를 추가해서 텍스트 변환을기다리기
+        console.log(`API response: ${data}`);
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+    }
+}

@@ -1,0 +1,37 @@
+.modal-content {
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.close {
+    font-size: 10px; /* 'X' 버튼의 크기 조정 */
+}
+
+.modal-header {
+    border-bottom: none; /* 헤더의 하단 경계선 제거 */
+}
+.modal-header button {
+    width: 5%;
+}
+
+.modal-footer {
+    border-top: none; /* 푸터의 상단 경계선 제거 */
+}
+
+.modal-dialog {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-body .form-group{
+    text-align: center; /* 폼 내용을 중앙에 배치 */
+}
+
+.modal-footer button {
+    width: auto; /* '아이디 찾기' 버튼 너비 자동 조정 */
+    padding: 10px 10px; /* 패딩 조정 */
+    margin: auto; /* 자동 마진으로 중앙 정렬 */
+    display: block; /* 버튼을 블록 요소로 설정 */
+}
+

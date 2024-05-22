@@ -17,6 +17,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
@@ -171,13 +172,15 @@ public class UserService implements UserDetailsService {
         return new SignupRes(user.getId(), signupReq.getUserId(), signupReq.getNickname());
     }
 
-
+    /*
+        아이디 찾기
+     */
     public FindIdRes findId(FindIdReq findIdReq) throws BaseException {
-        List<UserVO> user_list = userRepo.findByEmail(findIdReq.getEmail());
+        List<UserVO> user_list = userRepo.findByEmailAndUserBirthAndUsername(findIdReq.getEmail(), findIdReq.getBirth(), findIdReq.getName());
         if (user_list.isEmpty()) {
             throw new BaseException(BaseExceptionStatus.NOT_FOUND_EMAIL);
         }
-        return new FindIdRes(user_list.get(0).getId());
+        return new FindIdRes(user_list.get(0).getUserId());
     }
 
     /*
@@ -215,16 +218,13 @@ public class UserService implements UserDetailsService {
     /*
         닉네임, 자기소개, 프사 업데이트
      */
-
     public UserProfile getUserProfileByUserId(String userId) {
         return userProfileRepo.findByUser_UserId(userId);
-
     }
 
     public UserProfileDTO saveUserProfile(UserProfile userProfile) {
         UserProfileDTO dto = new UserProfileDTO();
         UserProfile up = userProfileRepo.save(userProfile);
-
 
         dto.setUserInfo(up.getUserInfo());
         dto.setUserImage(up.getUserImage());
@@ -233,9 +233,9 @@ public class UserService implements UserDetailsService {
     }
 
 
-    public List<UserReview> getUserReview(String userId) {
+/*    public List<UserReview> getUserReview(String userId) {
         return userReviewRepo.findByUser_UserId(userId);
-    }
+    }*/
 
 
     public List<BlackList> getUserBlacklist(String userId) {

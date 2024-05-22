@@ -12,5 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class FindIdReq {
+    private String name;
+    private String birth;
     private String email;
 }

@@ -5,6 +5,7 @@ import com.multi.bungae.domain.BungaeMember;
 import com.multi.bungae.domain.BungaeStatus;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.service.BungaeMemberService;
+import com.multi.bungae.service.BungaeMemberServiceImpl;
 import com.multi.bungae.service.BungaeService;
 import com.multi.bungae.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -33,8 +34,13 @@ public class BungaeMemberController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당 모임이 이미 종료되었습니다.");
         }
         try {
+            if (bungaeMemberService.isOrganizerTrue(bungaeId, userId)) {
+                return ResponseEntity.ok("주최자");
+            } else if (bungaeMemberService.isOrganizerFalse(bungaeId, userId)){
+                return ResponseEntity.ok("참여자");
+            }
             BungaeMember bungaeMember = bungaeMemberService.joinBungae(bungaeId, userId);
-            return ResponseEntity.ok("참가 완료");
+            return ResponseEntity.ok("새로운 참여자");
         } catch (IllegalArgumentException | IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }

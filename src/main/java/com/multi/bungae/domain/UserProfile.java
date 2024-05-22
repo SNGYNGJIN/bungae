@@ -1,7 +1,12 @@
 package com.multi.bungae.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -15,7 +20,8 @@ public class UserProfile {
     private int id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id") // UserVO의 id를 참조
+    @JsonBackReference
+    @JoinColumn(name = "user_id") // UserVO의 id를 참조
     private UserVO user;
 
     @Column(name = "user_avg_rating", nullable = false)
@@ -34,9 +40,8 @@ public class UserProfile {
     @Column(name = "user_image", length = 1000, nullable = false)
     private String userImage; // UUID를 String으로 저장
 
-    @Builder
-    public UserProfile(String userInfo, String userImage) {
-        this.userInfo = userInfo;
-        this.userImage = userImage;
-    }
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Set<UserReview> reviews = new HashSet<>();
+
 }

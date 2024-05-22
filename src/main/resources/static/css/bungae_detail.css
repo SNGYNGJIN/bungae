@@ -71,7 +71,7 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0.75rem; }
 
 p {
-  margin-top: 0;
+  /*margin-top: 0;*/
   margin-bottom: 1rem; }
 
 abbr[title],
@@ -4197,7 +4197,7 @@ a.close.disabled {
 @media (min-width: 576px) {
   .modal-dialog {
     max-width: 500px;
-    margin: 1.75rem auto; }
+    margin: 10.75rem auto; }
   .modal-dialog-scrollable {
     max-height: calc(100% - 3.5rem); }
     .modal-dialog-scrollable .modal-content {

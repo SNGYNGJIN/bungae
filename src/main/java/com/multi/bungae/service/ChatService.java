@@ -2,10 +2,12 @@ package com.multi.bungae.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.multi.bungae.config.WebSocketChatHandler;
+import com.multi.bungae.controller.ChatController;
 import com.multi.bungae.domain.Bungae;
 import com.multi.bungae.domain.ChatMessage;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.ChatDTO;
+import com.multi.bungae.repository.BungaeMemberRepository;
 import com.multi.bungae.repository.BungaeRepository;
 import com.multi.bungae.repository.ChatMessageRepository;
 import com.multi.bungae.repository.UserRepository;
@@ -13,6 +15,7 @@ import groovy.util.logging.Slf4j;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -20,13 +23,18 @@ import org.springframework.web.socket.WebSocketSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
+
+import static java.lang.Boolean.FALSE;
+
 @Slf4j
 @Data
 @Service
 public class ChatService {
+    private SimpMessagingTemplate messagingTemplate;
     private final ObjectMapper mapper;
     private Map<Long, ChatDTO> chatRooms = new ConcurrentHashMap<>();
     private static final Logger log = LoggerFactory.getLogger(WebSocketChatHandler.class);
@@ -35,15 +43,10 @@ public class ChatService {
     @Autowired
     private BungaeRepository bungaeRepo;
     @Autowired
+    private BungaeMemberRepository bungaememberRepo;
+    @Autowired
     private UserRepository userRepo;
-
-    public List<ChatDTO> findAllRoom(){
-        return new ArrayList<>(chatRooms.values());
-    }
-
-    public ChatDTO findRoomById(Long roomId){
-        return chatRooms.get(roomId);
-    }
+    private final BungaeMemberServiceImpl bungaeMemberService;
 
 
     /*
@@ -54,12 +57,15 @@ public class ChatService {
         Bungae bungae = bungaeRepo.findById(chatRoomId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
         String nickname = user.getNickname();
         String bungaeName = bungae.getBungaeName();
+        LocalDateTime sendTime = LocalDateTime.now();
+        System.out.println("Debug: sendTime = " + sendTime); // 시간 로그 확인
 
         ChatDTO chat = ChatDTO.builder()
                 .chatRoomId(chatRoomId)
                 .sender(userId)
-                .message("[" + nickname + "]님이 <" + bungaeName + ">을 개설하였습니다.")
+                .message("🔈[" + nickname + "]님이 <" + bungaeName + ">을(를) 개설하였습니다.")
                 .type(ChatMessage.MessageType.ENTER)
+                .sendTime(LocalDateTime.now())
                 .build();
 
         // DTO를 Entity로 변환하기
@@ -75,39 +81,40 @@ public class ChatService {
     public ChatDTO joinChat(Long chatRoomId, String userId) {
         UserVO user = userRepo.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Bungae bungae = bungaeRepo.findById(chatRoomId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
-        String nickname = user.getNickname(); // userId 기준으로 찾아서 닉네임 대입
+        String nickname = user.getNickname();
         String bungaeName = bungae.getBungaeName();
+        LocalDateTime sendTime = LocalDateTime.now();
 
         ChatDTO chat = ChatDTO.builder()
                 .chatRoomId(chatRoomId)
-                .sender(userId) // userId 대입 ex)user1234
-                .message("[" + nickname + "]님이 <" + bungaeName + ">에 참가하였습니다.")
+                .sender(userId)
+                .message("🔈 [" + nickname + "]님이 <" + bungaeName + ">에 참가하였습니다.")
                 .type(ChatMessage.MessageType.ENTER)
+                .sendTime(sendTime)
                 .build();
 
-        // DTO를 Entity로 변환하기
         ChatMessage chatMessage = convertToEntity(chat);
         chatMessageRepo.save(chatMessage);
 
         return chat;
     }
 
-    public ChatDTO ChatMessage(Long chatRoomId, String senderId, String message) {
-        UserVO sender = userRepo.findByUserId(senderId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+    /*
+        chatMessage에 저장하고 프론트로 반환
+     */
+    public ChatDTO ChatMessage(Long chatRoomId, String senderId, String message, ChatMessage.MessageType type) {
 
-        Bungae chatRoom = bungaeRepo.findById(chatRoomId)
-                .orElseThrow(() -> new EntityNotFoundException("Chat room not found"));
+        LocalDateTime sendTime = LocalDateTime.now();
 
         ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setChatRoomId(chatRoom);
-        chatMessage.setSender(sender);
+        chatMessage.setChatRoomId(chatRoomId);
+        chatMessage.setSender(senderId);
         chatMessage.setMessage(message);
-        chatMessage.setType(ChatMessage.MessageType.TALK);
-
+        chatMessage.setType(type);
+        chatMessage.setSendTime(sendTime);
         chatMessageRepo.save(chatMessage);
 
-        return new ChatDTO(chatRoomId, senderId, message, ChatMessage.MessageType.TALK);
+        return new ChatDTO(chatRoomId, senderId, message, type, sendTime);
     }
 
     private ChatMessage convertToEntity(ChatDTO chatDTO) {
@@ -121,37 +128,23 @@ public class ChatService {
         UserVO user = userRepo.findByUserId(chatDTO.getSender())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        chatMessage.setChatRoomId(bungae);
-        chatMessage.setSender(user);
+        chatMessage.setChatRoomId(chatDTO.getChatRoomId());
+        chatMessage.setSender(chatDTO.getSender());
         chatMessage.setMessage(chatDTO.getMessage());
         chatMessage.setType(chatDTO.getType());
+        chatMessage.setSendTime(chatDTO.getSendTime());
 
 
         return chatMessage;
     }
 
-    /**
-     * 채팅방에 접근하여 세션을 반환
-     * @param chatRoomId 채팅방 ID
-     * @param session 웹소켓 세션
-     */
-    public void accessRoom(Long chatRoomId, WebSocketSession session) {
-        log.info("Accessing chat room: {}", chatRoomId);
-        Set<WebSocketSession> sessions = chatSessions.computeIfAbsent(chatRoomId.toString(), k -> ConcurrentHashMap.newKeySet());
-        sessions.add(session);
+    public List<ChatMessage> getMessagesByChatRoomId(Long chatRoomId) {
 
-        log.info("Session added to chat room: {}", chatRoomId);
-        // 해당 세션에 대한 초기 메시지나 설정을 할 수 있습니다.
-        sendMessage(session, new TextMessage("입장 완 : " + chatRoomId));
-
-
+        return chatMessageRepo.findByChatRoomId(chatRoomId);
     }
-    public <T> void sendMessage(WebSocketSession session, T message) {
-        try{
-            session.sendMessage(new TextMessage(mapper.writeValueAsString(message)));
-        } catch (IOException e) {
-            log.error("Error sending message", e);
-        }
+
+    public boolean checkMemberExists(Long bungae, String userId) {
+        return chatMessageRepo.existsByChatRoomIdAndSenderAndType(bungae, userId, ChatMessage.MessageType.ENTER);
     }
 
 

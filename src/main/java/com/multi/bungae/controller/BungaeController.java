@@ -4,15 +4,13 @@ import com.multi.bungae.domain.Bungae;
 import com.multi.bungae.domain.BungaeMember;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.BungaeDTO;
-import com.multi.bungae.dto.BungaeMemberDTO;
 import com.multi.bungae.dto.LocationDTO;
+import com.multi.bungae.repository.BungaeMemberRepository;
 import com.multi.bungae.repository.UserRepository;
 import com.multi.bungae.service.BungaeMemberService;
 import com.multi.bungae.service.BungaeService;
 import com.multi.bungae.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -41,6 +39,8 @@ public class BungaeController {
     private final BungaeMemberService bungaeMemberService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private BungaeMemberRepository bungaeMemberRepo;
 
     private static final Logger logger = LoggerFactory.getLogger(BungaeController.class);
 

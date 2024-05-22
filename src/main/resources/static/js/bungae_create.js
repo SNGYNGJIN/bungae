@@ -83,7 +83,7 @@ function sendCreateBungaeRequest(event) {
         .then(data => {
             console.log(data);
             if (data.status === "success") {
-                window.location.href = data.url;
+                window.location.href = '/bungae_list';
             } else {
                 alert("번개모임 생성 중 오류가 발생했습니다.");
             }

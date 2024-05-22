@@ -8,11 +8,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }).then(response => response.json()).then(data => {
         if (data.code === 200) {
             document.getElementById('nickname').value = data.result.nickname;
-
+            document.getElementById('userInfo').value = data.result.profile.userInfo;
+            document.getElementById('profile-image').src = data.result.profile.userImage;
             localStorage.setItem('id', data.result.id);
             const id = parseInt(localStorage.getItem('id'), 10);
 
-            userProfileRequest(id); // 사용자 프로필 정보 요청
+            //userProfileRequest(id); // 사용자 프로필 정보 요청
         } else {
             console.error('Failed to fetch user info:', data.message);
         }
@@ -20,23 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Error fetching user info:', error);
     });
 });
-
-// userProfile에서 자기소개와 프로필 사진 가져오기
-function userProfileRequest(id) {
-    fetch(`/user/api/info/profile/${id}`, { // 프로필 정보 요청
-        method: 'GET',
-        headers: { 'Accept': 'application/json' }
-    }).then(response => response.json()).then(data => {
-        if (data.code === 200) {
-            document.getElementById('userInfo').value = data.result.userInfo;
-            document.getElementById('profile-image').src = data.result.userImage;
-        } else {
-            console.error('Failed to fetch user profile:', data.message);
-        }
-    }).catch(error => {
-        console.error('Error fetching user profile:', error);
-    });
-}
 
 // 사용자가 가져온 사진 미리 보여주기
 function previewImage(event) {

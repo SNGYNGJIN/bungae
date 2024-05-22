@@ -3,6 +3,7 @@ package com.multi.bungae.domain;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.context.annotation.Profile;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -19,6 +20,10 @@ public class UserVO extends BaseVO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private UserProfile profile;
 
     @Column(name = "user_id", nullable = false, unique = true)
     private String userId;

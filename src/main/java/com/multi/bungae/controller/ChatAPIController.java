@@ -1,52 +1,80 @@
 package com.multi.bungae.controller;
 
-import com.multi.bungae.config.BaseException;
-import com.multi.bungae.config.BaseResponse;
+import com.multi.bungae.domain.Bungae;
+import com.multi.bungae.domain.BungaeMember;
+import com.multi.bungae.domain.ChatMessage;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.ChatDTO;
-import com.multi.bungae.dto.user.UserProfileDTO;
+import com.multi.bungae.dto.user.forReview;
+import com.multi.bungae.repository.BungaeMemberRepository;
+import com.multi.bungae.repository.BungaeRepository;
 import com.multi.bungae.repository.UserRepository;
 import com.multi.bungae.service.ChatService;
 import groovy.util.logging.Slf4j;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.socket.WebSocketSession;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/chat/api")
 public class ChatAPIController {
-
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
     private final ChatService service;
     private final UserRepository userRepo;
+    private final BungaeRepository bungaeRepo;
+    private final BungaeMemberRepository bungaeMemberRepo;
 
-    @PostMapping("/join")
-    public ChatDTO joinChat(@RequestParam Long chatRoomId, HttpSession session){
-        Integer id = (Integer) session.getAttribute("loggedInId");
-        UserVO user = userRepo.findById(id).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    /*
+        참가했을 경우 기존 채팅방 유저에게 입장 알림
+     */
+    @GetMapping("/join/{chatRoomId}")
+    public ResponseEntity<?> joinChatRoom(@PathVariable Long chatRoomId, @RequestParam String userId) {
+        UserVO user = userRepo.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Bungae bungae = bungaeRepo.findById(chatRoomId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
 
-        return service.joinChat(chatRoomId, user.getUserId());
+        boolean memberExists = service.checkMemberExists(chatRoomId, userId);
+
+        if (!memberExists) {
+            ChatDTO chat = service.joinChat(chatRoomId, userId);
+            messagingTemplate.convertAndSend("/room/" + chatRoomId, chat);
+
+            return ResponseEntity.ok().body(chat);
+        }
+
+        return ResponseEntity.ok().body("방 참가 여부 : " + memberExists);
     }
 
-    @GetMapping
-    public List<ChatDTO> findAllRooms(){
-
-        return service.findAllRoom();
+    /*
+        chatRoomId에 해당하는 채팅메세지 불러오기 기능 (늦게 들어온 사람도 볼 수 있게)
+     */
+    @GetMapping("/messages/{chatRoomId}")
+    public ResponseEntity<List<ChatMessage>> getChatMessages(@PathVariable Long chatRoomId) {
+        List<ChatMessage> messages = service.getMessagesByChatRoomId(chatRoomId);
+        return ResponseEntity.ok(messages);
     }
 
-/*    @PostMapping("/{chatRoomId}")
-    public chatDTO accessRoom(@RequestParam Long chatRoomId) {
-        return service.accessRoom(chatRoomId);
-    }*/
-
-
-
+    @ResponseBody
+    @GetMapping("/chatMember/{bungaeId}")
+    public ResponseEntity<List<forReview>> getBungaeMemberss(@PathVariable Long bungaeId) {
+        List<BungaeMember> members = bungaeMemberRepo.findByBungae_BungaeId(bungaeId);
+        List<forReview> userNicknames = members.stream()
+                .map(member -> new forReview(
+                        member.getUser().getUserId(),
+                        member.getUser().getNickname(),
+                        member.getUser().getProfile().getUserImage(),
+                        member.isOrganizer()
+                ))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(userNicknames);
+    }
 }

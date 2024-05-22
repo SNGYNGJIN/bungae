@@ -1,0 +1,18 @@
+.pagination-container {
+    text-align: center;
+    margin-top: 20px;
+}
+.pagination-container button {
+    padding: 5px 7px;
+    margin: 0 5px;
+    background-color: #ffffff;
+    border: 0.1px solid #dee2e6;
+    color: #495057;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 10px;
+}
+.pagination-container button:hover {
+    background-color: #e9ecef;
+}

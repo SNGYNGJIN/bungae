@@ -88,10 +88,10 @@ public class BungaeServiceImpl implements BungaeService {
         bungaeMemberService.createBungaeMember(bungae, user, true);
 
         return bungae;
-*/
+*/      bungaeRepository.save(bungae);
         bungaeMemberService.createBungaeMember(bungae, user, true);
-
-        return bungaeRepository.save(bungae);
+        chatService.createChat(bungae.getBungaeId(), user.getUserId());
+        return bungae;
 
     }
 
