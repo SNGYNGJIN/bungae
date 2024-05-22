@@ -11,11 +11,11 @@
 
 <body>
 <nav class="navbar navbar-dark bg-primary">
-  <div class="container d-flex justify-content-center"> <a class="navbar-brand" href="#"><img src="/images/bungae.png" width="100" height="30" class="d-inline-block align-top" alt=""></a> </div>
+  <div class="container d-flex justify-content-center"> <a class="navbar-brand" href="main"><img src="/images/bungae.png" width="100" height="30" class="d-inline-block align-top" alt=""></a> </div>
 </nav>
 <div class="py-5 text-center">
-  <div class="container">
-    <div class="row">
+  <div class="container d-flex justify-content-center" style="" >
+    <div class="row d-flex border border-light rounded shadow py-3 align-items-center" style="	width: 800px;">
       <div class="mx-auto col-lg-6 col-10">
         <h1>회원가입</h1>
         <form name="signup" class="text-left" th:action="@{/user/api/signup}" method="post" onsubmit="return submitForm()">
@@ -79,7 +79,7 @@
           <div class="text-center">
             <div class="container">
               <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12 pb-3">
                   <button id="btn-save" type="submit" class="btn btn-primary">회원가입</button>
                 </div>
               </div>
