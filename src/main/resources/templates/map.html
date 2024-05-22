@@ -76,16 +76,6 @@
                     <li class="nav-item"><a class="nav-link" href="#">Pricing</a></li>
                     <li class="nav-item"><a class="nav-link" href="#">About</a></li>
                 </ul>
-                <div class="row">
-                    <div class="col-md-12 d-flex align-items-center justify-content-md-between justify-content-center my-2">
-                        <a href="#">
-                            <i class="d-block fa fa-facebook-official text-muted fa-lg mx-2"></i>
-                        </a> <a href="#">
-                        <i class="d-block fa fa-instagram text-muted fa-lg mx-2"></i>
-                    </a> <a href="#">
-                        <i class="d-block fa fa-twitter text-muted fa-lg ml-2"></i>
-                    </a></div>
-                </div>
             </div>
         </div>
         <div class="row">
@@ -102,6 +92,23 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+<script>
+    // 버튼을 클릭하면 내 위치를 중심으로 지도화면 초기화
+    document.getElementById('myloc').addEventListener('click', function (e) {
+        e.preventDefault();
 
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var lat = position.coords.latitude,
+                    lon = position.coords.longitude;
+                var locPosition = new kakao.maps.LatLng(lat, lon);
+
+                map.setCenter(locPosition);
+            });
+        } else {
+            alert('Unable to use geolocation.');
+        }
+    });
+</script>
 </body>
 </html>
