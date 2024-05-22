@@ -51,7 +51,7 @@ public class BungaeController {
 
     /* @PostMapping("/create_bungae")
     public String createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, HttpSession session) {
-        
+
       Integer id = (Integer) session.getAttribute("loggedInId"); // userId(X), id(O)
 
         if (id == null) {

@@ -2,107 +2,115 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-          type="text/css">
-    <link rel="stylesheet" href="/css/map.css">
-    <script type="text/javascript"
-            src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3ee55d752effcbc08eda7914b122df74&libraries=services"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script th:src="@{/js/map.js}" type="text/javascript"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="/css/map.css">
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3ee55d752effcbc08eda7914b122df74&libraries=services"></script>
 </head>
 
 
 <body>
-<nav class="navbar navbar-expand-md bg-primary navbar-light border-bottom border-dark" style="	height: 80px;">
-    <div class="container"><a class="navbar-brand" href="#"><img src="/images/bungae.png" width="100" height="30"
-                                                                 class="d-inline-block align-top" alt=""></a>
-        <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse"
-                data-target="#navbar16">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbar16">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="main">홈</a></li>
-                <li class="nav-item"><a class="nav-link" href="map">지도</a></li>
-                <li class="nav-item"><a class="nav-link" href="bungae_create" th:href="@{bungae_create}">번개생성</a>
-                </li>
-                <li class="nav-item"><a class="nav-link" href="bungae_list">번개목록</a></li>
-                <li class="nav-item"><a class="nav-link" href="bungae_ing">참여목록</a></li>
-                <li class="nav-item"><a class="nav-link" href="profile" th:href="@{profile}">프로필</a></li>
-            </ul>
-            <a class="btn navbar-btn ml-md-2 btn-light text-dark" href="login">로그인<br></a>
-        </div>
+  <nav class="navbar navbar-expand-md bg-primary navbar-light border-bottom border-dark" style="	height: 80px;">
+    <div class="container"> <a class="navbar-brand" href="#"><img src="/images/bungae.png" width="100" height="30" class="d-inline-block align-top" alt=""></a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar16">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar16">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item"> <a class="nav-link" href="main">홈</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="map">지도</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="bungaeForm" th:href="@{bungae/bungaeForm}">번개생성</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="bungae_list">번개목록</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="bungae_ing">참여목록</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="profile" th:href="@{profile}">프로필</a> </li>
+        </ul> <a class="btn navbar-btn ml-md-2 btn-light text-dark" href="login">로그인<br></a>
+      </div>
     </div>
-</nav>
-<div class="" style="">
+  </nav>
+  <div class="" style="">
     <div class="container">
-        <div class="row">
-            <div class="col-md-4" style="">
-                <form class="form-inline mx-auto my-2">
-                    <div class="input-group mx-auto">
-                        <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="Search"
-                               style="width: 300px;">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button>
-                        </div>
-                    </div>
-                </form>
-                <div class="list-group" id="bungae-list">
-
-                </div>
+      <div class="row">
+        <div class="col-md-4" style="">
+          <form class="form-inline mx-auto my-2">
+            <div class="input-group mx-auto">
+              <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="Search" style="width: 300px;" >
+              <div class="input-group-append"><button class="btn btn-primary" type="button"><i class="fa fa-search"></i></button></div>
             </div>
-            <div class="col-md-8 d-flex flex-row justify-content-end align-items-center" id="map"
-                 style="height: 600px;">
-                <div class="row">
-                    <div class="col-md-12 mr-3" style=""><span
-                            class="btn btn-primary d-flex justify-content-center align-items-center" href="#"
-                            style="	width: 30px;" id="myloc"><i class="fa fa-compass"></i></span></div>
-                </div>
-            </div>
+          </form>
+          <div class="list-group">
+            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
+              </div>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
+              </div>
+            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
+              </div>
+            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
+              </div>
+            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
+              </div>
+            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
+              </div>
+            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
+              </div>
+            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
+              </div>
+            </a><a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">번개명</h5> <small class="text-muted">일시</small>
+              </div>
+            </a>
+          </div>
         </div>
+        <div class="col-md-8 d-flex flex-row justify-content-end align-items-center" id="map" style="height: 600px;">
+          <div class="row">
+            <div class="col-md-12 mr-3" style="" ><span class="btn btn-primary d-flex justify-content-center align-items-center" href="#" style="	width: 30px;" id="myloc"><i class="fa fa-compass"></i></span></div>
+          </div>
+        </div>
+      </div>
     </div>
-</div>
-<div class="py-3 border-top border-dark">
+  </div>
+  <div class="py-3 border-top border-dark">
     <div class="container">
-        <div class="row">
-            <div class="col-md-6" style=""><img src="/images/bungae.png" width="100" height="30"
-                                                class="d-inline-block align-top" alt=""></div>
-            <div class="col-md-6 text-center d-md-flex align-items-center">
-                <ul class="nav mx-md-auto d-flex justify-content-center">
-                    <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Features</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Pricing</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-                </ul>
-                <div class="row">
-                    <div class="col-md-12 d-flex align-items-center justify-content-md-between justify-content-center my-2">
-                        <a href="#">
-                            <i class="d-block fa fa-facebook-official text-muted fa-lg mx-2"></i>
-                        </a> <a href="#">
-                        <i class="d-block fa fa-instagram text-muted fa-lg mx-2"></i>
-                    </a> <a href="#">
-                        <i class="d-block fa fa-twitter text-muted fa-lg ml-2"></i>
-                    </a></div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <p class="mt-2 mb-0" contenteditable="true">© 2024 CodeNinja. All rights reserved</p>
-            </div>
-        </div>
-    </div>
-</div>
+      <div class="row">
+        <div class="col-md-6" style=""><img src="/images/bungae.png" width="100" height="30" class="d-inline-block align-top" alt=""></div>
+        <div class="col-md-6 text-center d-md-flex align-items-center">
+          <ul class="nav mx-md-auto d-flex justify-content-center">
+            <li class="nav-item"> <a class="nav-link active" href="#">Home</a> </li>
+            <li class="nav-item"> <a class="nav-link" href="#">Features</a> </li>
+            <li class="nav-item"> <a class="nav-link" href="#">Pricing</a> </li>
+            <li class="nav-item"> <a class="nav-link" href="#">About</a> </li>
+          </ul>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
-        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
-        crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
-<script>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <p class="mt-2 mb-0" contenteditable="true">© 2024 CodeNinja. All rights reserved</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script>
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
         mapOption = {
             center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
@@ -122,7 +130,7 @@
     if (navigator.geolocation) {
 
         // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-        navigator.geolocation.getCurrentPosition(function (position) {
+        navigator.geolocation.getCurrentPosition(function(position) {
 
             var lat = position.coords.latitude, // 위도
                 lon = position.coords.longitude; // 경도
@@ -133,7 +141,7 @@
             // 마커와 인포윈도우를 표시합니다
             displayMarker(locPosition, message);
 
-        });
+          });
 
     } else { // HTML5의 GeoLocation을 사용할 수 없을 때 마커 표시 위치와 내용을 설정합니다
 
@@ -157,22 +165,61 @@
     }
 
     // 버튼을 클릭하면 내 위치를 중심으로 지도화면 초기화
-    document.getElementById('myloc').addEventListener('click', function (e) {
-        e.preventDefault();
+    document.getElementById('myloc').addEventListener('click', function(e) {
+    e.preventDefault();
 
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function (position) {
-                var lat = position.coords.latitude,
-                    lon = position.coords.longitude;
-                var locPosition = new kakao.maps.LatLng(lat, lon);
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var lat = position.coords.latitude,
+                lon = position.coords.longitude;
+            var locPosition = new kakao.maps.LatLng(lat, lon);
 
-                map.setCenter(locPosition);
+            map.setCenter(locPosition);
             });
         } else {
             alert('Unable to use geolocation.');
         }
     });
 
-</script>
+    var geocoder = new kakao.maps.services.Geocoder();
+    var positions = [
+        {
+          title: '카카오',
+          address: '제주특별자치도 제주시 첨단로 242'
+        }
+    ];
+    positions.forEach(function (position) { //추가한 코드
+    // 주소로 좌표를 검색합니다
+    geocoder.addressSearch(position.address, function(result, status) {
+
+      // 정상적으로 검색이 완료됐으면
+      if (status === kakao.maps.services.Status.OK) {
+
+        var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+        // 결과값으로 받은 위치를 마커로 표시합니다
+        var marker = new kakao.maps.Marker({
+          map: map,
+          position: coords
+        });
+
+
+      }
+    });
+  });
+
+    var bungae=/*[[${bungae}]]*/ [];
+    moims.forEach(function(bungae) {
+    new kakao.maps.services.Geocoder().addressSearch(bungae.bungaeAdd, function(result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+            new kakao.maps.Marker({
+                map: map,
+                position: coords
+            });
+        }
+    });
+});
+  </script>
 </body>
 </html>
