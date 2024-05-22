@@ -7123,3 +7123,26 @@ a.text-dark:hover, a.text-dark:focus {
   .table .thead-dark th {
     color: inherit;
     border-color: #dee2e6; } }
+    #new-list {
+      max-height: calc(2 * 7rem);
+      overflow-y: scroll;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+  }
+
+  #new-list::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+  }
+
+  #deadline-list {
+      max-height: calc(2 * 7rem);
+      overflow-y: scroll;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+  }
+
+  #deadline-list::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+  }

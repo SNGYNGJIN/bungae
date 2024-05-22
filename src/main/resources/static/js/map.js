@@ -26,7 +26,6 @@ $(document).ready(function () {
 });
 
 
-var map;
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function (position) {
         var lat = position.coords.latitude, // 위도
@@ -141,19 +140,3 @@ function closeOverlay(overlayId) {
 }
 
 
-// 버튼을 클릭하면 내 위치를 중심으로 지도화면 초기화
-document.getElementById('myloc').addEventListener('click', function (e) {
-    e.preventDefault();
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            var lat = position.coords.latitude,
-                lon = position.coords.longitude;
-            var locPosition = new kakao.maps.LatLng(lat, lon);
-
-            map.setCenter(locPosition);
-        });
-    } else {
-        alert('Unable to use geolocation.');
-    }
-});
