@@ -28,4 +28,6 @@ public interface BungaeService {
     void cancelBungae(Long bungaeId, UserVO userVO);
 
     Bungae cancelBungae2(Long bungaeId, UserVO userVO);
+
+    void updateBungaeStatus();
 }

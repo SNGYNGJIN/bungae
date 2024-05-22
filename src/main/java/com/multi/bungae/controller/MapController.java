@@ -17,10 +17,12 @@ public class MapController {
     public String getMap() {
         return "map";
     }
+
     @GetMapping("/main")
     public String main() {
         return "main";
     }
+
     @GetMapping("/bungae_create")
     public String bungae_create() {
         return "bungae_create";
@@ -30,34 +32,42 @@ public class MapController {
     public String bungae_detail() {
         return "bungae_detail";
     }
-    @GetMapping("/bungae_ing")
+
+    @GetMapping("/bungae_ing2")
     public String bungae_ing() {
         return "bungae_ing";
     }
+
     @GetMapping("/bungae_list")
     public String bungae_list() {
         return "bungae_list";
     }
+
     @GetMapping("/chatting")
     public String chatting() {
         return "chatting";
     }
+
     @GetMapping("/join")
     public String join() {
         return "join";
     }
+
     @GetMapping("/login")
     public String login() {
         return "login";
     }
+
     @GetMapping("/profile")
     public String profile() {
         return "profile";
     }
+
     @GetMapping("/profile_edit")
     public String profile_edit() {
         return "profile_edit";
     }
+
     @GetMapping("/testmap")
     public String testmap() {
         return "testmap";

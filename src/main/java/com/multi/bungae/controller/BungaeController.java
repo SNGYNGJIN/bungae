@@ -68,7 +68,7 @@ public class BungaeController {
         }
 */
     @PostMapping("/create_bungae")
-    public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam String keyword, @RequestParam String address, @RequestParam String userId) {
+    public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam("keyword") String keyword, @RequestParam("address") String address, @RequestParam("userId") String userId) {
 
         LocationDTO locationDTO = new LocationDTO(keyword, address);
         bungaeDTO.setBungaeLocation(locationDTO);
