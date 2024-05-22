@@ -10,7 +10,7 @@ public class BungaeScheduler {
 
     private final BungaeService bungaeService;
 
-    @Scheduled(fixedRate = 60000) // 1분마다 실행
+    @Scheduled(fixedRate = 600000) // 1분마다 실행
     public void scheduleFixedRateTask() {
         bungaeService.updateBungaeStatus();
     }
