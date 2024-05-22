@@ -226,9 +226,9 @@ $(function () {
         `;
 
             if (member.organizer) {
-                organizerElement.innerHTML += "주최자 : " + userInfo;
+                organizerElement.innerHTML += " 👑 " + userInfo;
             } else {
-                memberElement.innerHTML += "참여자 : " + userInfo;
+                memberElement.innerHTML += "👥 " + userInfo;
             }
         });
     }
