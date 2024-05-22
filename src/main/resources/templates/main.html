@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="utf-8">
@@ -11,14 +11,14 @@
 
 <body>
   <nav class="navbar navbar-expand-md bg-primary navbar-light border-bottom border-dark" style="	height: 80px;">
-    <div class="container"> <a class="navbar-brand" href="#"><img src="/images/bungae.png" width="100" height="30" class="d-inline-block align-top" alt=""></a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar16">
+    <div class="container"> <a class="navbar-brand" href="main"><img src="/images/bungae.png" width="100" height="30" class="d-inline-block align-top" alt=""></a> <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse" data-target="#navbar16">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbar16">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item"> <a class="nav-link" href="main">홈</a> </li>
           <li class="nav-item"> <a class="nav-link" href="map">지도</a> </li>
-          <li class="nav-item"> <a class="nav-link" href="bungaeForm" th:href="@{bungae/bungaeForm}">번개생성</a> </li>
+          <li class="nav-item"> <a class="nav-link" href="bungae_create">번개생성</a> </li>
           <li class="nav-item"> <a class="nav-link" href="bungae_list">번개목록</a> </li>
           <li class="nav-item"> <a class="nav-link" href="bungae_ing">참여목록</a> </li>
           <li class="nav-item"> <a class="nav-link" href="profile" th:href="@{profile}">프로필</a> </li>
