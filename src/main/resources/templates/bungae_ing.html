@@ -46,7 +46,7 @@
         <div class="row d-flex justify-content-center">
             <div class="col-md-8" style="">
                 <div class="list-group" style="">
-                    <a th:href="@{|/chat/${bungae.bungaeId}|}" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <a th:if="${bungae != null}" th:href="@{|/chat/${bungae.bungaeId}|}" class="list-group-item list-group-item-action flex-column align-items-start">
                         <div class="row">
                             <div class="col-md-4"><img class="d-block img-fluid"
                                                        src="https://static.pingendo.com/img-placeholder-1.svg"></div>
