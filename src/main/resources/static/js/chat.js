@@ -79,6 +79,7 @@ $(function () {
         if (message.type !== "TALK") {
             messageElement.classList.add('announcement-message');
             messageElement.appendChild(textNode);
+            memberList()
         } else {
             // 메시지 송신자가 현재 사용자인 경우
             if (message.sender === currentUserId) {
@@ -141,12 +142,13 @@ $(function () {
                     messageElement.appendChild(imgElement);
                     messageElement.appendChild(messageInfo);
 
+                    messageList.scrollTop = messageList.scrollHeight; // 스크롤을 최하단으로
                 }).catch(error => {
                     console.error("Error loading user info:", error);
                 });
             }
         }
-        messageList.appendChild(messageElement); // 메시지 목록에 메시지 요소 추가
+        messageList.appendChild(messageElement);
         messageList.scrollTop = messageList.scrollHeight; // 스크롤을 최하단으로
     }
 
@@ -176,7 +178,7 @@ $(function () {
             })
             .catch(error => {
                 displayError(`사용자 정보 가져오기 중 오류 발생: ${error}`);
-                throw error; // 에러를 다시 throw 하여 체인을 중단
+                throw error;
             });
     }
 
@@ -215,21 +217,22 @@ $(function () {
 
         // 초기화
         organizerElement.innerHTML = '';
-        memberElement.innerHTML = '';
+        memberElement.innerHTML = '👥';
 
         members.forEach(member => {
             const userInfo = `
-            <div>
-                <img src="${member.userImage}" alt="User Image" style="width: 30px; height: 30px;">
-                <p>${member.nickname}</p>
-            </div>
+        <div class="user-info">
+            <img src="${member.userImage}" alt="User Image" style="width: 30px; height: 30px;">
+            <p>${member.nickname}</p>
+        </div>
         `;
 
             if (member.organizer) {
                 organizerElement.innerHTML += " 👑 " + userInfo;
             } else {
-                memberElement.innerHTML += "👥 " + userInfo;
+                memberElement.innerHTML += userInfo;
             }
         });
     }
+
 });

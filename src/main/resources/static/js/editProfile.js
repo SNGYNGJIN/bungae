@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const userId = localStorage.getItem('userId'); // 현재 사용자 ID 가져오기
+    const userId = sessionStorage.getItem('loggedInUserId');
     checkImageSource();
 
     fetch(`/user/api/info/${userId}`, { // 닉네임 정보 요청
@@ -39,8 +39,7 @@ function deleteImage() {
     document.getElementById('profile-image').src = defaultImageSrc;
     document.getElementById('delete-image-btn').disabled = true; // 이미지 삭제 후 버튼 비활성화
 
-    // 사용자 ID를 포함하여 요청을 보낸다.
-    const userId = localStorage.getItem('userId'); // 사용자 ID를 로컬 스토리지에서 가져옵니다.
+    const userId = sessionStorage.getItem('loggedInUserId');
 
     fetch(`/user/api/deleteProfileImage/${userId}`, {
         method: 'POST',
@@ -73,7 +72,7 @@ function checkImageSource() {
 function updateForm() {
     event.preventDefault();
 
-    const userId = localStorage.getItem('userId');
+    const userId = sessionStorage.getItem('loggedInUserId');
     let image = document.getElementById("image-upload").files[0];
     const nickname = document.getElementById("nickname").value;
     const userInfo = document.getElementById("userInfo").value;
