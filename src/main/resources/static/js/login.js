@@ -20,6 +20,7 @@ function sendLoginRequest() {
         .then(data => {
             if (data.code === 200) {
                 sessionStorage.setItem('loggedInUserId', userId);
+
                 localStorage.setItem('userId', userId); // 'userId' 값을 로컬 스토리지에 저장
                 window.location.href = '/map';
             } else {

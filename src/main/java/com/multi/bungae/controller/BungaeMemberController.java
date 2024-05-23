@@ -30,6 +30,7 @@ public class BungaeMemberController {
     public ResponseEntity<String> joinBungae(@PathVariable Long bungaeId, HttpSession session) {
         String userId = (String) session.getAttribute("loggedInUserId");
         Bungae bungae = bungaeService.getBungaeById(bungaeId);
+
         if (bungae.getBungaeStatus() == BungaeStatus.ENDED) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("해당 모임이 이미 종료되었습니다.");
         }
@@ -39,12 +40,13 @@ public class BungaeMemberController {
             } else if (bungaeMemberService.isOrganizerFalse(bungaeId, userId)){
                 return ResponseEntity.ok("참여자");
             }
-            BungaeMember bungaeMember = bungaeMemberService.joinBungae(bungaeId, userId);
+            bungaeMemberService.joinBungae(bungaeId, userId);
             return ResponseEntity.ok("새로운 참여자");
         } catch (IllegalArgumentException | IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
     }
+
 
     @GetMapping("/bungae_ing")
     public String bungaeInAttendance(HttpSession session, Model model) {

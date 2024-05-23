@@ -80,6 +80,14 @@
     max-width: 80%;
 }
 
+#organizer, #member {
+    display: flex;
+    flex-wrap: wrap; /* 요소들이 너무 많아지면 다음 줄로 넘어갑니다 */
+    align-items: center; /* 세로 중앙 정렬 */
+    gap: 10px; /* 요소들 사이의 간격을 10px로 설정 */
+}
+
+
 
 .modal {
     display: none;
