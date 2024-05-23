@@ -17,10 +17,18 @@ $(function () {
     memberList();
 
     stompClient.connect({}, function (frame) {
+
+        stompClient.send(`/send/enter/${roomId}/${currentUserId}`, {}, JSON.stringify(currentUserId));
+
         // 구독하기
         stompClient.subscribe('/room/' + roomId, function (messageOutput) {
             var message = JSON.parse(messageOutput.body);
-            if (message) {showMessageOutput(message, currentUserId);}
+            if (message && !(message.type === 'enter' || message.type === 'leave')) {showMessageOutput(message, currentUserId);}
+        });
+
+
+        window.addEventListener("beforeunload", function() {
+            stompClient.send(`/send/leave/${roomId}/${currentUserId}`, {}, JSON.stringify(currentUserId));
         });
 
         // 페이지 로드 시 채팅 기록 불러오기

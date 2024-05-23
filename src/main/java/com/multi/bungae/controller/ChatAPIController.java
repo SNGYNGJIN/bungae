@@ -1,18 +1,18 @@
 package com.multi.bungae.controller;
 
-import com.multi.bungae.domain.Bungae;
-import com.multi.bungae.domain.BungaeMember;
-import com.multi.bungae.domain.ChatMessage;
-import com.multi.bungae.domain.UserVO;
+import com.multi.bungae.domain.*;
 import com.multi.bungae.dto.ChatDTO;
+import com.multi.bungae.dto.SocketStateDTO;
 import com.multi.bungae.dto.user.forReview;
 import com.multi.bungae.repository.BungaeMemberRepository;
 import com.multi.bungae.repository.BungaeRepository;
+import com.multi.bungae.repository.SocketStateRepository;
 import com.multi.bungae.repository.UserRepository;
 import com.multi.bungae.service.ChatService;
 import groovy.util.logging.Slf4j;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.net.AbstractEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -33,6 +33,7 @@ public class ChatAPIController {
     private final UserRepository userRepo;
     private final BungaeRepository bungaeRepo;
     private final BungaeMemberRepository bungaeMemberRepo;
+    private final SocketStateRepository socketStateRepo;
 
     /*
         참가했을 경우 기존 채팅방 유저에게 입장 알림
@@ -76,5 +77,11 @@ public class ChatAPIController {
                 ))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(userNicknames);
+    }
+
+    @ResponseBody
+    @GetMapping("/asdf/{bungaeId}")
+    public List<SocketState> fingClosedUser(@PathVariable Long bungaeId){
+        return socketStateRepo.findByChatRoomIdAndState(bungaeId, AbstractEndpoint.Handler.SocketState.valueOf("CLOSED"));
     }
 }

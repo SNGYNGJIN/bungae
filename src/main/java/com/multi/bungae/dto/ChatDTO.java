@@ -42,30 +42,4 @@ public class ChatDTO {
         this.type = type;
         this.sendTime = sendTime;
     }
-
-    public void handleAction(WebSocketSession session, ChatDTO message, ChatService service) {
-        // 모든 메시지에 대해 세션 추가, 중복 세션 방지
-        sessions.add(session);
-
-        // 메시지 타입에 따라 처리
-        if (message.getType().equals(ChatMessage.MessageType.ENTER)) {
-            message.setMessage(message.getSender() + " 님이 입장하셨습니다.");
-        }
-
-        sendMessage(message);
-    }
-
-    // 메시지를 모든 세션에 전송
-    public void sendMessage(ChatDTO message) {
-        sessions.forEach(session -> {
-            try {
-                if (session.isOpen()) {
-                    session.sendMessage(new TextMessage(new ObjectMapper().writeValueAsString(message)));
-                }
-            } catch (IOException e) {
-                System.err.println("Error sending message: " + e.getMessage());
-                sessions.remove(session); // 오류가 발생한 세션 제거
-            }
-        });
-    }
 }

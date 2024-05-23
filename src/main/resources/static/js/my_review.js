@@ -4,13 +4,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const usersContainer = document.getElementById('usersContainer');
     const paginationContainer = document.getElementById('pagination');
     const currentId = sessionStorage.getItem('loggedInUserId');
+    usersContainer.innerHTML = '아직 받은 리뷰가 없어요 🫠';
 
     function displayReviews(reviews, page = 1, reviewsPerPage = 5) {
         const start = (page - 1) * reviewsPerPage;
         const end = page * reviewsPerPage;
-        usersContainer.innerHTML = ''; // Clear previous content
 
         reviews.slice(start, end).forEach(review => {
+            usersContainer.innerHTML = '';
             const reviewElement = document.createElement('div');
             reviewElement.className = 'review-info';
             reviewElement.innerHTML = `
