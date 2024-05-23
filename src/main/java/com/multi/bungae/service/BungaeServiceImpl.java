@@ -55,9 +55,8 @@ public class BungaeServiceImpl implements BungaeService {
         }
 
 */
-        Optional<BungaeMember> duplicatedMember = bungaeMemberRepository.findByUser(user);
-        if (duplicatedMember.isPresent()) {
-            throw new IllegalStateException("해당 유저가 이미 다른 번개 모임에 참여하고 있습니다.");
+        if (!bungaeMemberService.canJoinOrHostBungae(user)) {
+            throw new IllegalStateException("참가 중인 모임이 있으면 새로운 모임을 주최할 수 없습니다.");
         }
 
         LocalDateTime createTime = LocalDateTime.now();
@@ -88,7 +87,8 @@ public class BungaeServiceImpl implements BungaeService {
         bungaeMemberService.createBungaeMember(bungae, user, true);
 
         return bungae;
-*/      bungaeRepository.save(bungae);
+*/
+        bungaeRepository.save(bungae);
         bungaeMemberService.createBungaeMember(bungae, user, true);
         chatService.createChat(bungae.getBungaeId(), user.getUserId());
         return bungae;
