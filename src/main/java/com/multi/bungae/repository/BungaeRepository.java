@@ -1,6 +1,7 @@
 package com.multi.bungae.repository;
 
 import com.multi.bungae.domain.Bungae;
+import com.multi.bungae.domain.BungaeStatus;
 import com.multi.bungae.domain.UserVO;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,5 +27,6 @@ public interface BungaeRepository extends JpaRepository<Bungae, Long> {
 
     Optional<Bungae> findById(Long id);
 
+    Optional<Bungae> findByBungaeIdAndBungaeStatusNot(Long bungadId, BungaeStatus bungaeStatus);
 
 }

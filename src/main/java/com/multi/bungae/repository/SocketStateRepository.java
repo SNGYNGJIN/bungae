@@ -16,4 +16,5 @@ public interface SocketStateRepository extends JpaRepository<SocketState, Long> 
 
     List<SocketState> findByChatRoomIdAndState(Long chatRoomId, AbstractEndpoint.Handler.SocketState state);
 
+    Optional<SocketState> findByChatRoomIdAndUserIdAndState(Long chatRoomId, int userId, AbstractEndpoint.Handler.SocketState state);
 }

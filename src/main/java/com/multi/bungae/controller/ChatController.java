@@ -9,12 +9,14 @@ import com.multi.bungae.repository.BungaeMemberRepository;
 import com.multi.bungae.repository.ChatMessageRepository;
 import com.multi.bungae.repository.SocketStateRepository;
 import com.multi.bungae.repository.UserRepository;
+import com.multi.bungae.service.AlarmService;
 import com.multi.bungae.service.ChatService;
 import com.multi.bungae.service.SocketStateService;
 import groovy.util.logging.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -39,6 +41,7 @@ public class ChatController {
     private final SocketStateRepository socketStateRepo;
     private final ChatService chatService;
     private final SocketStateService socketService;
+    private final AlarmService alarmService;
 
     @GetMapping("/{chatRoomId}")
     public String getChatRoom(@PathVariable Long chatRoomId, Model model) {
@@ -49,17 +52,16 @@ public class ChatController {
     @MessageMapping("/{roomId}") // 여기(send/{roomId})로 전송되면 메서드 호출 -> WebSocketConfig prefixes 에서 적용한건 앞에 생략
     @SendTo("/room/{roomId}")   // 구독하고 있는 장소로 메시지 전송 (목적지)  -> WebSocketConfig Broker 에서 적용한건 앞에 붙어줘야됨
     public ChatDTO chat(@DestinationVariable Long roomId, ChatDTO input) {
-
         List<SocketState> closedUsers = socketService.findClosedUser(roomId);
+
         if (!closedUsers.isEmpty()) {
             for (SocketState socketState : closedUsers) {
-                socketService.chatAlarm(socketState.getChatRoomId(), socketState.getUserId());
+                socketService.chatAlarm(socketState.getChatRoomId(),socketState.getUserId(), input.getMessage(), input.getSender());
             }
         }
 
         return chatService.ChatMessage(roomId, input.getSender(), input.getMessage(), input.getType());
     }
-
 
     @MessageMapping("/enter/{roomId}/{userId}")
     @SendTo("/room/{roomId}")
@@ -68,7 +70,7 @@ public class ChatController {
         SocketState state = socketStateRepo.findByChatRoomIdAndUserId(roomId, user.getId());
 
         socketService.updateStateOpen(state);
-
+        //alarmService.removeEmitterForSession(userId);
         return "{\"type\":\"enter\", \"message\":\"" + userId + "님이 입장했어요\"}";
     }
 
@@ -79,18 +81,9 @@ public class ChatController {
         SocketState state = socketStateRepo.findByChatRoomIdAndUserId(roomId, user.getId());
 
         socketService.updateStateClosed(state);
-
+        //SseEmitter emitter = new SseEmitter();
+        //alarmService.addEmitter(userId, emitter);
         return "{\"type\":\"leave\", \"message\":\"" + userId + "님이 떠났어요\"}";
-    }
-
-
-    @GetMapping("/notifications/{userId}")
-    public SseEmitter subscribeToNotifications(@PathVariable int userId) {
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        notificationService.addEmitter(userId, emitter);
-        emitter.onCompletion(() -> notificationService.removeEmitter(userId));
-        emitter.onTimeout(() -> notificationService.removeEmitter(userId));
-        return emitter;
     }
 
 

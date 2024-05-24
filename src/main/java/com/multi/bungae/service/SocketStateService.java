@@ -1,7 +1,9 @@
 package com.multi.bungae.service;
 
 import com.multi.bungae.config.WebSocketChatHandler;
+import com.multi.bungae.controller.SSEController;
 import com.multi.bungae.domain.*;
+import com.multi.bungae.dto.ChatDTO;
 import com.multi.bungae.dto.SocketStateDTO;
 import com.multi.bungae.repository.*;
 import org.apache.tomcat.util.net.AbstractEndpoint;
@@ -11,14 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class SocketStateService {
@@ -30,7 +31,10 @@ public class SocketStateService {
     private final Map<String, Set<WebSocketSession>> chatSessions = new ConcurrentHashMap<>();
     @Autowired
     private UserRepository userRepo;
-
+    @Autowired
+    private AlarmService alarmService;
+    @Autowired
+    private UserService userService;
 
     /*
         처음 입장했을 때 createStateOpen을 호출하기 !
@@ -107,7 +111,29 @@ public class SocketStateService {
     /*
         CLOSED 상태인 유저들에게 알람 보내기
      */
-    public void chatAlarm(Long bungaeId, int userId) {
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@{}방에 {}님이 자리에 없음 @@" + bungaeId + userId);
+/*    public void chatAlarm(int userId, ChatDTO input) {
+        UserVO user = userRepo.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        if (input != null) {
+            alarmService.sendAlarm("sender: " +input.getSender()+"/ message: "+input.getMessage() + " 퇴장한 상태"); // 알림 전송
+            sseController.addSubscriber(userId);
+            System.out.println("Notification sent: " + input);
+        } else {
+            System.out.println("No emitter found for input : " + input);
+        }
+    }*/
+    //public void sendAlarm(Long bungaeId, String userId, String message, String senderId) {
+
+    public SseEmitter chatAlarm(Long bungaeId, int userId, String input, String senderId) {
+        UserVO user = userRepo.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
+        String emitterId = UUID.randomUUID().toString();
+        alarmService.addEmitter(bungaeId, user.getUserId(), emitter);
+        // 클라이언트가 구독한 후에 즉시 알림 전송
+        alarmService.sendAlarm(bungaeId, user.getUserId(), input,senderId);
+
+        return emitter;
     }
+
+
 }

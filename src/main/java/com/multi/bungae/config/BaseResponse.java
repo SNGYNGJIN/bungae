@@ -3,9 +3,11 @@ package com.multi.bungae.config;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
+@RequiredArgsConstructor
 @AllArgsConstructor
 public class BaseResponse<T> {
     private final int code;
