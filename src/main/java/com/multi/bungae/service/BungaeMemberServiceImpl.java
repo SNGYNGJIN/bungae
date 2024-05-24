@@ -46,7 +46,7 @@ public class BungaeMemberServiceImpl implements BungaeMemberService {
             throw new IllegalStateException("참가 중인 모임이 있으면 다른 모임에 참여할 수 없습니다.");
         }
         // 연령대 체크
-        if (user.getProfile().getUserAge() < bungae.getBungaeMinAge() && user.getProfile().getUserAge() > bungae.getBungaeMaxAge()) {
+        if (user.getProfile().getUserAge() < bungae.getBungaeMinAge() || user.getProfile().getUserAge() > bungae.getBungaeMaxAge()) {
             throw new IllegalStateException("연령대에 맞지 않는 번개 모임입니다.");
         }
         // 인원수 체크
@@ -81,6 +81,20 @@ public class BungaeMemberServiceImpl implements BungaeMemberService {
         activeBungaeList.addAll(bungaeMemberRepository.findByUserAndBungae_BungaeStatus(user, BungaeStatus.IN_PROGRESS));
 
         return activeBungaeList.isEmpty();
+    }
+
+    @Override
+    @Transactional
+    public Bungae findActiveBungaeByUserId(int userId) {
+        return bungaeMemberRepository.findByUser_IdAndBungae_BungaeStatusNot(userId, BungaeStatus.ENDED)
+                .map(BungaeMember::getBungae)
+                .orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public int countByBungae_BungaeId(Long bungaeId) {
+        return bungaeMemberRepository.countByBungae_BungaeId(bungaeId);
     }
 
     @Override

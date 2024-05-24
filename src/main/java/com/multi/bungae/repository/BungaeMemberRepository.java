@@ -23,9 +23,11 @@ public interface BungaeMemberRepository extends JpaRepository<BungaeMember, Long
     @Query("SELECT bm.bungae FROM BungaeMember bm WHERE bm.user.id = :userId")
     Bungae findBungaeById(@Param("userId") int userId);
 
-    Long countByBungae_BungaeId(Long bungaeId);
+    int countByBungae_BungaeId(Long bungaeId);
 
     List<BungaeMember> findByUserAndBungae_BungaeStatus(UserVO user, BungaeStatus status);
+
+    Optional<BungaeMember> findByUser_IdAndBungae_BungaeStatusNot(int userId, BungaeStatus status);
 
     // 해당 모임에 userId가 존재하는지 여부
     boolean existsByBungaeAndUser(Bungae bungae, UserVO user);

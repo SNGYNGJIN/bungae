@@ -70,8 +70,8 @@
                             <td th:text="${bungae.bungaeDescription}">(내용)</td>
                         </tr>
                         <tr>
-                            <td>최대 인원</td>
-                            <td th:text="${bungae.bungaeMaxMember}">(내용)</td>
+                            <td>현재 인원</td>
+                            <td th:text="${currentMemberCount} + ' / ' + ${bungae.bungaeMaxMember}">(내용)</td>
                         </tr>
                         <tr>
                             <td>연령대</td>

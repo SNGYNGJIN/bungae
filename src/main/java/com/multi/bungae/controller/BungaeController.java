@@ -102,7 +102,9 @@ public class BungaeController {
     @GetMapping("/bungae_detail/{bungaeId}")
     public String bungaeDetail(@PathVariable Long bungaeId, Model model) {
         Bungae bungae = bungaeService.getBungaeById(bungaeId);
+        int currentMemberCount = bungaeMemberService.countByBungae_BungaeId(bungae.getBungaeId());
         model.addAttribute("bungae", bungae);
+        model.addAttribute("currentMemberCount", currentMemberCount);
         return "bungae_detail";
     }
 

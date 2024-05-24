@@ -10,6 +10,7 @@ $(document).ready(function () {
                         <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1">${bungae.bungaeName}</h5>
                             <small class="text-muted">시작: ${bungae.bungaeStartTime}</small>
+                            <small class="text-muted">현재 인원: ${bungae.currentMemberCount} / ${bungae.bungaeMaxMember}</small>
                         </div>
                     </a>`;
             };

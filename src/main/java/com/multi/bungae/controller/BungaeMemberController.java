@@ -64,8 +64,10 @@ public class BungaeMemberController {
     public String bungaeInAttendance(HttpSession session, Model model) {
         String userId = (String) session.getAttribute("loggedInUserId");
         UserVO user = userService.getUserByUserId(userId);
-        Bungae bungae = bungaeMemberService.findBungaeById(user.getId());
+        Bungae bungae = bungaeMemberService.findActiveBungaeByUserId(user.getId());
+        int currentMemberCount = bungaeMemberService.countByBungae_BungaeId(bungae.getBungaeId());
         model.addAttribute("bungae", bungae);
+        model.addAttribute("currentMemberCount", currentMemberCount);
         return "bungae_ing";
     }
 }

@@ -100,30 +100,21 @@ public class BungaeServiceImpl implements BungaeService {
     @Transactional
     public List<BungaeDTO> bungaeList() {
         List<Bungae> bungaeList = bungaeRepository.findAll();
-        return bungaeList.stream()
-                .filter(bungae -> bungae.getBungaeStatus() != BungaeStatus.ENDED)
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return getBungaeDTOList(bungaeList);
     }
 
     @Override
     @Transactional
     public List<BungaeDTO> bungaeListOfStartTime() {
         List<Bungae> bungaeList = bungaeRepository.findAllByOrderByBungaeStartTimeAsc();
-        return bungaeList.stream()
-                .filter(bungae -> bungae.getBungaeStatus() != BungaeStatus.ENDED)
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return getBungaeDTOList(bungaeList);
     }
 
     @Override
     @Transactional
     public List<BungaeDTO> bungaeListOfCreateTime() {
         List<Bungae> bungaeList = bungaeRepository.findAllByOrderByBungaeCreateTimeDesc();
-        return bungaeList.stream()
-                .filter(bungae -> bungae.getBungaeStatus() != BungaeStatus.ENDED)
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return getBungaeDTOList(bungaeList);
     }
 
     @Override
@@ -223,5 +214,17 @@ public class BungaeServiceImpl implements BungaeService {
             }
             bungaeRepository.save(bungae);
         }
+    }
+    
+    private List<BungaeDTO> getBungaeDTOList(List<Bungae> bungaeList) {
+        return bungaeList.stream()
+                .filter(bungae -> bungae.getBungaeStatus() != BungaeStatus.ENDED)
+                .map(bungae -> {
+                    BungaeDTO bungaeDTO = convertToDTO(bungae);
+                    int currentMemberCount = bungaeMemberRepository.countByBungae_BungaeId(bungae.getBungaeId());
+                    bungaeDTO.setCurrentMemberCount(currentMemberCount);
+                    return bungaeDTO;
+                })
+                .collect(Collectors.toList());
     }
 }

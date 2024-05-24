@@ -2,6 +2,7 @@ package com.multi.bungae.service;
 
 import com.multi.bungae.domain.Bungae;
 import com.multi.bungae.domain.BungaeMember;
+import com.multi.bungae.domain.BungaeStatus;
 import com.multi.bungae.domain.UserVO;
 import org.apache.catalina.User;
 
@@ -18,6 +19,10 @@ public interface BungaeMemberService {
     Bungae findBungaeById(int userId);
 
     boolean canJoinOrHostBungae(UserVO user);
+
+    Bungae findActiveBungaeByUserId(int userId);
+
+    int countByBungae_BungaeId(Long bungaeId);
 
     boolean isOrganizerTrue(Long bungaeId, String userId);
 
