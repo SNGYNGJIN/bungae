@@ -47,7 +47,7 @@ public class AlarmService {
         }
     }
 
-    public void sendAlarm(Long bungaeId, String userId, String message, String senderId) {
+    public void sendAlarm(Long bungaeId, String message, String senderId) {
         Map<String, SseEmitter> userEmitters = emitters.get(bungaeId);
         if (userEmitters != null) {
             userEmitters.forEach((uid, emitter) -> {
@@ -62,6 +62,7 @@ public class AlarmService {
             });
         }
     }
+
     public void sendAlarm(String message) {
         emitters.forEach((bungaeId, userEmitters) -> {
             userEmitters.forEach((userId, emitter) -> {

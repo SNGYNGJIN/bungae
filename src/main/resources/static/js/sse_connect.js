@@ -41,13 +41,12 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log("Subscribing to SSE for user:", loggedInUserId);
             eventSource = new EventSource("/alarm/subscribe/" + loggedInUserId);
 
-            eventSource.onmessage = function (event) {
-                alert("Message received: " + event.data);
-                const div = document.createElement("div");
-                div.textContent = `Event received: ${event.data}`;
-                document.getElementById("messages").appendChild(div);
-                console.log(event.data);
-            };
+            eventSource.addEventListener("alarm", function (event) {
+                console.log("Alarm event received:", event);
+                const data = JSON.parse(event.data);
+                alert("Message received: " + data[0] + " from " + data[1]);
+                console.log(data);
+            });
 
             eventSource.onerror = function (error) {
                 console.error("Error occurred: ", error);

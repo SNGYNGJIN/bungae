@@ -123,17 +123,8 @@ public class SocketStateService {
     }*/
     //public void sendAlarm(Long bungaeId, String userId, String message, String senderId) {
 
-    public SseEmitter chatAlarm(Long bungaeId, int userId, String input, String senderId) {
-        UserVO user = userRepo.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        String emitterId = UUID.randomUUID().toString();
-        alarmService.addEmitter(bungaeId, user.getUserId(), emitter);
-        // 클라이언트가 구독한 후에 즉시 알림 전송
-        alarmService.sendAlarm(bungaeId, user.getUserId(), input,senderId);
-
-        return emitter;
+    public void chatAlarm(Long bungaeId, String input, String senderId) {
+        alarmService.sendAlarm(bungaeId, input, senderId);
     }
-
 
 }
