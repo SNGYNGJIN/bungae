@@ -63,6 +63,9 @@ public class BungaeMemberController {
     @GetMapping("/bungae_ing")
     public String bungaeInAttendance(HttpSession session, Model model) {
         String userId = (String) session.getAttribute("loggedInUserId");
+        if (userId == null) {
+            return "redirect:login";
+        }
         UserVO user = userService.getUserByUserId(userId);
         Bungae bungae = bungaeMemberService.findActiveBungaeByUserId(user.getId());
         int currentMemberCount = bungaeMemberService.countByBungae_BungaeId(bungae.getBungaeId());
