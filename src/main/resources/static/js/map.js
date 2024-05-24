@@ -46,9 +46,19 @@ if (navigator.geolocation) {
         // 지도의 우측에 확대 축소 컨트롤을 추가한다
         map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
+        var imageSrc = '/images/myLoc.png', // 마커이미지의 주소입니다
+            imageSize = new kakao.maps.Size(30, 35), // 마커이미지의 크기입니다
+            imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+        // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+
+
+
         var locPosition = new kakao.maps.LatLng(lat, lon)
         var marker = new kakao.maps.Marker({
-            position: locPosition
+            position: locPosition,
+            image: markerImage
         });
         marker.setMap(map);
 
@@ -93,11 +103,13 @@ function loadData() {
                             '        </div>' +
                             '        <div class="body">' +
                             '            <div class="img">' +
-                            '                <img src="" width="73" height="70">' +
+                            '                <img src="" width="83" height="80">' +
                             '            </div>' +
                             '            <div class="desc">' +
-                            '                <div class="ellipsis">' + bungae.bungaeLocation.keyword + '</div>' +
-                            '                <div class="jibun ellipsis">' + bungae.bungaeLocation.address + '</div>' +
+                            '                <div class="ellipsis">장소: ' + bungae.bungaeLocation.keyword + '</div>' +
+                            '                <div class="time ellipsis">일시: ' + bungae.bungaeStartTime + '</div>' +
+                            '                <div class="age ellipsis">연령대: ' + bungae.bungaeMinAge + '세~' + bungae.bungaeMaxAge + '세</div>' +
+                            '                <div class="member ellipsis">최대인원: ' + bungae.bungaeMaxMember + '명</div>' +
                             '                <div><a href="bungae/bungae_detail/' + bungae.bungaeId + '" class="link">상세보기</a></div>' +
                             '            </div>' +
                             '        </div>' +
