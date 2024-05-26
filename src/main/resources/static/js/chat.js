@@ -20,9 +20,7 @@ $(function () {
         // 채팅방 구독하기
         stompClient.subscribe('/room/' + roomId, function (messageOutput) {
             var message = JSON.parse(messageOutput.body);
-            if (message.type === 'leave') {
-                alert("User left: " + message.message);
-            } else if (message && !(message.type === 'enter')) {
+            if (message && !(message.type === 'enter' || message.type === 'leave')) {
                 showMessageOutput(message, currentUserId);
             }
         });

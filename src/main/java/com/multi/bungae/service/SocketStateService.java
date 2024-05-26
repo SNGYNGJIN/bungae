@@ -111,20 +111,10 @@ public class SocketStateService {
     /*
         CLOSED 상태인 유저들에게 알람 보내기
      */
-/*    public void chatAlarm(int userId, ChatDTO input) {
-        UserVO user = userRepo.findById(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        if (input != null) {
-            alarmService.sendAlarm("sender: " +input.getSender()+"/ message: "+input.getMessage() + " 퇴장한 상태"); // 알림 전송
-            sseController.addSubscriber(userId);
-            System.out.println("Notification sent: " + input);
-        } else {
-            System.out.println("No emitter found for input : " + input);
-        }
-    }*/
-    //public void sendAlarm(Long bungaeId, String userId, String message, String senderId) {
-
     public void chatAlarm(Long bungaeId, String input, String senderId) {
-        alarmService.sendAlarm(bungaeId, input, senderId);
+        UserVO user = userRepo.findByUserId(senderId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        alarmService.sendAlarm(bungaeId, input, user.getNickname());
     }
 
 }

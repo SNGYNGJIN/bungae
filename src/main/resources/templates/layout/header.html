@@ -2,7 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <script th:src="@{/js/sse_connect.js}" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+    <script th:src="@{/js/offline.js}" type="text/javascript"></script>
+
+
 </head>
 
 <body>
@@ -25,23 +31,40 @@
                     <li class="nav-item"><a class="nav-link" th:href="@{/bungae/bungae_ing}">참여목록</a></li>
                     <li class="nav-item"><a class="nav-link" th:href="@{/profile}">프로필</a></li>
                 </ul>
+                <a id="notificationIcon" href="#" class="btn navbar-btn ml-md-2"> 📭 </a>
                 <a id="loginLogoutButton" class="btn navbar-btn ml-md-2 btn-light text-dark" href="#">로그인</a>
             </div>
         </div>
     </nav>
+
+    <!-- 메세지 알림 모달 창 -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2> ✉️ 회원님이 자리를 비웠을 때 </h2>
+            <div id="notificationList"></div>
+            <div id="pagination"></div>
+        </div>
+    </div>
+
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 로그인/로그아웃 처리
+            /*
+                로그인/로그아웃 처리 스크립트
+            */
             const loggedInUserId = sessionStorage.getItem("loggedInUserId");
             const loginLogoutButton = document.getElementById('loginLogoutButton');
+            const notificationIcon = document.getElementById('notificationIcon');
+            const notificationModal = document.getElementById('notificationModal');
+            const notificationList = document.getElementById('notificationList');
+            const pagination = document.getElementById('pagination');
 
             if (!loginLogoutButton) {
                 console.error("loginLogoutButton element not found.");
                 return;
             }
-
             console.log("Logged in user ID:", loggedInUserId);
-
             if (loggedInUserId) {
                 loginLogoutButton.textContent = '로그아웃';
                 loginLogoutButton.href = '#';
@@ -58,103 +81,127 @@
                 }
             });
 
-            // SSE 연결 처리
-            console.log("sse_connect.js loaded");
-            let eventSource;
-
             if (!loggedInUserId) {
                 console.error("No logged in user ID found in sessionStorage");
                 return;
             }
+
+            /*
+                알림 메세지 스크립트
+            */
+            let notifications = [];
+            let currentPage = 1;
+            const itemsPerPage = 7;
+
+            // 알림 아이콘 클릭 이벤트
+            notificationIcon.addEventListener('click', function () {
+                loadNotifications();
+                markNotificationsAsRead(); // 알림을 읽음 상태로 업데이트
+                notificationModal.style.display = 'block';
+                updateNotificationIcon(); // 알림 아이콘 업데이트
+            });
+
+            // 알림 아이콘 클릭 이벤트
+            notificationIcon.addEventListener('click', function () {
+                loadNotifications();
+                notificationModal.style.display = 'block';
+            });
+
+            // 모달 창 닫기 이벤트
+            document.querySelector('.close').addEventListener('click', function () {
+                notificationModal.style.display = 'none';
+                markNotificationsAsRead(); // 알림을 읽음 상태로 업데이트
+            });
+
+            // 알림을 읽음 상태로 표시
+            function markNotificationsAsRead() {
+                $.ajax({
+                    url: '/chat/api/checkLogoutMessage/' + loggedInUserId,
+                    method: 'POST',
+                    success: function (response) {
+                        console.log("Notifications marked as read:", response);
+                        // 로컬 데이터도 업데이트
+                        notifications.forEach(notification => {
+                            notification.read = true;
+                        });
+                        displayNotifications();
+                    },
+                    error: function (error) {
+                        console.error("Error marking notifications as read:", error);
+                    }
+                });
+            }
+
+            // 알림 목록 로드
+            function loadNotifications() {
+                $.ajax({
+                    url: '/chat/api/logoutChat/' + loggedInUserId,
+                    method: 'GET',
+                    success: function (data) {
+                        notifications = data.sort((a, b) => new Date(b.sendedTime) - new Date(a.sendedTime));
+                        console.log("Data received:", data);
+                        displayNotifications();
+                        updateNotificationIcon(); // 알림 아이콘 업데이트
+                    },
+                    error: function (error) {
+                        console.error("Error loading notifications:", error);
+                    }
+                });
+            }
+
+            // 알림 목록 표시
+            function displayNotifications() {
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const paginatedNotifications = notifications.slice(start, end);
+
+                notificationList.innerHTML = '';
+                if (paginatedNotifications.length === 0 && notifications.length === 0) {
+                    notificationList.innerHTML = '<p>받은 알림이 없어요</p>';
+                } else {
+                    paginatedNotifications.forEach(notification => {
+                        const color = notification.read ? 'lightgray' : 'black';
+                        notificationList.innerHTML += `<div style="color: ${color}">
+                    <p>${notification.senderNickname} : ${notification.message}</p>
+                    <p>Time: ${new Date(notification.sendedTime).toLocaleString()}</p>
+                    <hr>
+                </div>`;
+                    });
+                }
+
+                setupPagination();
+            }
+
+            // 페이징 처리 설정
+            function setupPagination() {
+                const pageCount = Math.ceil(notifications.length / itemsPerPage);
+                pagination.innerHTML = '';
+
+                for (let i = 1; i <= pageCount; i++) {
+                    const button = document.createElement('button');
+                    button.textContent = i;
+                    if (i === currentPage) {
+                        button.classList.add('active');
+                    }
+                    button.addEventListener('click', function () {
+                        currentPage = i;
+                        displayNotifications();
+                    });
+
+                    pagination.appendChild(button);
+                }
+            }
+
+            // 알림 아이콘 업데이트
+            function updateNotificationIcon() {
+                notificationIcon.textContent = notifications.length > 0 ? '📬' : '📭';
+            }
+
+            // 초기 알림 상태 설정
+            loadNotifications();
         });
 
     </script>
 </header>
 </body>
 </html>
-<!--
-            checkAndSubscribe();
-
-            function checkAndSubscribe() {
-                $.ajax({
-                    url: `/chat/api/findDisconnect/${loggedInUserId}`,
-                    method: 'GET',
-                    success: function(response) {
-                        if (response === true) {
-
-                            subscribeToSSE();
-                        } else if (response === false) {
-                            // 구독 끊기
-                            if (eventSource && eventSource.readyState !== EventSource.CLOSED) {
-                                eventSource.close();
-                                sessionStorage.removeItem('sseSubscribed');
-                                console.log("SSE 구독이 끊어졌습니다.");
-                            }
-                        }
-                    },
-                    error: function(error) {
-                        console.error("Error : ", error);
-                    }
-                });
-            }
-
-            function subscribeToSSE() {
-                console.log("subscribeToSSE called");
-                if (!eventSource || eventSource.readyState === EventSource.CLOSED) {
-                    eventSource = new EventSource("/alarm/subscribe/" + loggedInUserId);
-                    console.log("Subscribing to SSE for user:", loggedInUserId);
-
-                    eventSource.onmessage = function(event) {
-                        alert("Message received: " + event.data);
-                        const div = document.createElement("div");
-                        div.textContent = `Event received: ${event.data}`;
-                        document.getElementById("messages").appendChild(div);
-                        console.log(event.data);
-                    };
-
-                    eventSource.onerror = function(error) {
-                        console.error("Error occurred: ", error);
-                        // SSE 연결이 끊어졌을 때 재연결 시도
-                        setTimeout(function() {
-                            subscribeToSSE();
-                        }, 3000); // 3초 후 재구독 시도
-                    };
-
-                    // SSE 상태를 세션 스토리지에 저장
-                    sessionStorage.setItem('sseSubscribed', 'true');
-                }
-            }
-
-            function unsubscribe() {
-                console.log("unsubscribe called");
-                if (eventSource) {
-                    $.ajax({
-                        url: "/alarm/unsubscribe/" + loggedInUserId,
-                        method: 'DELETE',
-                        success: function() {
-                            console.log("사용자가 채팅방에 들어갔습니다. SSE 구독이 끊어졌습니다.");
-                        },
-                        error: function(error) {
-                            console.error("Error : ", error);
-                        }
-                    });
-
-                    eventSource.close();
-                    sessionStorage.removeItem('sseSubscribed');
-                }
-            }
-
-            window.addEventListener('beforeunload', unsubscribe);
-            window.addEventListener('enterChat', function(event) {
-                console.log("enterChat event received");
-                unsubscribe();
-            });
-        });
-
-
-
-
-
-
-
--->

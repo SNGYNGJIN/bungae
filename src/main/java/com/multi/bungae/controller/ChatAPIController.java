@@ -5,10 +5,7 @@ import com.multi.bungae.domain.*;
 import com.multi.bungae.dto.ChatDTO;
 import com.multi.bungae.dto.SocketStateDTO;
 import com.multi.bungae.dto.user.forReview;
-import com.multi.bungae.repository.BungaeMemberRepository;
-import com.multi.bungae.repository.BungaeRepository;
-import com.multi.bungae.repository.SocketStateRepository;
-import com.multi.bungae.repository.UserRepository;
+import com.multi.bungae.repository.*;
 import com.multi.bungae.service.AlarmService;
 import com.multi.bungae.service.ChatService;
 import groovy.util.logging.Slf4j;
@@ -42,6 +39,7 @@ public class ChatAPIController {
     private final BungaeRepository bungaeRepo;
     private final BungaeMemberRepository bungaeMemberRepo;
     private final SocketStateRepository socketStateRepo;
+    private final MessageInOfflineRepository mioRepo;
     private static final Logger logger = LoggerFactory.getLogger(WebSocketChatHandler.class);
 
     /*
@@ -88,12 +86,6 @@ public class ChatAPIController {
         return ResponseEntity.ok(userNicknames);
     }
 
-    @ResponseBody
-    @GetMapping("/asdf/{bungaeId}")
-    public List<SocketState> fingClosedUser(@PathVariable Long bungaeId){
-        return socketStateRepo.findByChatRoomIdAndState(bungaeId, AbstractEndpoint.Handler.SocketState.valueOf("CLOSED"));
-    }
-
     @GetMapping("/findDisconnect/{userId}")
     public ResponseEntity<Boolean> findDisconnect(@PathVariable String userId) {
         UserVO user = userRepo.findByUserId(userId)
@@ -121,6 +113,19 @@ public class ChatAPIController {
         return ResponseEntity.ok(false);
     }
 
+    @GetMapping("/logoutChat/{userId}")
+    public ResponseEntity<List<MessageInOffline>> logoutChat(@PathVariable String userId) {
+        List<MessageInOffline> mioList = mioRepo.findByUserId(userId);
+
+        return ResponseEntity.ok(mioList);
+    }
+
+    @PostMapping("/checkLogoutMessage/{userId}")
+    public ResponseEntity<String> checkLogoutMessage(@PathVariable String userId) {
+        List<MessageInOffline> mioList = mioRepo.findByUserId(userId);
+        alarmService.readTrue(mioList); // 메소드 호출하여 read를 true로 설정
+        return ResponseEntity.ok("Messages marked as read");
+    }
 
 
 }

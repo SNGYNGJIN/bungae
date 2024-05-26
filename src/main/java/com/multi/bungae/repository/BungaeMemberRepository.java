@@ -3,6 +3,7 @@ package com.multi.bungae.repository;
 import com.multi.bungae.domain.Bungae;
 import com.multi.bungae.domain.BungaeMember;
 import com.multi.bungae.domain.UserVO;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,9 +25,9 @@ public interface BungaeMemberRepository extends JpaRepository<BungaeMember, Long
 
 
     // 해당 모임에 userId가 존재하는지 여부
-    boolean existsByUser( UserVO user);
+    //boolean findBy( UserVO user);
 
-
+    @EntityGraph(value = "BungaeMember.user", type = EntityGraph.EntityGraphType.LOAD)
     List<BungaeMember> findByBungae_BungaeId(Long bungaeId);
 
     boolean existsByBungaeAndUserAndIsOrganizerTrue(Bungae bungae, UserVO user);

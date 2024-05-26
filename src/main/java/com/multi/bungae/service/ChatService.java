@@ -146,7 +146,6 @@ public class ChatService {
     }
 
     public List<ChatMessage> getMessagesByChatRoomId(Long chatRoomId) {
-
         return chatMessageRepo.findByChatRoomId(chatRoomId);
     }
 

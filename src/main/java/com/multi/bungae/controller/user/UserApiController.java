@@ -7,6 +7,7 @@ import com.multi.bungae.domain.BlackList;
 import com.multi.bungae.domain.UserProfile;
 import com.multi.bungae.domain.UserReview;
 import com.multi.bungae.domain.UserVO;
+import com.multi.bungae.dto.OfflineDTO;
 import com.multi.bungae.service.UserService;
 import com.multi.bungae.dto.user.*;
 import jakarta.servlet.http.HttpSession;
@@ -188,8 +189,6 @@ public class UserApiController {
         }
     }
 
-
-
     /*
         userID를 통해 blacklist 테이블의 모든 블랙리스트 항목을 가져오는 API
     */
@@ -200,5 +199,14 @@ public class UserApiController {
         return new BaseResponse<>(blackLists);
     }
 
-
+    @PostMapping("/offline/{userId}")
+    public ResponseEntity<String> updateOfflineState(@PathVariable String userId, @RequestBody OfflineDTO dto) {
+        System.out.println("Received request to update state for user " + userId + " with state " + dto.getState());
+        try {
+            userService.updateOfflineState(userId, dto);
+            return new ResponseEntity<>("State updated successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to update state", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

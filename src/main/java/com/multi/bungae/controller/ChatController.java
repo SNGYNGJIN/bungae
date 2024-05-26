@@ -52,6 +52,7 @@ public class ChatController {
     @MessageMapping("/{roomId}") // 여기(send/{roomId})로 전송되면 메서드 호출 -> WebSocketConfig prefixes 에서 적용한건 앞에 생략
     @SendTo("/room/{roomId}")   // 구독하고 있는 장소로 메시지 전송 (목적지)  -> WebSocketConfig Broker 에서 적용한건 앞에 붙어줘야됨
     public ChatDTO chat(@DestinationVariable Long roomId, ChatDTO input) {
+        //alarmService.viewAlarm(roomId, input.getMessage(), input.getSender());
         socketService.chatAlarm(roomId, input.getMessage(), input.getSender());
 
         return chatService.ChatMessage(roomId, input.getSender(), input.getMessage(), input.getType());

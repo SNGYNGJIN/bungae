@@ -44,8 +44,37 @@ document.addEventListener('DOMContentLoaded', function () {
             eventSource.addEventListener("alarm", function (event) {
                 console.log("Alarm event received:", event);
                 const data = JSON.parse(event.data);
-                alert("Message received: " + data[0] + " from " + data[1]);
-                console.log(data);
+
+                // 브라우저 알람 요청 허용시 알람 뜨게 하게
+                (async () => {
+                    const showNotification = () => {
+                        const notification = new Notification('⚡️ 새로운 메세지 도착', {
+                            body : data.senderId + " : " + data.message
+                        });
+                        setTimeout(() => {
+                            notification.close();
+                        }, 10 * 1000);
+                        notification.addEventListener('click', () => {
+                            unsubscribe(); // SSE 연결 끊기 !!!!
+                            window.open("http://localhost:8080" + data.url, '_blank');
+                        });
+                    }
+
+                    // 브라우저 알림 허용 권한
+                    let granted = false;
+
+                    if (Notification.permission === 'granted') {
+                        granted = true;
+                    } else if (Notification.permission !== 'denied') {
+                        let permission = await Notification.requestPermission();
+                        granted = permission === 'granted';
+                    }
+                    console.log(granted);
+                    // 알림 보여주기
+                    if (granted) {
+                        showNotification();
+                    }
+                })();
             });
 
             eventSource.onerror = function (error) {
@@ -67,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
             $.ajax({
                 url: "/alarm/unsubscribe/" + loggedInUserId,
                 method: 'DELETE',
-                async: false, // 비동기 방식을 사용하지 않도록 설정
+                async: false,
                 success: function () {
                     console.log("SSE 구독이 끊어졌습니다.");
                 },
@@ -89,12 +118,12 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("enterChat event received");
         unsubscribe();
         // 2초 후 checkAndSubscribe 호출
-        setTimeout(checkAndSubscribe, 2000); // 2초 지연
+        setTimeout(checkAndSubscribe, 2000);
     });
 
     // 채팅 페이지 벗어날 때 구독 설정
     window.addEventListener('leaveChat', function (event) {
         console.log("leaveChat event received");
-        checkAndSubscribe();
+        setTimeout(checkAndSubscribe, 2000);
     });
 });

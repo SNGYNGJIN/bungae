@@ -60,7 +60,7 @@ public class SSEController {
         alarmService.addEmitter(bungae.get().getBungae().getBungaeId(), userId, emitter);
 
         // 즉시 알림 전송
-        alarmService.sendAlarm("연결됨 .....");
+        // alarmService.sendAlarm("연결됨 .....");
 
         return emitter;
     }
