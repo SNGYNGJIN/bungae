@@ -7,13 +7,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
           type="text/css">
     <link rel="stylesheet" href="/css/bungae_create.css">
-    <script th:src="@{/js/bungae_create.js}" type="text/javascript"></script>
+    <script th:src="@{/js/bungae_update.js}" type="text/javascript"></script>
     <script type="text/javascript"
             src="//dapi.kakao.com/v2/maps/sdk.js?appkey=3ee55d752effcbc08eda7914b122df74&libraries=services"></script>
 </head>
 
 <body>
-<nav class="navbar navbar-expand-md bg-primary navbar-light border-bottom border-dark" style="	height: 80px;">
+<nav class="navbar navbar-expand-md bg-primary navbar-light border-bottom border-dark" style="    height: 80px;">
     <div class="container"><a class="navbar-brand" href="#"><img src="/images/bungae.png" width="100" height="30"
                                                                  class="d-inline-block align-top" alt=""></a>
         <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse"
@@ -37,11 +37,13 @@
     <div class="container">
         <div class="row">
             <div class="mx-auto col-lg-6 col-10">
-                <h1>번개 생성</h1>
-                <form id="createBungaeForm" enctype="multipart/form-data">
+                <h1>번개 수정</h1>
+                <form id="updateBungaeForm" enctype="multipart/form-data">
+                    <input type="text" name="bungaeId" id="bungaeId" th:value="${bungae.bungaeId}" hidden>
                     <div class="form-group">
                         <label for="bungaeName">번개 모임명</label>
-                        <input type="text" name="bungaeName" id="bungaeName" required class="form-control">
+                        <input type="text" name="bungaeName" id="bungaeName" required class="form-control"
+                               th:value="${bungae.bungaeName}">
                     </div>
                     <div class="form-group">
                         <div class="form-group">
@@ -60,40 +62,38 @@
                     <div class="form-group">
                         <label for="bungaeDescription">번개 내용</label>
                         <input type="text" name="bungaeDescription" id="bungaeDescription" required
-                               class="form-control">
+                               class="form-control" th:value="${bungae.bungaeDescription}">
                     </div>
                     <div class="form-group">
                         <label for="bungaeStartTime">번개 일시</label>
                         <input type="datetime-local" name="bungaeStartTime" id="bungaeStartTime" required
-                               class="form-control">
+                               class="form-control" th:value="${bungae.bungaeStartTime}">
                     </div>
                     <div class="form-group">
                         <label>번개 위치</label>
                         <input type="text" id="keyword" name="keyword" placeholder="키워드를 입력하세요" required
-                               class="form-control">
-                        <input type="hidden" id="address" name="address">
+                               class="form-control" th:value="${bungae.bungaeLocation.keyword}">
+                        <input type="hidden" id="address" name="address" th:value="${bungae.bungaeLocation.address}">>
                         <ul id="placesList"></ul>
                     </div>
                     <div class="form-group age">
                         <label>연령대</label>
                         <input type="number" name="bungaeMinAge" id="bungaeMinAge" min="0" required
-                               class="form-control age"> ~
+                               class="form-control age" th:value="${bungae.bungaeMinAge}"> ~
                         <input type="number" name="bungaeMaxAge" id="bungaeMaxAge" min="0" required
-                               class="form-control age">
+                               class="form-control age" th:value="${bungae.bungaeMaxAge}">
                     </div>
                     <div class="form-group">
                         <label for="bungaeMaxMember">최대 인원 수</label>
                         <input type="number" name="bungaeMaxMember" id="bungaeMaxMember" min="0" required
-                               class="form-control">
+                               class="form-control" th:value="${bungae.bungaeMaxMember}">
                     </div>
                     <div class="form-group">
                         <label>대표 사진</label>
                         <input type="file" name="bungaeImage" accept="images/*" class="form-control-file">
                     </div>
-                    <button type="submit" class="btn btn-primary mt-3">모임등록
-                    </button>
-                    <button type="reset" class="btn btn-primary mt-3">다시쓰기
-                    </button>
+                    <button type="submit" class="btn btn-primary mt-3">모임수정</button>
+                    <button type="reset" class="btn btn-primary mt-3">다시쓰기</button>
                 </form>
             </div>
         </div>

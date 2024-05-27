@@ -99,6 +99,12 @@ public class BungaeMemberServiceImpl implements BungaeMemberService {
 
     @Override
     @Transactional
+    public Optional<BungaeMember> getOrganizerByBungaeId(Long bungaeId) {
+        return bungaeMemberRepository.findByBungae_BungaeIdAndIsOrganizerTrue(bungaeId);
+    }
+
+    @Override
+    @Transactional
     public boolean isOrganizerTrue(Long bungaeId, String userId) {
         UserVO user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Bungae bungae = bungaeRepository.findById(bungaeId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));

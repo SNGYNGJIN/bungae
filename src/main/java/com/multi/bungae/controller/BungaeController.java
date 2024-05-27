@@ -10,6 +10,7 @@ import com.multi.bungae.repository.UserRepository;
 import com.multi.bungae.service.BungaeMemberService;
 import com.multi.bungae.service.BungaeService;
 import com.multi.bungae.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -49,24 +51,6 @@ public class BungaeController {
         return "bungae_create";
     }
 
-    /* @PostMapping("/create_bungae")
-    public String createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam double latitude, @RequestParam double longitude, HttpSession session) {
-        
-      Integer id = (Integer) session.getAttribute("loggedInId"); // userId(X), id(O)
-
-        if (id == null) {
-            return "redirect:/login";
-        }
-
-        UserVO user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Authenticated user not found"));
-
-        Point location = new GeometryFactory().createPoint(new Coordinate(longitude, latitude));
-        bungaeDTO.setBungaeLocation(location);
-        bungaeService.createBungae(bungaeDTO, user); // 여기선 user table의 id
-
-        return "redirection:/bungae/bungaeList";
-        }
-*/
     @PostMapping("/create_bungae")
     public ResponseEntity<Map<String, String>> createBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam("keyword") String keyword, @RequestParam("address") String address, @RequestParam("userId") String userId) {
 
@@ -91,6 +75,13 @@ public class BungaeController {
         return bungaeService.bungaeList();
     }
 
+    @GetMapping("/bungae_update/{bungaeId}")
+    public String updateBungaeForm(@PathVariable Long bungaeId, Model model) {
+        Bungae bungae = bungaeService.getBungaeById(bungaeId);
+        model.addAttribute("bungae", bungae);
+        return "bungae_update";
+    }
+
     /**
      * bungaeList.html 호출
      */
@@ -100,11 +91,26 @@ public class BungaeController {
     }
 
     @GetMapping("/bungae_detail/{bungaeId}")
-    public String bungaeDetail(@PathVariable Long bungaeId, Model model) {
+    public String bungaeDetail(@PathVariable Long bungaeId, HttpSession session, Model model) {
         Bungae bungae = bungaeService.getBungaeById(bungaeId);
         int currentMemberCount = bungaeMemberService.countByBungae_BungaeId(bungae.getBungaeId());
+
+        String userId = (String) session.getAttribute("loggedInUserId");
+        if (userId == null) {
+            return "redirect:login";
+        }
+
+        Optional<BungaeMember> organizerOptional = bungaeMemberService.getOrganizerByBungaeId(bungaeId);
+        if (organizerOptional.isPresent()) {
+            boolean isOrganizer = organizerOptional.get().getUser().getUserId().equals(userId);
+            UserVO organizer = organizerOptional.get().getUser();
+            model.addAttribute("organizer", organizer);
+            model.addAttribute("isOrganizer", isOrganizer);
+        }
+
         model.addAttribute("bungae", bungae);
         model.addAttribute("currentMemberCount", currentMemberCount);
+
         return "bungae_detail";
     }
 
@@ -132,16 +138,19 @@ public class BungaeController {
         return null;
     }
 
-    /**
-     * 수정, 삭제 주최자가 로그인 했을 때만 가능하게 수정해야함
-     */
-    @PutMapping("/{bungaeId}")
-    public Bungae editBungae(@PathVariable Long bungaeId, @RequestBody BungaeDTO bungaeDTO, @RequestParam String userId) {
-        UserVO user = userService.getUserByUserId(userId);
-        return bungaeService.editBungae(bungaeId, bungaeDTO, user);
+    @PostMapping("/update_bungae")
+    public ResponseEntity<Map<String, String>> updateBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam("keyword") String keyword, @RequestParam("address") String address) {
+        LocationDTO locationDTO = new LocationDTO(keyword, address);
+        bungaeDTO.setBungaeLocation(locationDTO);
+        bungaeService.updateBungae(bungaeDTO.getBungaeId(), bungaeDTO);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("url", "/bungae_list");
+        return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{bungaeId}")
+    @DeleteMapping("/{bungaeId}/cancel")
     public String cancelBungae(@PathVariable Long bungaeId, @RequestParam String userId) {
         UserVO user = userService.getUserByUserId(userId);
         bungaeService.cancelBungae(bungaeId, user);

@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $('#joinButton').click(function () {
         let bungaeId = $(this).data('bungae-id');
-        var user = sessionStorage.getItem("loggedInUserId");
+        let user = sessionStorage.getItem("loggedInUserId");
 
         $.ajax({
             type: 'POST',
@@ -36,8 +36,12 @@ $(document).ready(function () {
             }
         });
     });
-});
 
+    $('#updateButton').click(function () {
+        let bungaeId = $(this).data('bungae-id');
+        window.location.href = '/bungae/bungae_update/' + bungaeId;
+    });
+});
 
 // 번개 아이디에 해당하는 번개멤버 채팅 참가 시키기
 async function joinChat(chatRoomId, userId) {

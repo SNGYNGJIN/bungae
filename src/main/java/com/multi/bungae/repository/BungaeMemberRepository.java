@@ -29,6 +29,8 @@ public interface BungaeMemberRepository extends JpaRepository<BungaeMember, Long
 
     Optional<BungaeMember> findByUser_IdAndBungae_BungaeStatusNot(int userId, BungaeStatus status);
 
+    Optional<BungaeMember> findByBungae_BungaeIdAndIsOrganizerTrue(Long bungaeId);
+
     // 해당 모임에 userId가 존재하는지 여부
     boolean existsByBungaeAndUser(Bungae bungae, UserVO user);
 

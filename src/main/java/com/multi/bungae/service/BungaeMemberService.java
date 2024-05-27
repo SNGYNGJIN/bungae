@@ -7,6 +7,7 @@ import com.multi.bungae.domain.UserVO;
 import org.apache.catalina.User;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BungaeMemberService {
 
@@ -23,6 +24,9 @@ public interface BungaeMemberService {
     Bungae findActiveBungaeByUserId(int userId);
 
     int countByBungae_BungaeId(Long bungaeId);
+
+    Optional<BungaeMember> getOrganizerByBungaeId(Long bungaeId);
+
 
     boolean isOrganizerTrue(Long bungaeId, String userId);
 
