@@ -12,11 +12,10 @@
 <div th:replace="~{layout/header :: header}"></div>
 
 
-
-<div class="py-5 text-center border-dark" style="">
-    <div class="container">
-      <div class="row">
-        <div class="mx-auto col-md-6 col-10 bg-white p-5">
+  <div class="py-5 text-center" style="">
+    <div class="login-container d-flex justify-content-center" style="">
+      <div class="row d-flex justify-content-center align-items-center border rounded shadow border-light" style="	width: 400px;	height: 300px;" >
+        <div class="col-10 bg-white text-center col-md-12">
           <h1 class="mb-4">로그인</h1>
 
           <form name="login" id="login" onsubmit="sendLoginRequest(); return false;" method="POST">
@@ -70,7 +69,6 @@
       </div>
     </div>
   </div>
-
 
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>

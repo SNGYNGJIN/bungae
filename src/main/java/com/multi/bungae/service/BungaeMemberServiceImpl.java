@@ -1,9 +1,6 @@
 package com.multi.bungae.service;
 
-import com.multi.bungae.domain.Bungae;
-import com.multi.bungae.domain.BungaeMember;
-import com.multi.bungae.domain.ChatMessage;
-import com.multi.bungae.domain.UserVO;
+import com.multi.bungae.domain.*;
 import com.multi.bungae.dto.ChatDTO;
 import com.multi.bungae.repository.BungaeMemberRepository;
 import com.multi.bungae.repository.BungaeRepository;
@@ -45,9 +42,16 @@ public class BungaeMemberServiceImpl implements BungaeMemberService {
         UserVO user = userOptional.get();
 
         // 중복 가입 체크
-        Optional<BungaeMember> duplicatedMember = bungaeMemberRepository.findByUser(user);
-        if (duplicatedMember.isPresent()) {
-            throw new IllegalStateException("해당 유저가 이미 다른 번개 모임에 참여하고 있습니다.");
+        if (!canJoinOrHostBungae(user)) {
+            throw new IllegalStateException("참가 중인 모임이 있으면 다른 모임에 참여할 수 없습니다.");
+        }
+        // 연령대 체크
+        if (user.getProfile().getUserAge() < bungae.getBungaeMinAge() || user.getProfile().getUserAge() > bungae.getBungaeMaxAge()) {
+            throw new IllegalStateException("연령대에 맞지 않는 번개 모임입니다.");
+        }
+        // 인원수 체크
+        if (bungae.getBungaeMaxMember() <= bungaeMemberRepository.countByBungae_BungaeId(bungaeId)) {
+            throw new IllegalStateException("수용 인원 초과된 번개 모임입니다.");
         }
 
         BungaeMember bungaeMember = new BungaeMember();
@@ -72,7 +76,36 @@ public class BungaeMemberServiceImpl implements BungaeMemberService {
 
     @Override
     @Transactional
-    public boolean isOrganizerTrue(Long bungaeId, String userId){
+    public boolean canJoinOrHostBungae(UserVO user) {
+        List<BungaeMember> activeBungaeList = bungaeMemberRepository.findByUserAndBungae_BungaeStatus(user, BungaeStatus.SCHEDULED);
+        activeBungaeList.addAll(bungaeMemberRepository.findByUserAndBungae_BungaeStatus(user, BungaeStatus.IN_PROGRESS));
+
+        return activeBungaeList.isEmpty();
+    }
+
+    @Override
+    @Transactional
+    public Bungae findActiveBungaeByUserId(int userId) {
+        return bungaeMemberRepository.findByUser_IdAndBungae_BungaeStatusNot(userId, BungaeStatus.ENDED)
+                .map(BungaeMember::getBungae)
+                .orElse(null);
+    }
+
+    @Override
+    @Transactional
+    public int countByBungae_BungaeId(Long bungaeId) {
+        return bungaeMemberRepository.countByBungae_BungaeId(bungaeId);
+    }
+
+    @Override
+    @Transactional
+    public Optional<BungaeMember> getOrganizerByBungaeId(Long bungaeId) {
+        return bungaeMemberRepository.findByBungae_BungaeIdAndIsOrganizerTrue(bungaeId);
+    }
+
+    @Override
+    @Transactional
+    public boolean isOrganizerTrue(Long bungaeId, String userId) {
         UserVO user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Bungae bungae = bungaeRepository.findById(bungaeId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
         return bungaeMemberRepository.existsByBungaeAndUserAndIsOrganizerTrue(bungae, user);
@@ -80,7 +113,7 @@ public class BungaeMemberServiceImpl implements BungaeMemberService {
 
     @Override
     @Transactional
-    public boolean isOrganizerFalse(Long bungaeId, String userId){
+    public boolean isOrganizerFalse(Long bungaeId, String userId) {
         UserVO user = userRepository.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         Bungae bungae = bungaeRepository.findById(bungaeId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
         return bungaeMemberRepository.existsByBungaeAndUserAndIsOrganizerFalse(bungae, user);

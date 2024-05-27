@@ -47,17 +47,8 @@ public class BungaeServiceImpl implements BungaeService {
     @Override
     @Transactional
     public Bungae createBungae(BungaeDTO bungaeDTO, UserVO user) {
-/*Hyeyeon
-        logger.info("Creating Bungae with type: {}, name: {}", bungaeDTO.getBungaeType(), bungaeDTO.getBungaeName());
-        if (bungaeDTO == null || user == null) { // user의 id 값 받아온 것임 ex.1
-            logger.error("BungaeDTO or UserVO is null");
-            throw new IllegalArgumentException("BungaeDTO and UserVO must not be null");
-        }
-
-*/
-        Optional<BungaeMember> duplicatedMember = bungaeMemberRepository.findByUser(user);
-        if (duplicatedMember.isPresent()) {
-            throw new IllegalStateException("해당 유저가 이미 다른 번개 모임에 참여하고 있습니다.");
+        if (!bungaeMemberService.canJoinOrHostBungae(user)) {
+            throw new IllegalStateException("참가 중인 모임이 있으면 새로운 모임을 주최할 수 없습니다.");
         }
 
         LocalDateTime createTime = LocalDateTime.now();
@@ -77,53 +68,31 @@ public class BungaeServiceImpl implements BungaeService {
                 BungaeStatus.SCHEDULED,
                 null
         );
-/* Hyeyeon
-        bungae = bungaeRepository.save(bungae);
-        logger.info("Bungae object created successfully with ID: {}", bungae.getBungaeId());
-
-        // 채팅방 생성
-        chatService.createChat(bungae.getBungaeId(), user.getUserId()); // 여기서 user의 userId 넣기
-
-        // BungaeMember 생성
-        bungaeMemberService.createBungaeMember(bungae, user, true);
-
-        return bungae;
-*/      bungaeRepository.save(bungae);
+        bungaeRepository.save(bungae);
         bungaeMemberService.createBungaeMember(bungae, user, true);
         chatService.createChat(bungae.getBungaeId(), user.getUserId());
         return bungae;
-
     }
-
 
     @Override
     @Transactional
     public List<BungaeDTO> bungaeList() {
         List<Bungae> bungaeList = bungaeRepository.findAll();
-        return bungaeList.stream()
-                .filter(bungae -> bungae.getBungaeStatus() != BungaeStatus.ENDED)
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return getBungaeDTOList(bungaeList);
     }
 
     @Override
     @Transactional
     public List<BungaeDTO> bungaeListOfStartTime() {
         List<Bungae> bungaeList = bungaeRepository.findAllByOrderByBungaeStartTimeAsc();
-        return bungaeList.stream()
-                .filter(bungae -> bungae.getBungaeStatus() != BungaeStatus.ENDED)
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return getBungaeDTOList(bungaeList);
     }
 
     @Override
     @Transactional
     public List<BungaeDTO> bungaeListOfCreateTime() {
         List<Bungae> bungaeList = bungaeRepository.findAllByOrderByBungaeCreateTimeDesc();
-        return bungaeList.stream()
-                .filter(bungae -> bungae.getBungaeStatus() != BungaeStatus.ENDED)
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return getBungaeDTOList(bungaeList);
     }
 
     @Override
@@ -135,14 +104,14 @@ public class BungaeServiceImpl implements BungaeService {
 
     @Override
     @Transactional
-    public Bungae editBungae(Long bungaeId, BungaeDTO bungaeDTO, UserVO user) {
+    public Bungae updateBungae(Long bungaeId, BungaeDTO bungaeDTO) {
         Optional<Bungae> bungaeOptional = bungaeRepository.findById(bungaeId);
 
         if (bungaeOptional.isPresent()) {
             Bungae bungae = bungaeOptional.get();
-            updateBungaeData(bungae, bungaeDTO);
+            Bungae updatedBungae = updateBungaeData(bungae, bungaeDTO);
 
-            return bungaeRepository.save(bungae);
+            return bungaeRepository.save(updatedBungae);
 
         } else {
             throw new RuntimeException("해당 id를 가진 번개모임이 없음: " + bungaeId);
@@ -182,7 +151,7 @@ public class BungaeServiceImpl implements BungaeService {
         }
     }
 
-    private void updateBungaeData(Bungae bungae, BungaeDTO bungaeDTO) {
+    private Bungae updateBungaeData(Bungae bungae, BungaeDTO bungaeDTO) {
         bungae.setBungaeType(bungaeDTO.getBungaeType());
         bungae.setBungaeName(bungaeDTO.getBungaeName());
         bungae.setBungaeDescription(bungaeDTO.getBungaeDescription());
@@ -193,6 +162,7 @@ public class BungaeServiceImpl implements BungaeService {
         bungae.setBungaeStartTime(bungaeDTO.getBungaeStartTime());
         bungae.setBungaeMinAge(bungaeDTO.getBungaeMinAge());
         bungae.setBungaeMaxAge(bungaeDTO.getBungaeMaxAge());
+        return bungae;
     }
 
     private BungaeDTO convertToDTO(Bungae bungae) {
@@ -223,5 +193,17 @@ public class BungaeServiceImpl implements BungaeService {
             }
             bungaeRepository.save(bungae);
         }
+    }
+
+    private List<BungaeDTO> getBungaeDTOList(List<Bungae> bungaeList) {
+        return bungaeList.stream()
+                .filter(bungae -> bungae.getBungaeStatus() != BungaeStatus.ENDED)
+                .map(bungae -> {
+                    BungaeDTO bungaeDTO = convertToDTO(bungae);
+                    int currentMemberCount = bungaeMemberRepository.countByBungae_BungaeId(bungae.getBungaeId());
+                    bungaeDTO.setCurrentMemberCount(currentMemberCount);
+                    return bungaeDTO;
+                })
+                .collect(Collectors.toList());
     }
 }

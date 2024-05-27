@@ -22,4 +22,5 @@ public class BungaeDTO {
     private int bungaeMinAge;
     private int bungaeMaxAge;
     private BungaeStatus bungaeStatus;
+    private int currentMemberCount;
 }

@@ -2,6 +2,7 @@ package com.multi.bungae.repository;
 
 import com.multi.bungae.domain.Bungae;
 import com.multi.bungae.domain.BungaeMember;
+import com.multi.bungae.domain.BungaeStatus;
 import com.multi.bungae.domain.UserVO;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,6 +24,13 @@ public interface BungaeMemberRepository extends JpaRepository<BungaeMember, Long
     @Query("SELECT bm.bungae FROM BungaeMember bm WHERE bm.user.id = :userId")
     Bungae findBungaeById(@Param("userId") int userId);
 
+    int countByBungae_BungaeId(Long bungaeId);
+
+    List<BungaeMember> findByUserAndBungae_BungaeStatus(UserVO user, BungaeStatus status);
+
+    Optional<BungaeMember> findByUser_IdAndBungae_BungaeStatusNot(int userId, BungaeStatus status);
+
+    Optional<BungaeMember> findByBungae_BungaeIdAndIsOrganizerTrue(Long bungaeId);
 
     // 해당 모임에 userId가 존재하는지 여부
     //boolean findBy( UserVO user);
@@ -31,5 +39,6 @@ public interface BungaeMemberRepository extends JpaRepository<BungaeMember, Long
     List<BungaeMember> findByBungae_BungaeId(Long bungaeId);
 
     boolean existsByBungaeAndUserAndIsOrganizerTrue(Bungae bungae, UserVO user);
+
     boolean existsByBungaeAndUserAndIsOrganizerFalse(Bungae bungae, UserVO user);
 }
