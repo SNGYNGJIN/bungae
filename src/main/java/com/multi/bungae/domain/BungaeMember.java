@@ -15,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@NamedEntityGraph(name = "BungaeMember.user", attributeNodes = @NamedAttributeNode("user"))
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "bungaeMemberId")
 public class BungaeMember {
 

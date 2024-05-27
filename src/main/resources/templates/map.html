@@ -15,27 +15,8 @@
 
 
 <body>
-<nav class="navbar navbar-expand-md bg-primary navbar-light border-bottom border-dark" style="	height: 80px;">
-    <div class="container"><a class="navbar-brand" href="#"><img src="/images/bungae.png" width="100" height="30"
-                                                                 class="d-inline-block align-top" alt=""></a>
-        <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse"
-                data-target="#navbar16">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbar16">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="main">홈</a></li>
-                <li class="nav-item"><a class="nav-link" href="map">지도</a></li>
-                <li class="nav-item"><a class="nav-link" href="bungae_create" th:href="@{bungae_create}">번개생성</a>
-                </li>
-                <li class="nav-item"><a class="nav-link" href="bungae_list">번개목록</a></li>
-                <li class="nav-item"><a class="nav-link" href="bungae_ing">참여목록</a></li>
-                <li class="nav-item"><a class="nav-link" href="profile" th:href="@{profile}">프로필</a></li>
-            </ul>
-            <a class="btn navbar-btn ml-md-2 btn-light text-dark" href="login">로그인<br></a>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{layout/header :: header}"></div>
+
 <div class="" style="">
     <div class="container">
         <div class="row">
@@ -58,25 +39,6 @@
                             class="btn btn-primary d-flex justify-content-center align-items-center" href="#"
                             style="	width: 30px;" id="myloc"><i class="fa fa-compass"></i></span></div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="py-3 border-top border-dark">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6" style=""><img src="/images/bungae.png" width="100" height="30"
-                                                class="d-inline-block align-top" alt=""></div>
-            <div class="col-md-6 text-center d-md-flex align-items-center">
-                <ul class="nav mx-md-auto d-flex justify-content-center">
-                    <li class="nav-item"><a class="nav-link" href="https://github.com/SNGYNGJIN/bungae.git"><img class="github_icon" src="/images/github_icon.png">GitHub</a></li>
-                    <li class="nav-item"><a class="nav-link" href="https://www.notion.so/About-Our-Project-e8a8dd04be0c43ac879fb59ab4beb4f0?pvs=4"><img class="notion_icon" src="/images/notion_icon.png">Notion</a></li>
-                </ul>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <p class="mt-2 mb-0" contenteditable="true">© 2024 CodeNinja. All rights reserved</p>
             </div>
         </div>
     </div>
@@ -106,5 +68,7 @@
         }
     });
 </script>
+<div th:replace="~{layout/footer :: footer}"></div>
+
 </body>
 </html>

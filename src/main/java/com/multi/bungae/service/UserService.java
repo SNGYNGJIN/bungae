@@ -2,15 +2,17 @@ package com.multi.bungae.service;
 
 import com.multi.bungae.config.BaseException;
 import com.multi.bungae.config.BaseExceptionStatus;
-import com.multi.bungae.domain.BlackList;
-import com.multi.bungae.domain.UserProfile;
-import com.multi.bungae.domain.UserReview;
-import com.multi.bungae.domain.UserVO;
+import com.multi.bungae.config.WebSocketChatHandler;
+import com.multi.bungae.domain.*;
 
+import com.multi.bungae.dto.OfflineDTO;
 import com.multi.bungae.dto.user.*;
 import com.multi.bungae.repository.*;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,6 +23,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import java.util.HashSet;
@@ -33,7 +38,10 @@ import static com.multi.bungae.utils.ValidationRegex.*;
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketChatHandler.class);
+
     private final UserRepository userRepo;
+    private final OfflineStateRepository offlineStateRepo;
     private final UserProfileRepository userProfileRepo;
     private final UserReviewRepository userReviewRepo;
     private final BlackListRepository blackListRepo;
@@ -168,6 +176,11 @@ public class UserService implements UserDetailsService {
         userProfile.setUserImage("http://localhost:8080/images/user.png"); // 초기 이미지 설정
         userProfileRepo.save(userProfile);
 
+        // 유저 상태 오프라인으로 설정
+        OfflineState offlineState = new OfflineState();
+        offlineState.setUser(user);
+        offlineState.setState(OfflineState.State.OFFLINE);
+        user.setState(offlineState);
 
         return new SignupRes(user.getId(), signupReq.getUserId(), signupReq.getNickname());
     }
@@ -232,10 +245,56 @@ public class UserService implements UserDetailsService {
         return dto;
     }
 
+    /*
+        사용자의 마지막 활동이 5분이 넘었으면 OFFLINE으로 변환
+     */
+    @Transactional
+    public void checkAndUpdateUserStatus() {
+        List<UserVO> users = userRepo.findAll();
+        LocalDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
-/*    public List<UserReview> getUserReview(String userId) {
-        return userReviewRepo.findByUser_UserId(userId);
-    }*/
+        OfflineDTO dto = new OfflineDTO();
+        dto.setState("down");
+
+        for (UserVO user : users) {
+            if (user.getState().getLastActive() != null && user.getState().getLastActive().isBefore(now.minusMinutes(5))) {
+                updateOfflineState(user.getUserId(), dto);
+            }
+        }
+    }
+
+    /*
+        사용자의 인터넷 상태를 감지하고 온오프 변환하기
+     */
+    @Transactional
+    public void updateOfflineState(String userId, OfflineDTO state) {
+        OfflineState.State newState;
+
+        if ("up".equals(state.getState())) {
+            newState = OfflineState.State.ONLINE;
+        } else {
+            newState = OfflineState.State.OFFLINE;
+        }
+
+        UserVO user = userRepo.findByUserId(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        OfflineState offlineState = user.getState();
+
+
+        if (offlineState.getState() != newState) {
+
+            offlineState.setLastActive(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
+            offlineState.setState(newState);
+            offlineStateRepo.save(offlineState);
+            System.out.println("Updated offline state for user " + userId + ": " + newState);
+            userRepo.save(user);
+        } else {
+            offlineState.setLastActive(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
+            offlineStateRepo.save(offlineState);
+            System.out.println("State is already " + newState);
+        }
+    }
 
 
     public List<BlackList> getUserBlacklist(String userId) {

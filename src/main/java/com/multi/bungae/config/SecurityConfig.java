@@ -17,7 +17,7 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer assetCustomizer() {
-        return (web -> web.ignoring().requestMatchers("/uploads/images/**","/templates/**","/static/**","/css/**", "/script/**", "image/**", "/fonts/**", "lib/**"));
+        return (web -> web.ignoring().requestMatchers("/subscribe/**","/uploads/images/**","/templates/**","/static/**","/css/**", "/script/**", "image/**", "/fonts/**", "lib/**"));
     }
 
     @Bean
@@ -30,6 +30,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {

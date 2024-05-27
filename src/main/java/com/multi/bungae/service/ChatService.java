@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
@@ -38,6 +40,7 @@ public class ChatService {
     private final ObjectMapper mapper;
     private Map<Long, ChatDTO> chatRooms = new ConcurrentHashMap<>();
     private static final Logger log = LoggerFactory.getLogger(WebSocketChatHandler.class);
+    @Autowired
     private final ChatMessageRepository chatMessageRepo;
     private final Map<String, Set<WebSocketSession>> chatSessions = new ConcurrentHashMap<>();
     @Autowired
@@ -46,7 +49,10 @@ public class ChatService {
     private BungaeMemberRepository bungaememberRepo;
     @Autowired
     private UserRepository userRepo;
+    @Autowired
     private final BungaeMemberServiceImpl bungaeMemberService;
+    @Autowired
+    private final SocketStateService socketStateService;
 
 
     /*
@@ -57,20 +63,21 @@ public class ChatService {
         Bungae bungae = bungaeRepo.findById(chatRoomId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
         String nickname = user.getNickname();
         String bungaeName = bungae.getBungaeName();
-        LocalDateTime sendTime = LocalDateTime.now();
-        System.out.println("Debug: sendTime = " + sendTime); // 시간 로그 확인
+        LocalDateTime sendTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
         ChatDTO chat = ChatDTO.builder()
                 .chatRoomId(chatRoomId)
                 .sender(userId)
                 .message("🔈[" + nickname + "]님이 <" + bungaeName + ">을(를) 개설하였습니다.")
                 .type(ChatMessage.MessageType.ENTER)
-                .sendTime(LocalDateTime.now())
+                .sendTime(sendTime)
                 .build();
 
         // DTO를 Entity로 변환하기
         ChatMessage chatMessage = convertToEntity(chat);
         chatMessageRepo.save(chatMessage);
+
+        socketStateService.createStateOpen(chatRoomId, userId);
 
         return chat;
     }
@@ -83,7 +90,7 @@ public class ChatService {
         Bungae bungae = bungaeRepo.findById(chatRoomId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
         String nickname = user.getNickname();
         String bungaeName = bungae.getBungaeName();
-        LocalDateTime sendTime = LocalDateTime.now();
+        LocalDateTime sendTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
         ChatDTO chat = ChatDTO.builder()
                 .chatRoomId(chatRoomId)
@@ -96,6 +103,8 @@ public class ChatService {
         ChatMessage chatMessage = convertToEntity(chat);
         chatMessageRepo.save(chatMessage);
 
+        socketStateService.createStateOpen(chatRoomId, userId);
+
         return chat;
     }
 
@@ -104,7 +113,7 @@ public class ChatService {
      */
     public ChatDTO ChatMessage(Long chatRoomId, String senderId, String message, ChatMessage.MessageType type) {
 
-        LocalDateTime sendTime = LocalDateTime.now();
+        LocalDateTime sendTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setChatRoomId(chatRoomId);
@@ -139,7 +148,6 @@ public class ChatService {
     }
 
     public List<ChatMessage> getMessagesByChatRoomId(Long chatRoomId) {
-
         return chatMessageRepo.findByChatRoomId(chatRoomId);
     }
 

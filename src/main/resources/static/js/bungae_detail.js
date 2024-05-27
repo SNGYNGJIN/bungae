@@ -1,5 +1,6 @@
 $(document).ready(function () {
-    $('#joinButton').click(function () {
+    $('#joinButton').click(function (event) {
+        event.preventDefault();
         let bungaeId = $(this).data('bungae-id');
         let user = sessionStorage.getItem("loggedInUserId");
 
@@ -9,9 +10,16 @@ $(document).ready(function () {
             success: function (response) {
                 if (response === "새로운 참여자") {
                     alert('참가 완료!');
+                    joinChat(bungaeId, user);
                 }
-                joinChat(bungaeId, user);
-                window.location.href = '/chat/' + bungaeId;
+                const enterEvent = new Event('enterChat');
+                window.dispatchEvent(enterEvent);
+                console.log("enterChat event dispatched");
+
+                // 이벤트가 완전히 처리된 후 페이지 이동
+                setTimeout(function() {
+                    window.location.href = '/chat/' + bungaeId;
+                }, 500); // 500ms 후 페이지 이동
             },
             error: function (xhr) {
                 let errorMessage;

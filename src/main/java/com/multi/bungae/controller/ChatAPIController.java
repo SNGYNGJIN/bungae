@@ -1,25 +1,29 @@
 package com.multi.bungae.controller;
 
-import com.multi.bungae.domain.Bungae;
-import com.multi.bungae.domain.BungaeMember;
-import com.multi.bungae.domain.ChatMessage;
-import com.multi.bungae.domain.UserVO;
+import com.multi.bungae.config.WebSocketChatHandler;
+import com.multi.bungae.domain.*;
 import com.multi.bungae.dto.ChatDTO;
+import com.multi.bungae.dto.SocketStateDTO;
 import com.multi.bungae.dto.user.forReview;
-import com.multi.bungae.repository.BungaeMemberRepository;
-import com.multi.bungae.repository.BungaeRepository;
-import com.multi.bungae.repository.UserRepository;
+import com.multi.bungae.repository.*;
+import com.multi.bungae.service.AlarmService;
 import com.multi.bungae.service.ChatService;
 import groovy.util.logging.Slf4j;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.net.AbstractEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,9 +34,13 @@ public class ChatAPIController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
     private final ChatService service;
+    private final AlarmService alarmService;
     private final UserRepository userRepo;
     private final BungaeRepository bungaeRepo;
     private final BungaeMemberRepository bungaeMemberRepo;
+    private final SocketStateRepository socketStateRepo;
+    private final MessageInOfflineRepository mioRepo;
+    private static final Logger logger = LoggerFactory.getLogger(WebSocketChatHandler.class);
 
     /*
         참가했을 경우 기존 채팅방 유저에게 입장 알림
@@ -77,4 +85,47 @@ public class ChatAPIController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(userNicknames);
     }
+
+    @GetMapping("/findDisconnect/{userId}")
+    public ResponseEntity<Boolean> findDisconnect(@PathVariable String userId) {
+        UserVO user = userRepo.findByUserId(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found by chatAPIController"));
+
+        Optional<BungaeMember> bungae = bungaeMemberRepo.findByUser(user);
+
+        if (bungae.isPresent()) {
+            Long bungaeId = bungae.get().getBungae().getBungaeId();
+            Optional<SocketState> sock = socketStateRepo.findByChatRoomIdAndUserIdAndState(
+                    bungaeId,
+                    user.getId(),
+                    AbstractEndpoint.Handler.SocketState.valueOf("CLOSED"));
+
+            if (sock.isPresent()) {
+                System.out.println("findDisconnect: User is disconnected, returning true .... ");
+                return ResponseEntity.ok(true);
+            } else {
+                System.out.println("findDisconnect: User is connected, returning false .... ");
+            }
+        } else {
+            System.out.println("findDisconnect: BungaeMember not found for user, returning false .... ");
+        }
+
+        return ResponseEntity.ok(false);
+    }
+
+    @GetMapping("/logoutChat/{userId}")
+    public ResponseEntity<List<MessageInOffline>> logoutChat(@PathVariable String userId) {
+        List<MessageInOffline> mioList = mioRepo.findByUserId(userId);
+
+        return ResponseEntity.ok(mioList);
+    }
+
+    @PostMapping("/checkLogoutMessage/{userId}")
+    public ResponseEntity<String> checkLogoutMessage(@PathVariable String userId) {
+        List<MessageInOffline> mioList = mioRepo.findByUserId(userId);
+        alarmService.readTrue(mioList); // 메소드 호출하여 read를 true로 설정
+        return ResponseEntity.ok("Messages marked as read");
+    }
+
+
 }

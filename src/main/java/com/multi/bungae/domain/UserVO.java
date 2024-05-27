@@ -50,9 +50,14 @@ public class UserVO extends BaseVO {
     @Column(name = "user_email", nullable = false)
     private String email;
 
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private OfflineState state;
+
     public enum Gender {
         FEMALE, MALE
     }
+
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference

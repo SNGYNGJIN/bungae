@@ -1,4 +1,5 @@
 var roomId = getRoomIdFromUrl(); // roomId를 추출
+var eventSource;
 
 function getRoomIdFromUrl() {
     const path = window.location.pathname;
@@ -10,24 +11,35 @@ $(function () {
     var socket = new SockJS('/ws');
     var stompClient = Stomp.over(socket);
     var currentUserId = sessionStorage.getItem('loggedInUserId'); // 현재 사용자 ID 가져오기
-    var organizer = document.getElementById('organizer');
-    var member = document.getElementById('member');
-
 
     memberList();
 
     stompClient.connect({}, function (frame) {
-        // 구독하기
+        stompClient.send(`/send/enter/${roomId}/${currentUserId}`, {}, JSON.stringify(currentUserId));
+
+        // 채팅방 구독하기
         stompClient.subscribe('/room/' + roomId, function (messageOutput) {
             var message = JSON.parse(messageOutput.body);
-            if (message) {showMessageOutput(message, currentUserId);}
+            if (message && !(message.type === 'enter' || message.type === 'leave')) {
+                showMessageOutput(message, currentUserId);
+            }
+        });
+
+        window.addEventListener("beforeunload", function(event) {
+            console.log("beforeunload event triggered");
+            handleUnload();
+            event.returnValue = ''; // This will show a confirmation dialog in some browsers
+        });
+
+        window.addEventListener("unload", function(event) {
+            console.log("unload event triggered");
+            handleUnload();
         });
 
         // 페이지 로드 시 채팅 기록 불러오기
         fetch(`/chat/api/messages/${roomId}`)
             .then(response => response.json())
             .then(data => {
-                // 서버로부터 받은 데이터가 배열인지 확인
                 if (Array.isArray(data)) {
                     data.forEach(message => {
                         showMessageOutput(message, currentUserId);
@@ -37,9 +49,31 @@ $(function () {
                 }
             })
             .catch(error => console.error('Error loading chat messages:', error));
-
-
     });
+
+    // 메시지 전송 버튼 클릭 시 기본 동작 방지
+    document.getElementById("sendButton").addEventListener("click", function(event) {
+        event.preventDefault();
+        sendMessage();
+    });
+
+    function handleUnload() {
+        stompClient.send(`/send/leave/${roomId}/${currentUserId}`, {}, JSON.stringify(currentUserId));
+        $.ajax({
+            url: "/alarm/unsubscribe/" + currentUserId,
+            method: 'DELETE',
+            async: false, // 비동기 방식을 사용하지 않도록 설정
+            success: function () {
+                console.log("사용자가 채팅방을 떠났습니다. SSE 구독이 끊어졌습니다.");
+            },
+            error: function (error) {
+                console.error("Error : ", error);
+            }
+        });
+        if (eventSource) {
+            eventSource.close();
+        }
+    }
 
     window.sendMessage = function () {
         var messageContent = document.getElementById("message").value;
@@ -56,7 +90,6 @@ $(function () {
             } catch (e) {
                 console.error("JSON stringify error:", e);
             }
-            //stompClient.send("/send/" + roomId, {}, JSON.stringify(chatMessage));
             document.getElementById("message").value = '';
         }
         return false;
@@ -79,25 +112,22 @@ $(function () {
         if (message.type !== "TALK") {
             messageElement.classList.add('announcement-message');
             messageElement.appendChild(textNode);
-            memberList()
+            memberList();
         } else {
-            // 메시지 송신자가 현재 사용자인 경우
             if (message.sender === currentUserId) {
                 messageElement.classList.add('my-message');
                 messageElement.appendChild(timeSpan);
-                messageElement.appendChild(textNode); // 텍스트만 추가
+                messageElement.appendChild(textNode);
             } else {
-                // 사용자 상세 모달 가져오기
                 var userDetailsModal = document.getElementById("userDetailsModal");
-                var ModalImage = document.getElementById("mprofile-image")
+                var ModalImage = document.getElementById("mprofile-image");
                 var ModalNickname = document.getElementById("muserNickname");
                 var ModalAgeGender = document.getElementById("mAge-Gender");
-                var ModalInfo = document.getElementById("muserInfo")
+                var ModalInfo = document.getElementById("muserInfo");
                 var ModalReview = document.getElementById("muserReviewScore");
 
                 var closeModal = document.getElementsByClassName("close")[0];
 
-                // 모달 닫기 이벤트
                 closeModal.onclick = function() {
                     userDetailsModal.style.display = "none";
                 }
@@ -108,7 +138,6 @@ $(function () {
                     }
                 }
 
-                // 다른 사람의 메시지일 때
                 messageElement.classList.add('their-message');
                 nicknameRequest(message.sender).then(userInfo => {
                     var imgElement = document.createElement('img');
@@ -142,16 +171,15 @@ $(function () {
                     messageElement.appendChild(imgElement);
                     messageElement.appendChild(messageInfo);
 
-                    messageList.scrollTop = messageList.scrollHeight; // 스크롤을 최하단으로
+                    messageList.scrollTop = messageList.scrollHeight;
                 }).catch(error => {
                     console.error("Error loading user info:", error);
                 });
             }
         }
         messageList.appendChild(messageElement);
-        messageList.scrollTop = messageList.scrollHeight; // 스크롤을 최하단으로
+        messageList.scrollTop = messageList.scrollHeight;
     }
-
 
     function nicknameRequest(userId) {
         return fetch(`/user/api/info/${userId}`, {
@@ -163,14 +191,14 @@ $(function () {
             .then(response => response.json())
             .then(data => {
                 if (data.code === 200) {
-                        return {
-                            nickname: data.result.nickname,
-                            userRating : data.result.profile.userRating,
-                            usergender : data.result.profile.gender,
-                            userAge : data.result.profile.userAge,
-                            userImage: data.result.profile.userImage,
-                            Info : data.result.profile.userInfo
-                        };
+                    return {
+                        nickname: data.result.nickname,
+                        userRating: data.result.profile.userRating,
+                        usergender: data.result.profile.gender,
+                        userAge: data.result.profile.userAge,
+                        userImage: data.result.profile.userImage,
+                        Info: data.result.profile.userInfo
+                    };
                 } else {
                     displayError(`사용자 정보 가져오기 실패: ${data.message}`);
                     throw new Error(`사용자 정보 가져오기 실패: ${data.message}`);
@@ -182,11 +210,10 @@ $(function () {
             });
     }
 
-
     function displayError(message) {
-        console.error(message); // 콘솔에 오류 로그 출력
+        console.error(message);
         const errorContainer = document.getElementById('errorMessage');
-        errorContainer.textContent = message; // 사용자 인터페이스에 오류 메시지 표시
+        errorContainer.textContent = message;
     }
 
     function formatTime(isoString) {
@@ -203,8 +230,7 @@ $(function () {
         })
             .then(response => response.json())
             .then(data => {
-                // 여기에서 데이터 구조를 확인하고 함수를 호출합니다.
-                updateMemberList(data);  // 직접 받은 데이터로 목록을 업데이트 (예: data.results, data 등 실제 구조에 맞춰야 함)
+                updateMemberList(data);
             })
             .catch(error => {
                 console.error(`사용자 정보 가져오기 중 오류 발생: ${error}`);
@@ -215,17 +241,16 @@ $(function () {
         const organizerElement = document.getElementById('organizer');
         const memberElement = document.getElementById('member');
 
-        // 초기화
         organizerElement.innerHTML = '';
         memberElement.innerHTML = '👥';
 
         members.forEach(member => {
             const userInfo = `
-        <div class="user-info">
-            <img src="${member.userImage}" alt="User Image" style="width: 30px; height: 30px;">
-            <p>${member.nickname}</p>
-        </div>
-        `;
+                <div class="user-info">
+                    <img src="${member.userImage}" alt="User Image" style="width: 30px; height: 30px;">
+                    <p>${member.nickname}</p>
+                </div>
+            `;
 
             if (member.organizer) {
                 organizerElement.innerHTML += " 👑 " + userInfo;
@@ -234,5 +259,4 @@ $(function () {
             }
         });
     }
-
 });
