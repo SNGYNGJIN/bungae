@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $('#joinButton').click(function () {
         let bungaeId = $(this).data('bungae-id');
-        var user = sessionStorage.getItem("loggedInUserId");
+        let user = sessionStorage.getItem("loggedInUserId");
 
         $.ajax({
             type: 'POST',
@@ -17,14 +17,29 @@ $(document).ready(function () {
                 let errorMessage;
                 if (xhr.status === 400) {
                     errorMessage = '잘못된 요청: ' + xhr.responseText;
+                } else if (xhr.status === 404) {
+                    errorMessage = '번개 모임 또는 유저를 찾을 수 없습니다: ' + xhr.responseText;
                 } else if (xhr.status === 409) {
-                    errorMessage = '모임의 중복 참가는 불가능합니다. ' + xhr.responseText;
+                    if (xhr.responseText.includes("참가 중인 모임이 있어 다른 모임에 참여할 수 없습니다.")) {
+                        errorMessage = '참가 중인 모임이 있어 다른 모임에 참여할 수 없습니다.';
+                    } else if (xhr.responseText.includes("연령대에 맞지 않는 번개 모임입니다.")) {
+                        errorMessage = '연령대에 맞지 않는 번개 모임입니다.';
+                    } else if (xhr.responseText.includes("수용 인원이 초과된 번개 모임입니다.")) {
+                        errorMessage = '수용 인원이 초과된 번개 모임입니다.';
+                    } else {
+                        errorMessage = '해당 번개 모임은 참여 불가능한 상태입니다.';
+                    }
                 } else {
                     errorMessage = '참가 실패. 다시 시도해주세요.';
                 }
                 alert(errorMessage);
             }
         });
+    });
+
+    $('#updateButton').click(function () {
+        let bungaeId = $(this).data('bungae-id');
+        window.location.href = '/bungae/bungae_update/' + bungaeId;
     });
 });
 

@@ -18,7 +18,7 @@ $(document).ready(function () {
                     <p class="text-left">일시: ${bungae.bungaeStartTime}</p>
                     <p class="text-left">장소: ${bungae.bungaeLocation.keyword}</p>
                     <p class="text-left">상세 주소: ${bungae.bungaeLocation.address}</p>
-                    <p class="text-left">최대인원: ${bungae.bungaeMaxMember}</p>
+                    <p class="text-left">현재 인원: ${bungae.currentMemberCount} / ${bungae.bungaeMaxMember}</p>
                   </div>
                 </div>
               </a>`;
