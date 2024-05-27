@@ -23,7 +23,7 @@ public interface BungaeService {
 
     List<BungaeDTO> findBungaeNearby(Point userLocation, double radius);
 
-    Bungae editBungae(Long bungaeId, BungaeDTO bungaeDTO, UserVO userVO);
+    Bungae updateBungae(Long bungaeId, BungaeDTO bungaeDTO);
 
     void cancelBungae(Long bungaeId, UserVO userVO);
 

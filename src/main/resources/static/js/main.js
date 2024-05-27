@@ -14,6 +14,7 @@ $(document).ready(function () {
                         </div>
                         <p class="mb-1">${bungae.bungaeDescription}</p>
                         <small class="${textClass}">${bungae.bungaeStartTime}</small>
+                        <small class="${textClass}">현재 인원: ${bungae.currentMemberCount} / ${bungae.bungaeMaxMember}</small>
                     </a>`;
             };
 
@@ -43,6 +44,7 @@ $(document).ready(function () {
                 </div>
                 <p class="mb-1">${bungae.bungaeDescription}</p>
                 <small class="${textClass}">${bungae.bungaeStartTime}</small>
+                <small class="${textClass}">현재 인원: ${bungae.currentMemberCount} / ${bungae.bungaeMaxMember}</small>
             </a>`;
             };
 

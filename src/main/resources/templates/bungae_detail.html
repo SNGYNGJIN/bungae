@@ -55,6 +55,14 @@
                         </thead>
                         <tbody>
                         <tr>
+                            <td>제목</td>
+                            <td th:text="${bungae.bungaeName}">(내용)</td>
+                        </tr>
+                        <tr>
+                            <td>주최자</td>
+                            <td th:text="${organizer.userId}">(내용)</td>
+                        </tr>
+                        <tr>
                             <td>일시</td>
                             <td th:text="${bungae.bungaeStartTime}">(내용)</td>
                         </tr>
@@ -70,8 +78,8 @@
                             <td th:text="${bungae.bungaeDescription}">(내용)</td>
                         </tr>
                         <tr>
-                            <td>최대 인원</td>
-                            <td th:text="${bungae.bungaeMaxMember}">(내용)</td>
+                            <td>현재 인원</td>
+                            <td th:text="${currentMemberCount} + ' / ' + ${bungae.bungaeMaxMember}">(내용)</td>
                         </tr>
                         <tr>
                             <td>연령대</td>
@@ -86,8 +94,16 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 text-center mt-3">
-                <button class="btn btn-primary mx-5" id="joinButton" th:data-bungae-id="${bungae.bungaeId}">참가</button>
-                <a class="btn btn-primary mx-5" href="#">수정</a></div>
+                <button class="btn btn-primary mx-5" id="joinButton" th:data-bungae-id="${bungae.bungaeId}"
+                        th:if="${!isOrganizer}">참가
+                </button>
+                <button class="btn btn-primary mx-5" id="updateButton" th:data-bungae-id="${bungae.bungaeId}"
+                        th:if="${isOrganizer}">수정
+                </button>
+                <button class="btn btn-danger mx-5" id="cancelButton" th:data-bungae-id="${bungae.bungaeId}"
+                        th:if="${isOrganizer}">삭제
+                </button>
+            </div>
         </div>
     </div>
 </div>
