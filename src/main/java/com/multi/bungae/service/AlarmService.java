@@ -20,6 +20,8 @@ import org.yaml.snakeyaml.emitter.Emitter;
 import javax.management.Notification;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -29,11 +31,6 @@ import static org.codehaus.groovy.runtime.DefaultGroovyMethods.collect;
 @Service
 public class AlarmService {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketChatHandler.class);
-    //private final Map<Integer, SseEmitter> emitters = new ConcurrentHashMap<>();
-    private static final long TIMEOUT = 60 * 1000;
-    private static final long RECONNECTION_TIMEOUT = 1000L;
-    private static final String CONNECTED = "CONNECTED";
-    private final static String SSE_NAME = "board";
 
     @Autowired
     private UserRepository userRepo;
@@ -135,7 +132,7 @@ public class AlarmService {
             mio.setUserId(userId);
             mio.setMessage(message);
             mio.setSenderNickname(senderNickname);
-            mio.setSendedTime(LocalDateTime.now());
+            mio.setSendedTime(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
             mio.setRead(false);
             messageRepo.save(mio);
         }

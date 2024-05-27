@@ -24,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
@@ -61,7 +63,7 @@ public class ChatService {
         Bungae bungae = bungaeRepo.findById(chatRoomId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
         String nickname = user.getNickname();
         String bungaeName = bungae.getBungaeName();
-        LocalDateTime sendTime = LocalDateTime.now();
+        LocalDateTime sendTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
         ChatDTO chat = ChatDTO.builder()
                 .chatRoomId(chatRoomId)
@@ -88,7 +90,7 @@ public class ChatService {
         Bungae bungae = bungaeRepo.findById(chatRoomId).orElseThrow(() -> new UsernameNotFoundException("ChatRoom not found"));
         String nickname = user.getNickname();
         String bungaeName = bungae.getBungaeName();
-        LocalDateTime sendTime = LocalDateTime.now();
+        LocalDateTime sendTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
         ChatDTO chat = ChatDTO.builder()
                 .chatRoomId(chatRoomId)
@@ -111,7 +113,7 @@ public class ChatService {
      */
     public ChatDTO ChatMessage(Long chatRoomId, String senderId, String message, ChatMessage.MessageType type) {
 
-        LocalDateTime sendTime = LocalDateTime.now();
+        LocalDateTime sendTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setChatRoomId(chatRoomId);

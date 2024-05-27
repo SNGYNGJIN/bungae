@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import java.util.HashSet;
@@ -249,7 +251,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void checkAndUpdateUserStatus() {
         List<UserVO> users = userRepo.findAll();
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
         OfflineDTO dto = new OfflineDTO();
         dto.setState("down");
@@ -282,13 +284,13 @@ public class UserService implements UserDetailsService {
 
         if (offlineState.getState() != newState) {
 
-            offlineState.setLastActive(LocalDateTime.now());
+            offlineState.setLastActive(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
             offlineState.setState(newState);
             offlineStateRepo.save(offlineState);
             System.out.println("Updated offline state for user " + userId + ": " + newState);
             userRepo.save(user);
         } else {
-            offlineState.setLastActive(LocalDateTime.now());
+            offlineState.setLastActive(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
             offlineStateRepo.save(offlineState);
             System.out.println("State is already " + newState);
         }

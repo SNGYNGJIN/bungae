@@ -17,6 +17,8 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -88,7 +90,7 @@ public class SocketStateService {
         유저가 채팅방을 나갔을 때, State를 CLOSED로 바꾸고 나간 시간 저장
      */
     public SocketStateDTO updateStateClosed(SocketState socketState) {
-        LocalDateTime closedTime = LocalDateTime.now();
+        LocalDateTime closedTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
         socketState.setState(AbstractEndpoint.Handler.SocketState.valueOf("CLOSED"));
         socketState.setClosedTime(closedTime);
 
