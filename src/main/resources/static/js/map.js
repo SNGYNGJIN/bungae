@@ -1,31 +1,3 @@
-$(document).ready(function () {
-    $.ajax({
-        url: '/bungae/getList',
-        type: 'GET',
-        dataType: 'json',
-        success: function (data) {
-            let createListItem = function (bungae) {
-                return `
-                    <a href="bungae/bungae_detail/${bungae.bungaeId}" class="list-group-item list-group-item-action flex-column align-items-start">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">${bungae.bungaeName}</h5>
-                            <small class="text-muted">시작: ${bungae.bungaeStartTime}</small>
-                        </div>
-                    </a>`;
-            };
-
-            let listContainer = $('#bungae-list');
-            data.forEach(function (bungae) {
-                listContainer.append(createListItem(bungae));
-            });
-        },
-        error: function (err) {
-            alert('Error: ' + err);
-        }
-    });
-});
-
-
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function (position) {
         var lat = position.coords.latitude, // 위도
@@ -53,8 +25,6 @@ if (navigator.geolocation) {
         // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
         var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
 
-
-
         var locPosition = new kakao.maps.LatLng(lat, lon)
         var marker = new kakao.maps.Marker({
             position: locPosition,
@@ -63,7 +33,64 @@ if (navigator.geolocation) {
         marker.setMap(map);
 
 
+
+        // 지도의 이동이 끝날 때마다 호출되는 이벤트
+        kakao.maps.event.addListener(map, 'idle', function() {
+            updateBungaeList();
+        });
+
+        function updateBungaeList() {
+            $.ajax({
+                url: '/bungae/getList', // 번개 모임 정보를 가져오는 서버의 URL
+                type: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    var listContainer = $('#bungae-list');
+                    listContainer.empty(); // 리스트 초기화
+
+                    var geocoder = new kakao.maps.services.Geocoder();
+
+                    data.forEach(function(bungae) {
+                        geocoder.addressSearch(bungae.bungaeLocation.address, function(result, status) {
+                            if (status === kakao.maps.services.Status.OK) {
+                                var lat = parseFloat(result[0].y); // 위도
+                                var lng = parseFloat(result[0].x); // 경도
+
+                                if (isInMapBounds(lat, lng)) {
+                                    listContainer.append(createListItem(bungae));
+                                }
+                            }
+                        });
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error occurred: " + error);
+                }
+            });
+        }
+
+        function isInMapBounds(lat, lng) {
+            var bounds = map.getBounds();
+            var sw = bounds.getSouthWest(); // 남서쪽 경계
+            var ne = bounds.getNorthEast(); // 북동쪽 경계
+            return lat >= sw.getLat() && lat <= ne.getLat() && lng >= sw.getLng() && lng <= ne.getLng();
+        }
+
+        function createListItem(bungae) {
+            // 번개 모임 데이터를 기반으로 리스트 아이템 HTML 생성
+            return `
+               <a href="bungae/bungae_detail/${bungae.bungaeId}" class="list-group-item list-group-item-action flex-column align-items-start">
+                   <div class="d-flex w-100 justify-content-between">
+                       <h5 class="mb-1">${bungae.bungaeName}</h5>
+                       <small class="text-muted">시작: ${bungae.bungaeStartTime}</small>
+                   </div>
+               </a>`;
+        }
+
+
         loadData();
+
+
     });
 } else {
     // Geolocation 사용 불가능할 때 처리
