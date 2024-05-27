@@ -5,6 +5,30 @@ $(document).ready(function () {
         dataType: 'json',
         success: function (data) {
             let createListItem = function (bungae) {
+                let bungaeTypeIcon = '';
+                switch (bungae.bungaeType) {
+                    case 'DRINK':
+                        bungaeTypeIcon = 'fa fa-beer';
+                        break;
+                    case 'SOCCER':
+                        bungaeTypeIcon = 'fa fa-futbol';
+                        break;
+                    case 'BASKETBALL':
+                        bungaeTypeIcon = 'fa fa-basketball-ball';
+                        break;
+                    case 'CYCLE':
+                        bungaeTypeIcon = 'fa fa-bicycle';
+                        break;
+                    case 'RUNNING':
+                        bungaeTypeIcon = 'fa fa-running';
+                        break;
+                    case 'STUDY':
+                        bungaeTypeIcon = 'fa fa-book';
+                        break;
+                    default:
+                        bungaeTypeIcon = '';
+                        break;
+                }
                 return `
               <a href="bungae/bungae_detail/${bungae.bungaeId}" class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="row">
@@ -13,7 +37,7 @@ $(document).ready(function () {
                   </div>
                   <div class="col-md-8">
                     <div class="d-flex w-100 justify-content-between">
-                      <h5 class="my-2">${bungae.bungaeName}</h5>
+                      <h5 class="my-2">${bungae.bungaeName} <i class="${bungaeTypeIcon}"></i></h5>
                     </div>
                     <p class="text-left">일시: ${bungae.bungaeStartTime}</p>
                     <p class="text-left">장소: ${bungae.bungaeLocation.keyword}</p>

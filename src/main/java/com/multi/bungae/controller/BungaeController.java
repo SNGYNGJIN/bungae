@@ -2,6 +2,7 @@ package com.multi.bungae.controller;
 
 import com.multi.bungae.domain.Bungae;
 import com.multi.bungae.domain.BungaeMember;
+import com.multi.bungae.domain.BungaeType;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.dto.BungaeDTO;
 import com.multi.bungae.dto.LocationDTO;
@@ -66,9 +67,6 @@ public class BungaeController {
 
     }
 
-    /**
-     * 번개 목록을 불러와서 json으로 바꿔서 반환
-     */
     @RequestMapping(value = "/getList", produces = "application/json; charset=UTF-8")
     @ResponseBody
     public List<BungaeDTO> getList() {
@@ -82,9 +80,6 @@ public class BungaeController {
         return "bungae_update";
     }
 
-    /**
-     * bungaeList.html 호출
-     */
     @GetMapping("/bungae_list")
     public String bungaeList() {
         return "bungae_list";
@@ -93,11 +88,12 @@ public class BungaeController {
     @GetMapping("/bungae_detail/{bungaeId}")
     public String bungaeDetail(@PathVariable Long bungaeId, HttpSession session, Model model) {
         Bungae bungae = bungaeService.getBungaeById(bungaeId);
+        String bungaeTypeKorean = convertBungaeTypeToKorean(bungae.getBungaeType());
         int currentMemberCount = bungaeMemberService.countByBungae_BungaeId(bungae.getBungaeId());
 
         String userId = (String) session.getAttribute("loggedInUserId");
         if (userId == null) {
-            return "redirect:login";
+            return "redirect:/login";
         }
 
         Optional<BungaeMember> organizerOptional = bungaeMemberService.getOrganizerByBungaeId(bungaeId);
@@ -110,6 +106,7 @@ public class BungaeController {
 
         model.addAttribute("bungae", bungae);
         model.addAttribute("currentMemberCount", currentMemberCount);
+        model.addAttribute("bungaeTypeKorean", bungaeTypeKorean);
 
         return "bungae_detail";
     }
@@ -151,9 +148,34 @@ public class BungaeController {
     }
 
     @DeleteMapping("/{bungaeId}/cancel")
-    public String cancelBungae(@PathVariable Long bungaeId, @RequestParam String userId) {
+    public ResponseEntity<Map<String, String>> cancelBungae(@PathVariable Long bungaeId, HttpSession session) {
+        String userId = (String) session.getAttribute("loggedInUserId");
         UserVO user = userService.getUserByUserId(userId);
         bungaeService.cancelBungae(bungaeId, user);
-        return "redirect:/bungae/bungaeList";
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Cancellation successful");
+        response.put("redirectUrl", "/bungae_list");
+
+        return ResponseEntity.ok(response);
+    }
+
+    private String convertBungaeTypeToKorean(BungaeType bungaeType) {
+        switch (bungaeType) {
+            case DRINK:
+                return "술자리";
+            case SOCCER:
+                return "축구";
+            case BASKETBALL:
+                return "농구";
+            case CYCLE:
+                return "자전거";
+            case RUNNING:
+                return "러닝";
+            case STUDY:
+                return "공부";
+            default:
+                return "알 수 없음";
+        }
     }
 }

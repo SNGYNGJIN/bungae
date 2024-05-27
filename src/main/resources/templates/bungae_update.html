@@ -13,26 +13,8 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-md bg-primary navbar-light border-bottom border-dark" style="    height: 80px;">
-    <div class="container"><a class="navbar-brand" href="#"><img src="/images/bungae.png" width="100" height="30"
-                                                                 class="d-inline-block align-top" alt=""></a>
-        <button class="navbar-toggler navbar-toggler-right border-0" type="button" data-toggle="collapse"
-                data-target="#navbar16">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbar16">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="main">홈</a></li>
-                <li class="nav-item"><a class="nav-link" href="map">지도</a></li>
-                <li class="nav-item"><a class="nav-link" href="bungae_create">번개생성</a></li>
-                <li class="nav-item"><a class="nav-link" href="bungae_list">번개목록</a></li>
-                <li class="nav-item"><a class="nav-link" href="bungae_ing">참여목록</a></li>
-                <li class="nav-item"><a class="nav-link" href="profile">프로필</a></li>
-            </ul>
-            <a class="btn navbar-btn ml-md-2 btn-light text-dark" href="login">로그인<br></a>
-        </div>
-    </div>
-</nav>
+<div th:replace="~{layout/header :: header}"></div>
+
 <div class="py-5 text-center">
     <div class="container">
         <div class="row">
@@ -49,7 +31,7 @@
                         <div class="form-group">
                             <label for="bungaeType">번개 주제</label>
                             <select name="bungaeType" id="bungaeType" required class="form-control">
-                                <option disabled selected>주제를 선택하세요</option>
+                                <option disabled>주제를 선택하세요</option>
                                 <option value="DRINK">술자리</option>
                                 <option value="SOCCER">축구</option>
                                 <option value="CYCLE">자전거</option>
@@ -73,7 +55,8 @@
                         <label>번개 위치</label>
                         <input type="text" id="keyword" name="keyword" placeholder="키워드를 입력하세요" required
                                class="form-control" th:value="${bungae.bungaeLocation.keyword}">
-                        <input type="hidden" id="address" name="address" th:value="${bungae.bungaeLocation.address}">>
+                        <input type="hidden" id="address" name="address" required
+                               th:value="${bungae.bungaeLocation.address}">
                         <ul id="placesList"></ul>
                     </div>
                     <div class="form-group age">
@@ -99,28 +82,7 @@
         </div>
     </div>
 </div>
-<div class="py-3 border-top border-dark">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6" style=""><img src="/images/bungae.png" width="100" height="30"
-                                                class="d-inline-block align-top" alt=""></div>
-            <div class="col-md-6 text-center d-md-flex align-items-center">
-                <ul class="nav mx-md-auto d-flex justify-content-center">
-                    <li class="nav-item"><a class="nav-link active" href="#">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Features</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">Pricing</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
-                </ul>
 
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12 text-center">
-                <p class="mt-2 mb-0" contenteditable="true">© 2024 CodeNinja. All rights reserved</p>
-            </div>
-        </div>
-    </div>
-</div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
@@ -130,106 +92,107 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
+<div th:replace="~{layout/footer :: footer}"></div>
 <script>
-    $('#keyword').change(function () {
-        searchPlaces();
+    document.addEventListener('DOMContentLoaded', function () {
+        let bungaeType = "[[${bungae.bungaeType}]]";
+        let selectElement = document.getElementById('bungaeType');
+
+        for (let i = 0; i < selectElement.options.length; i++) {
+            if (selectElement.options[i].value === bungaeType) {
+                selectElement.options[i].selected = true;
+                break;
+            }
+        }
+
+        $('#keyword').change(function () {
+            searchPlaces();
+        });
+
+        // 장소 검색 객체 생성
+        var ps = new kakao.maps.services.Places();
+
+        // 검색 결과 목록 표출 함수
+        var listEl = document.getElementById('placesList');
+
+        // 키워드 검색을 요청하는 함수
+        function searchPlaces() {
+            var keyword = document.getElementById('keyword').value;
+
+            if (!keyword.replace(/^\s+|\s+$/g, '')) {
+                removeAllChildNods(listEl);
+                return false;
+            }
+
+            ps.keywordSearch(keyword, placesSearchCB);
+        }
+
+        // 장소검색이 완료됐을 때 호출되는 콜백함수
+        function placesSearchCB(data, status, pagination) {
+            if (status === kakao.maps.services.Status.OK) {
+                displayPlaces(data);
+            } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+                removeAllChildNods(listEl);
+                alert('검색 결과가 존재하지 않습니다.');
+                return;
+            } else if (status === kakao.maps.services.Status.ERROR) {
+                alert('검색 결과 중 오류가 발생했습니다.');
+                return;
+            }
+        }
+
+        function displayPlaces(places) {
+            var fragment = document.createDocumentFragment();
+
+            removeAllChildNods(listEl);
+
+            for (var i = 0; i < places.length; i++) {
+                var itemEl = getListItem(i, places[i]);
+
+                // 장소를 선택했을 때 선택한 장소를 입력칸에 추가
+                (function (name, address) {
+                    itemEl.onclick = function () {
+                        var key = document.getElementById('keyword');
+                        var add = document.getElementById('address');
+                        key.value = name;
+                        add.value = address;
+                        console.log("Address set to: " + address); // 디버깅 로그 추가
+                        removeAllChildNods(listEl);
+                    }
+                })(places[i].place_name, places[i].road_address_name);
+
+                fragment.appendChild(itemEl);
+            }
+
+            listEl.appendChild(fragment);
+        }
+
+        // 검색결과 항목을 Element로 반환하는 함수
+        function getListItem(index, places) {
+            var el = document.createElement('li'),
+                itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
+                    '<div class="info">' +
+                    '   <span class="info-title"><b>' + places.place_name + '</b></span>';
+
+            if (places.road_address_name) {
+                itemStr += '    <br><span class="info-address"><small>' + places.road_address_name + '</small></span>'
+            } else {
+                itemStr += '    <br><span class="info-address"><small>' + places.address_name + '</small></span>';
+            }
+
+            el.innerHTML = itemStr;
+            el.className = 'item';
+
+            return el;
+        }
+
+        // 검색결과 목록의 자식 Element를 제거하는 함수
+        function removeAllChildNods(el) {
+            while (el.hasChildNodes()) {
+                el.removeChild(el.lastChild);
+            }
+        }
     });
-
-    //장소 검색 객체 생성
-    var ps = new kakao.maps.services.Places();
-
-    //검색 결과 목록 표출 함수
-    var listEl = document.getElementById('placesList');
-
-    //키워드 검색을 요청하는 함수
-    function searchPlaces() {
-
-        var keyword = document.getElementById('keyword').value;
-
-        if (!keyword.replace(/^\s+|\s+$/g, '')) {
-            removeAllChildNods(listEl);
-            return false;
-        }
-
-        ps.keywordSearch(keyword, placesSearchCB);
-    }
-
-    //장소검색이 완료됐을 때 호출되는 콜백함수
-    function placesSearchCB(data, status, pagination) {
-
-        if (status === kakao.maps.services.Status.OK) {
-
-            displayPlaces(data);
-
-        } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
-            removeAllChildNods(listEl);
-            alert('검색 결과가 존재하지 않습니다.');
-            return;
-
-        } else if (status === kakao.maps.services.Status.ERROR) {
-
-            alert('검색 결과 중 오류가 발생했습니다.');
-            return;
-
-        }
-    }
-
-    //
-    function displayPlaces(places) {
-
-        var fragment = document.createDocumentFragment();
-
-        removeAllChildNods(listEl);
-
-        for (var i = 0; i < places.length; i++) {
-
-            var itemEl = getListItem(i, places[i]);
-
-            //장소를 선택했을 때 선택한 장소를 입력칸에 추가
-            (function (name, address) {
-                itemEl.onclick = function () {
-                    var key = document.getElementById('keyword');
-                    var add = document.getElementById('address');
-                    key.value = name;
-                    add.value = address;
-
-                    removeAllChildNods(listEl);
-
-                }
-            })(places[i].place_name, places[i].road_address_name);
-
-            fragment.appendChild(itemEl);
-        }
-
-        listEl.appendChild(fragment);
-    }
-
-    //검색결과 항목을 Element로 반환하는 함수
-    function getListItem(index, places) {
-
-        var el = document.createElement('li'),
-            itemStr = '<span class="markerbg marker_' + (index + 1) + '"></span>' +
-                '<div class="info">' +
-                '   <span class = "info-title"><b>' + places.place_name + '</b></span>';
-
-        if (places.road_address_name) {
-            itemStr += '    <br><span class = "info-address"><small>' + places.road_address_name + '</small></span>'
-        } else {
-            itemStr += '    <br><span class = "info-address"><small>' + places.address_name + '</small></span>';
-        }
-
-        el.innerHTML = itemStr;
-        el.className = 'item';
-
-        return el;
-    }
-
-    //검색결과 목록의 자식 Element를 제거하는 함수
-    function removeAllChildNods(el) {
-        while (el.hasChildNodes()) {
-            el.removeChild(el.lastChild);
-        }
-    }
 </script>
 
 </body>

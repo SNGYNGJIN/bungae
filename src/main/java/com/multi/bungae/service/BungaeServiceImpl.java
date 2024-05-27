@@ -152,13 +152,15 @@ public class BungaeServiceImpl implements BungaeService {
     }
 
     private Bungae updateBungaeData(Bungae bungae, BungaeDTO bungaeDTO) {
+        LocalDateTime createTime = LocalDateTime.now();
+
         bungae.setBungaeType(bungaeDTO.getBungaeType());
         bungae.setBungaeName(bungaeDTO.getBungaeName());
         bungae.setBungaeDescription(bungaeDTO.getBungaeDescription());
         bungae.setBungaeLocation(LocationDTO.toEntity(bungaeDTO.getBungaeLocation()));
         bungae.setBungaeImagePath(bungae.getBungaeImagePath());
         bungae.setBungaeMaxMember(bungaeDTO.getBungaeMaxMember());
-        bungae.setBungaeCreateTime(bungaeDTO.getBungaeCreateTime());
+        bungae.setBungaeCreateTime(createTime);
         bungae.setBungaeStartTime(bungaeDTO.getBungaeStartTime());
         bungae.setBungaeMinAge(bungaeDTO.getBungaeMinAge());
         bungae.setBungaeMaxAge(bungaeDTO.getBungaeMaxAge());

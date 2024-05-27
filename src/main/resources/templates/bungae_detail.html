@@ -41,6 +41,10 @@
                             <td th:text="${bungae.bungaeName}">(내용)</td>
                         </tr>
                         <tr>
+                            <td>주제</td>
+                            <td th:text="${bungaeTypeKorean}">(내용)</td>
+                        </tr>
+                        <tr>
                             <td>주최자</td>
                             <td th:text="${organizer.userId}">(내용)</td>
                         </tr>
@@ -83,7 +87,7 @@
                         th:if="${isOrganizer}">수정
                 </button>
                 <button class="btn btn-danger mx-5" id="cancelButton" th:data-bungae-id="${bungae.bungaeId}"
-                        th:if="${isOrganizer}">삭제
+                        th:if="${isOrganizer}">취소
                 </button>
             </div>
         </div>
