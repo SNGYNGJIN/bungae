@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,6 +30,7 @@ public class BungaeMemberServiceImpl implements BungaeMemberService {
     public BungaeMember joinBungae(Long bungaeId, String userId) {
         Optional<Bungae> bungaeOptional = bungaeRepository.findById(bungaeId);
         Optional<UserVO> userOptional = userRepository.findByUserId(userId);
+        LocalDateTime now = LocalDateTime.now();
 
         if (!bungaeOptional.isPresent()) {
             throw new IllegalArgumentException("해당 id를 가진 번개모임이 없음: " + bungaeId);
@@ -52,6 +54,10 @@ public class BungaeMemberServiceImpl implements BungaeMemberService {
         // 인원수 체크
         if (bungae.getBungaeMaxMember() <= bungaeMemberRepository.countByBungae_BungaeId(bungaeId)) {
             throw new IllegalStateException("수용 인원 초과된 번개 모임입니다.");
+        }
+        // 시작시간 체크
+        if (bungae.getBungaeStartTime().isBefore(now)) {
+            throw new IllegalStateException("시작 시간이 지난 번개 모임입니다.");
         }
 
         BungaeMember bungaeMember = new BungaeMember();

@@ -34,8 +34,10 @@ $(document).ready(function () {
                         errorMessage = '연령대에 맞지 않는 번개 모임입니다.';
                     } else if (xhr.responseText.includes("수용 인원이 초과된 번개 모임입니다.")) {
                         errorMessage = '수용 인원이 초과된 번개 모임입니다.';
-                    } else {
+                    } else if (xhr.responseText.includes("해당 번개 모임은 참여 불가능한 상태입니다.")) {
                         errorMessage = '해당 번개 모임은 참여 불가능한 상태입니다.';
+                    } else {
+                        errorMessage = '시작 시간이 지난 번개 모임입니다.';
                     }
                 } else {
                     errorMessage = '참가 실패. 다시 시도해주세요.';
