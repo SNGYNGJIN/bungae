@@ -29,14 +29,17 @@
         <div class="row d-flex justify-content-center">
             <div class="col-md-8">
                 <div id="activeBungaeList" class="list-group mb-4">
-                    <div th:if="${bungaeList == null or #lists.isEmpty(bungaeList) or bungaeList.?[bungaeStatus != T(com.multi.bungae.domain.BungaeStatus).ENDED].size() == 0}">
+                    <div th:if="${bungaeList == null or #lists.isEmpty(bungaeList) or (bungaeList.?[!bungaeStatus.equals(T(com.multi.bungae.domain.BungaeStatus).ENDED)].size() == 0)}">
                         <p class="text-center"> 🙅 참여중인 번개가 없어요</p>
                     </div>
                     <div th:each="bungae : ${bungaeList}">
-                        <a th:if="${bungae.bungaeStatus != T(com.multi.bungae.domain.BungaeStatus).ENDED}" th:href="@{|/chat/${bungae.bungaeId}|}" class="mb-4 list-group-item list-group-item-action flex-column align-items-start">
+                        <a th:if="${!bungae.bungaeStatus.equals(T(com.multi.bungae.domain.BungaeStatus).ENDED)}"
+                           th:href="@{|/chat/${bungae.bungaeId}|}"
+                           class="mb-4 list-group-item list-group-item-action flex-column align-items-start">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <img class="d-block img-fluid" src="https://static.pingendo.com/img-placeholder-1.svg">
+                                    <img class="d-block img-fluid"
+                                         src="https://static.pingendo.com/img-placeholder-1.svg">
                                 </div>
                                 <div class="col-md-8">
                                     <div class="d-flex w-100 justify-content-between">
@@ -45,7 +48,9 @@
                                     <p class="text-left" th:text="${bungae.bungaeStartTime}">일시</p>
                                     <p class="text-left" th:text="${bungae.bungaeLocation.keyword}">장소</p>
                                     <p class="text-left" th:text="${bungae.bungaeLocation.address}">상세장소</p>
-                                    <p class="text-left" th:text="'인원: ' + ${bungaeMemberCounts[bungae.bungaeId]} + ' / ' + ${bungae.bungaeMaxMember}">인원</p>
+                                    <p class="text-left"
+                                       th:text="'인원: ' + ${bungaeMemberCounts[bungae.bungaeId]} + ' / ' + ${bungae.bungaeMaxMember}">
+                                        인원</p>
                                 </div>
                             </div>
                         </a>
@@ -71,14 +76,16 @@
         <div class="row d-flex justify-content-center">
             <div class="col-md-8">
                 <div id="endedBungaeList" class="list-group">
-                    <div th:if="${bungaeList == null or #lists.isEmpty(bungaeList) or bungaeList.?[bungaeStatus == T(com.multi.bungae.domain.BungaeStatus).ENDED].size() == 0}">
+                    <div th:if="${bungaeList == null or #lists.isEmpty(bungaeList) or (bungaeList.?[bungaeStatus.equals(T(com.multi.bungae.domain.BungaeStatus).ENDED)].size() == 0)}">
                         <p class="text-center"> 🙅 종료된 번개가 없어요</p>
                     </div>
-                    <div class = "pb-4 " th:each="bungae : ${bungaeList}">
-                        <a th:if="${bungae.bungaeStatus == T(com.multi.bungae.domain.BungaeStatus).ENDED}" class="list-group-item list-group-item-action flex-column align-items-start">
+                    <div class="pb-4 " th:each="bungae : ${bungaeList}">
+                        <a th:if="${bungae.bungaeStatus.equals(T(com.multi.bungae.domain.BungaeStatus).ENDED)}"
+                           class="list-group-item list-group-item-action flex-column align-items-start">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <img class="d-block img-fluid" src="https://static.pingendo.com/img-placeholder-1.svg">
+                                    <img class="d-block img-fluid"
+                                         src="https://static.pingendo.com/img-placeholder-1.svg">
                                 </div>
                                 <div class="col-md-8">
                                     <div class="d-flex w-100 justify-content-between">
@@ -87,12 +94,16 @@
                                     <p class="text-left" th:text="${bungae.bungaeStartTime}">일시</p>
                                     <p class="text-left" th:text="${bungae.bungaeLocation.keyword}">장소</p>
                                     <p class="text-left" th:text="${bungae.bungaeLocation.address}">상세장소</p>
-                                    <p class="text-left" th:text="'인원: ' + ${bungaeMemberCounts[bungae.bungaeId]} + ' / ' + ${bungae.bungaeMaxMember}">인원</p>
+                                    <p class="text-left"
+                                       th:text="'인원: ' + ${bungaeMemberCounts[bungae.bungaeId]} + ' / ' + ${bungae.bungaeMaxMember}">
+                                        인원</p>
                                 </div>
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-md-12 text-center mt-3">
-                                            <button type="button" th:attr="data-bungae-id=${bungae.bungaeId}" class="btn btn-primary mx-5 go_review">후기 남기기</button>
+                                            <button type="button" th:attr="data-bungae-id=${bungae.bungaeId}"
+                                                    class="btn btn-primary mx-5 go_review">후기 남기기
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -163,7 +174,8 @@
                                 <span class="star-icon"></span>
                             </label>
                             <label class="rating__label rating__label--half" for="star3half">
-                                <input type="radio" id="star3half" class="rating__input" name="rating" value="3.5" checked>
+                                <input type="radio" id="star3half" class="rating__input" name="rating" value="3.5"
+                                       checked>
                                 <span class="star-icon"></span>
                             </label>
                             <label class="rating__label rating__label--full" for="star4">
@@ -182,7 +194,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="reviewText" name="text" >
+                    <input type="text" class="form-control" id="reviewText" name="text">
                 </div>
             </div>
             <div class="modal-footer">
