@@ -75,10 +75,6 @@ public class BungaeMemberController {
         Optional<UserVO> user = userRepo.findByUserId(userId);
         List<BungaeMember> bungaeMembers = bungaeMemberService.findByUserId(user.get().getId());
 
-        if (bungaeMembers.isEmpty()) {
-            return "redirect:map";
-        }
-
         List<Bungae> bungaeList = new ArrayList<>();
         Map<Long, Integer> bungaeMemberCounts = new HashMap<>();
 
