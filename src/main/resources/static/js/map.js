@@ -113,9 +113,19 @@ if (navigator.geolocation) {
                <a href="bungae/bungae_detail/${bungae.bungaeId}" class="list-group-item list-group-item-action flex-column align-items-start">
                    <div class="d-flex w-100 justify-content-between">
                        <h5 class="mb-1">${bungae.bungaeName} <i class="${bungaeTypeIcon}"></i></h5>
-                       <small class="text-muted">시작: ${bungae.bungaeStartTime}</small>
+                       <small class="text-muted">${formatDateTime(bungae.bungaeStartTime)}</small>
                    </div>
                </a>`;
+               function formatDateTime(dateTimeString) {
+                   var date = new Date(dateTimeString);
+
+                   var month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작하므로 1을 더함
+                   var day = date.getDate().toString().padStart(2, '0');
+                   var hours = date.getHours().toString().padStart(2, '0');
+                   var minutes = date.getMinutes().toString().padStart(2, '0');
+
+                   return `${month}월${day}일 ${hours}:${minutes}`;
+               }
         }
 
 
@@ -154,25 +164,28 @@ function loadData() {
                         // 오버레이 컨텐츠에 고유한 ID를 부여합니다
                         var overlayId = 'overlay_' + index;
 
-                        var content = '<div class="wrap">' +
-                            '    <div class="info">' +
-                            '        <div class="title">' + bungae.bungaeName +
-                            '            <div class="close" onclick="closeOverlay(\'' + overlayId + '\')" title="닫기"></div>' +
-                            '        </div>' +
-                            '        <div class="body">' +
-                            '            <div class="img">' +
-                            '                <img src="" width="83" height="80">' +
-                            '            </div>' +
-                            '            <div class="desc">' +
-                            '                <div class="ellipsis">장소: ' + bungae.bungaeLocation.keyword + '</div>' +
-                            '                <div class="time ellipsis">일시: ' + bungae.bungaeStartTime + '</div>' +
-                            '                <div class="age ellipsis">연령대: ' + bungae.bungaeMinAge + '세~' + bungae.bungaeMaxAge + '세</div>' +
-                            '                <div class="member ellipsis">최대인원: ' + bungae.bungaeMaxMember + '명</div>' +
-                            '                <div><a href="bungae/bungae_detail/' + bungae.bungaeId + '" class="link">상세보기</a></div>' +
-                            '            </div>' +
-                            '        </div>' +
-                            '    </div>' +
-                            '</div>';
+                        let imageSrc = bungae.bungaeImagePath ? `/uploads/${bungae.bungaeImagePath}` : 'https://static.pingendo.com/img-placeholder-1.svg';
+
+                        var content = `
+                            <div class="wrap">
+                                <div class="info">
+                                    <div class="title">${bungae.bungaeName}
+                                        <div class="close" onclick="closeOverlay('${overlayId}')" title="닫기"></div>
+                                    </div>
+                                    <div class="body">
+                                        <div class="img">
+                                            <img src="${imageSrc}" width="83" height="80">
+                                        </div>
+                                        <div class="desc">
+                                            <div class="ellipsis">장소: ${bungae.bungaeLocation.keyword}</div>
+                                            <div class="time ellipsis">일시: ${bungae.bungaeStartTime}</div>
+                                            <div class="age ellipsis">연령대: ${bungae.bungaeMinAge}세~${bungae.bungaeMaxAge}세</div>
+                                            <div class="member ellipsis">최대인원: ${bungae.bungaeMaxMember}명</div>
+                                            <div><a href="bungae/bungae_detail/${bungae.bungaeId}" class="link">상세보기</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
 
                         var overlay = new kakao.maps.CustomOverlay({
                             content: content,

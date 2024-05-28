@@ -158,7 +158,7 @@ public class BungaeServiceImpl implements BungaeService {
         bungae.setBungaeName(bungaeDTO.getBungaeName());
         bungae.setBungaeDescription(bungaeDTO.getBungaeDescription());
         bungae.setBungaeLocation(LocationDTO.toEntity(bungaeDTO.getBungaeLocation()));
-        bungae.setBungaeImagePath(bungae.getBungaeImagePath());
+        bungae.setBungaeImagePath(bungaeDTO.getBungaeImagePath());
         bungae.setBungaeMaxMember(bungaeDTO.getBungaeMaxMember());
         bungae.setBungaeCreateTime(createTime);
         bungae.setBungaeStartTime(bungaeDTO.getBungaeStartTime());

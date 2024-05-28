@@ -10,6 +10,7 @@ import com.multi.bungae.repository.BungaeMemberRepository;
 import com.multi.bungae.repository.UserRepository;
 import com.multi.bungae.service.BungaeMemberService;
 import com.multi.bungae.service.BungaeService;
+import com.multi.bungae.service.FileStorageService;
 import com.multi.bungae.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +42,9 @@ public class BungaeController {
     private final BungaeService bungaeService;
     private final UserService userService;
     private final BungaeMemberService bungaeMemberService;
+
+    private final FileStorageService fileStorageService;
+
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -58,6 +63,18 @@ public class BungaeController {
         LocationDTO locationDTO = new LocationDTO(keyword, address);
         bungaeDTO.setBungaeLocation(locationDTO);
         UserVO user = userService.getUserByUserId(userId); // userId로 사용자 정보 조회
+
+        String fileName = null;
+        if (bungaeDTO.getBungaeImage() != null && !bungaeDTO.getBungaeImage().isEmpty()) {
+            try {
+                fileName = fileStorageService.storeFile(bungaeDTO.getBungaeImage());
+                bungaeDTO.setBungaeImagePath(fileName);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(500).body(Map.of("status", "error", "message", "File upload failed"));
+            }
+        }
+
         bungaeService.createBungae(bungaeDTO, user);
 
         Map<String, String> response = new HashMap<>();
@@ -139,6 +156,18 @@ public class BungaeController {
     public ResponseEntity<Map<String, String>> updateBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam("keyword") String keyword, @RequestParam("address") String address) {
         LocationDTO locationDTO = new LocationDTO(keyword, address);
         bungaeDTO.setBungaeLocation(locationDTO);
+
+        String fileName = null;
+        if (bungaeDTO.getBungaeImage() != null && !bungaeDTO.getBungaeImage().isEmpty()) {
+            try {
+                fileName = fileStorageService.storeFile(bungaeDTO.getBungaeImage());
+                bungaeDTO.setBungaeImagePath(fileName);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(500).body(Map.of("status", "error", "message", "File upload failed"));
+            }
+        }
+
         bungaeService.updateBungae(bungaeDTO.getBungaeId(), bungaeDTO);
 
         Map<String, String> response = new HashMap<>();

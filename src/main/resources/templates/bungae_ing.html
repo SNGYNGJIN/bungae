@@ -38,8 +38,12 @@
                            class="mb-4 list-group-item list-group-item-action flex-column align-items-start">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <img class="d-block img-fluid"
+                                    <img class="img-fluid d-block mx-auto"
+                                         th:if="${bungae.bungaeImagePath == null}"
                                          src="https://static.pingendo.com/img-placeholder-1.svg">
+                                    <img th:if="${bungae.bungaeImagePath != null}"
+                                         th:src="@{'/uploads/' + ${bungae.bungaeImagePath}}"
+                                         class="card-img-top" alt="Bungae Image">
                                 </div>
                                 <div class="col-md-8">
                                     <div class="d-flex w-100 justify-content-between">
@@ -84,8 +88,12 @@
                            class="list-group-item list-group-item-action flex-column align-items-start">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <img class="d-block img-fluid"
+                                    <img class="img-fluid d-block mx-auto"
+                                         th:if="${bungae.bungaeImagePath == null}"
                                          src="https://static.pingendo.com/img-placeholder-1.svg">
+                                    <img th:if="${bungae.bungaeImagePath != null}"
+                                         th:src="@{'/uploads/' + ${bungae.bungaeImagePath}}"
+                                         class="card-img-top" alt="Bungae Image">
                                 </div>
                                 <div class="col-md-8">
                                     <div class="d-flex w-100 justify-content-between">
