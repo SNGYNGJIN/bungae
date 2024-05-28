@@ -7,10 +7,34 @@ $(document).ready(function () {
             let createListItem = function (bungae, isActive) {
                 let activeClass = isActive ? 'active' : '';
                 let textClass = isActive ? '' : 'text-muted';
+                let bungaeTypeIcon = '';
+                switch (bungae.bungaeType) {
+                    case 'DRINK':
+                        bungaeTypeIcon = 'fa fa-beer';
+                        break;
+                    case 'SOCCER':
+                        bungaeTypeIcon = 'fa fa-futbol';
+                        break;
+                    case 'BASKETBALL':
+                        bungaeTypeIcon = 'fa fa-basketball-ball';
+                        break;
+                    case 'CYCLE':
+                        bungaeTypeIcon = 'fa fa-bicycle';
+                        break;
+                    case 'RUNNING':
+                        bungaeTypeIcon = 'fa fa-running';
+                        break;
+                    case 'STUDY':
+                        bungaeTypeIcon = 'fa fa-book';
+                        break;
+                    default:
+                        bungaeTypeIcon = '';
+                        break;
+                }
                 return `
                     <a href="bungae/bungae_detail/${bungae.bungaeId}" class="list-group-item list-group-item-action flex-column align-items-start ${activeClass}">
                         <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">${bungae.bungaeName}</h5>
+                            <h5 class="mb-1">${bungae.bungaeName} <i class="${bungaeTypeIcon}"></i></h5>
                         </div>
                         <p class="mb-1">${bungae.bungaeDescription}</p>
                         <small class="${textClass}">${bungae.bungaeStartTime}</small>
@@ -37,10 +61,34 @@ $(document).ready(function () {
             let createListItem = function (bungae, isActive) {
                 let activeClass = isActive ? 'active' : '';
                 let textClass = isActive ? '' : 'text-muted';
+                let bungaeTypeIcon = '';
+                switch (bungae.bungaeType) {
+                    case 'DRINK':
+                        bungaeTypeIcon = 'fa fa-beer';
+                        break;
+                    case 'SOCCER':
+                        bungaeTypeIcon = 'fa fa-futbol';
+                        break;
+                    case 'BASKETBALL':
+                        bungaeTypeIcon = 'fa fa-basketball-ball';
+                        break;
+                    case 'CYCLE':
+                        bungaeTypeIcon = 'fa fa-bicycle';
+                        break;
+                    case 'RUNNING':
+                        bungaeTypeIcon = 'fa fa-running';
+                        break;
+                    case 'STUDY':
+                        bungaeTypeIcon = 'fa fa-book';
+                        break;
+                    default:
+                        bungaeTypeIcon = '';
+                        break;
+                }
                 return `
             <a href="bungae/bungae_detail/${bungae.bungaeId}" class="list-group-item list-group-item-action flex-column align-items-start ${activeClass}">
                 <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">${bungae.bungaeName}</h5>
+                    <h5 class="mb-1">${bungae.bungaeName} <i class="${bungaeTypeIcon}"></i></h5>
                 </div>
                 <p class="mb-1">${bungae.bungaeDescription}</p>
                 <small class="${textClass}">${bungae.bungaeStartTime}</small>

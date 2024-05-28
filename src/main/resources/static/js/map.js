@@ -1,4 +1,3 @@
-
 if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function (position) {
         var lat = position.coords.latitude, // 위도
@@ -34,9 +33,8 @@ if (navigator.geolocation) {
         marker.setMap(map);
 
 
-
         // 지도의 이동이 끝날 때마다 호출되는 이벤트
-        kakao.maps.event.addListener(map, 'idle', function() {
+        kakao.maps.event.addListener(map, 'idle', function () {
             updateBungaeList();
         });
 
@@ -45,14 +43,14 @@ if (navigator.geolocation) {
                 url: '/bungae/getList', // 번개 모임 정보를 가져오는 서버의 URL
                 type: 'GET',
                 dataType: 'json',
-                success: function(data) {
+                success: function (data) {
                     var listContainer = $('#bungae-list');
                     listContainer.empty(); // 리스트 초기화
 
                     var geocoder = new kakao.maps.services.Geocoder();
 
-                    data.forEach(function(bungae) {
-                        geocoder.addressSearch(bungae.bungaeLocation.address, function(result, status) {
+                    data.forEach(function (bungae) {
+                        geocoder.addressSearch(bungae.bungaeLocation.address, function (result, status) {
                             if (status === kakao.maps.services.Status.OK) {
                                 var lat = parseFloat(result[0].y); // 위도
                                 var lng = parseFloat(result[0].x); // 경도
@@ -64,7 +62,7 @@ if (navigator.geolocation) {
                         });
                     });
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("Error occurred: " + error);
                 }
             });
@@ -79,10 +77,34 @@ if (navigator.geolocation) {
 
         function createListItem(bungae) {
             // 번개 모임 데이터를 기반으로 리스트 아이템 HTML 생성
+            let bungaeTypeIcon = '';
+            switch (bungae.bungaeType) {
+                case 'DRINK':
+                    bungaeTypeIcon = 'fa fa-beer';
+                    break;
+                case 'SOCCER':
+                    bungaeTypeIcon = 'fa fa-futbol';
+                    break;
+                case 'BASKETBALL':
+                    bungaeTypeIcon = 'fa fa-basketball-ball';
+                    break;
+                case 'CYCLE':
+                    bungaeTypeIcon = 'fa fa-bicycle';
+                    break;
+                case 'RUNNING':
+                    bungaeTypeIcon = 'fa fa-running';
+                    break;
+                case 'STUDY':
+                    bungaeTypeIcon = 'fa fa-book';
+                    break;
+                default:
+                    bungaeTypeIcon = '';
+                    break;
+            }
             return `
                <a href="bungae/bungae_detail/${bungae.bungaeId}" class="list-group-item list-group-item-action flex-column align-items-start">
                    <div class="d-flex w-100 justify-content-between">
-                       <h5 class="mb-1">${bungae.bungaeName}</h5>
+                       <h5 class="mb-1">${bungae.bungaeName} <i class="${bungaeTypeIcon}"></i></h5>
                        <small class="text-muted">시작: ${bungae.bungaeStartTime}</small>
                    </div>
                </a>`;

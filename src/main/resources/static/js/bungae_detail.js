@@ -17,7 +17,7 @@ $(document).ready(function () {
                 console.log("enterChat event dispatched");
 
                 // 이벤트가 완전히 처리된 후 페이지 이동
-                setTimeout(function() {
+                setTimeout(function () {
                     window.location.href = '/chat/' + bungaeId;
                 }, 500); // 500ms 후 페이지 이동
             },
@@ -49,6 +49,20 @@ $(document).ready(function () {
         let bungaeId = $(this).data('bungae-id');
         window.location.href = '/bungae/bungae_update/' + bungaeId;
     });
+
+    $('#cancelButton').click(function () {
+        let bungaeId = $(this).data('bungae-id');
+        $.ajax({
+            url: '/bungae/' + bungaeId + '/cancel',
+            type: 'DELETE',
+            success: function (response) {
+                window.location.href = response.redirectUrl;
+            },
+            error: function (xhr, status, error) {
+                alert('Error: ' + xhr.responseText);
+            }
+        });
+    })
 });
 
 // 번개 아이디에 해당하는 번개멤버 채팅 참가 시키기
