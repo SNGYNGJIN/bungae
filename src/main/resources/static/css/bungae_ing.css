@@ -7145,3 +7145,9 @@ font-family: 'BMDOHYEON';
     width:25px;
     height:25px;
 }
+
+.ing_hr {
+  width: 50%;
+  margin: auto;
+  border: 1px solid #ddd;
+}

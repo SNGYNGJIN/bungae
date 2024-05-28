@@ -15,9 +15,11 @@ public interface BungaeMemberService {
 
     BungaeMember createBungaeMember(Bungae bungae, UserVO user, boolean isOrganizer);
 
+    Bungae findBungaeById(int userId);
+
     List<Bungae> findBungaeByUserId(int userId);
 
-    Bungae findBungaeById(int userId);
+    List<BungaeMember> findByUserId(int userId);
 
     boolean canJoinOrHostBungae(UserVO user);
 

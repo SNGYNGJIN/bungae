@@ -99,6 +99,12 @@ public class BungaeMemberServiceImpl implements BungaeMemberService {
 
     @Override
     @Transactional
+    public List<BungaeMember> findByUserId(int userId) {
+        return bungaeMemberRepository.findByUserId(userId);
+    }
+
+    @Override
+    @Transactional
     public Optional<BungaeMember> getOrganizerByBungaeId(Long bungaeId) {
         return bungaeMemberRepository.findByBungae_BungaeIdAndIsOrganizerTrue(bungaeId);
     }
