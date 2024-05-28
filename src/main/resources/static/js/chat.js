@@ -247,8 +247,8 @@ $(function () {
         members.forEach(member => {
             const userInfo = `
                 <div class="user-info">
-                    <img src="${member.userImage}" alt="User Image" style="width: 30px; height: 30px;">
-                    <p>${member.nickname}</p>
+                    <img class="user-image" src="${member.userImage}" alt="User Image" style="border-radius: 50%; width: 30px; height: 30px;">
+                    <p class="user-nickname">${member.nickname}</p>
                 </div>
             `;
 
