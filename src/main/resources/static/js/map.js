@@ -40,7 +40,15 @@ if (navigator.geolocation) {
             updateBungaeList();
         });
 
+        // 체크박스 선택 상태 변경 이벤트 리스너를 등록합니다
+        $('input[name="category"]').on('change', function () {
+            updateBungaeList();
+        });
+
         function updateBungaeList() {
+            var selectedCategories = $('input[name="category"]:checked').map(function () {
+                return this.value;
+            }).get();
             $.ajax({
                 url: '/bungae/getList', // 번개 모임 정보를 가져오는 서버의 URL
                 type: 'GET',
@@ -57,7 +65,7 @@ if (navigator.geolocation) {
                                 var lat = parseFloat(result[0].y); // 위도
                                 var lng = parseFloat(result[0].x); // 경도
 
-                                if (isInMapBounds(lat, lng)) {
+                                if (isInMapBounds(lat, lng) && (selectedCategories.length === 0 || selectedCategories.includes(bungae.bungaeType))) {
                                     listContainer.append(createListItem(bungae));
                                 }
                             }
