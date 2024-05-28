@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <button class="btn btn-primary review-user-btn" data-user-id="${user.userId}" data-nickname="${user.nickname}" ${reviewed ? 'disabled' : ''}>
                                     ${reviewed ? '작성 완료' : '리뷰 등록'}
                                 </button>
-                                <hr>
+                                <hr>    
                             `;
                             usersContainer.appendChild(userElement);
 
