@@ -25,9 +25,15 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-lg-6 order-2 order-lg-1"><img class="img-fluid d-block mx-auto"
-                                                          src="https://static.pingendo.com/img-placeholder-1.svg"
-                                                          width="300px" height="300px"></div>
+            <div class="col-lg-6 order-2 order-lg-1">
+                <img class="img-fluid d-block mx-auto"
+                     th:if="${bungae.bungaeImagePath == null}"
+                     src="https://static.pingendo.com/img-placeholder-1.svg"
+                     width="300px" height="300px">
+                <img th:if="${bungae.bungaeImagePath != null}"
+                     th:src="@{'/uploads/' + ${bungae.bungaeImagePath}}"
+                     class="card-img-top" alt="Bungae Image" width="300px" height="300px">
+            </div>
             <div class="px-md-5 order-1 order-lg-2 d-flex flex-column justify-content-center align-items-start p-3 col-lg-6"
                  style="">
                 <div class="table-responsive">

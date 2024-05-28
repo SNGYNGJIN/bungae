@@ -29,11 +29,14 @@ $(document).ready(function () {
                         bungaeTypeIcon = '';
                         break;
                 }
+
+                let imageSrc = bungae.bungaeImagePath ? `/uploads/${bungae.bungaeImagePath}` : 'https://static.pingendo.com/img-placeholder-1.svg';
+
                 return `
               <a href="bungae/bungae_detail/${bungae.bungaeId}" class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="row">
                   <div class="col-md-4">
-                    <img class="d-block img-fluid" src="https://static.pingendo.com/img-placeholder-1.svg">
+                    <img class="d-block img-fluid" src="${imageSrc}">
                   </div>
                   <div class="col-md-8">
                     <div class="d-flex w-100 justify-content-between">

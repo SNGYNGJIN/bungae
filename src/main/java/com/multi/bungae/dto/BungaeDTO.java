@@ -3,6 +3,7 @@ package com.multi.bungae.dto;
 import com.multi.bungae.domain.BungaeStatus;
 import com.multi.bungae.domain.BungaeType;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,7 @@ public class BungaeDTO {
     private String bungaeDescription;
     private LocationDTO bungaeLocation;
     private String bungaeImagePath;
+    private MultipartFile bungaeImage;
     private int bungaeMaxMember;
     private LocalDateTime bungaeCreateTime;
     private LocalDateTime bungaeStartTime;

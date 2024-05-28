@@ -164,25 +164,28 @@ function loadData() {
                         // 오버레이 컨텐츠에 고유한 ID를 부여합니다
                         var overlayId = 'overlay_' + index;
 
-                        var content = '<div class="wrap">' +
-                            '    <div class="info">' +
-                            '        <div class="title">' + bungae.bungaeName +
-                            '            <div class="close" onclick="closeOverlay(\'' + overlayId + '\')" title="닫기"></div>' +
-                            '        </div>' +
-                            '        <div class="body">' +
-                            '            <div class="img">' +
-                            '                <img src="" width="83" height="80">' +
-                            '            </div>' +
-                            '            <div class="desc">' +
-                            '                <div class="ellipsis">장소: ' + bungae.bungaeLocation.keyword + '</div>' +
-                            '                <div class="time ellipsis">일시: ' + bungae.bungaeStartTime + '</div>' +
-                            '                <div class="age ellipsis">연령대: ' + bungae.bungaeMinAge + '세~' + bungae.bungaeMaxAge + '세</div>' +
-                            '                <div class="member ellipsis">최대인원: ' + bungae.bungaeMaxMember + '명</div>' +
-                            '                <div><a href="bungae/bungae_detail/' + bungae.bungaeId + '" class="link">상세보기</a></div>' +
-                            '            </div>' +
-                            '        </div>' +
-                            '    </div>' +
-                            '</div>';
+                        let imageSrc = bungae.bungaeImagePath ? `/uploads/${bungae.bungaeImagePath}` : 'https://static.pingendo.com/img-placeholder-1.svg';
+
+                        var content = `
+                            <div class="wrap">
+                                <div class="info">
+                                    <div class="title">${bungae.bungaeName}
+                                        <div class="close" onclick="closeOverlay('${overlayId}')" title="닫기"></div>
+                                    </div>
+                                    <div class="body">
+                                        <div class="img">
+                                            <img src="${imageSrc}" width="83" height="80">
+                                        </div>
+                                        <div class="desc">
+                                            <div class="ellipsis">장소: ${bungae.bungaeLocation.keyword}</div>
+                                            <div class="time ellipsis">일시: ${bungae.bungaeStartTime}</div>
+                                            <div class="age ellipsis">연령대: ${bungae.bungaeMinAge}세~${bungae.bungaeMaxAge}세</div>
+                                            <div class="member ellipsis">최대인원: ${bungae.bungaeMaxMember}명</div>
+                                            <div><a href="bungae/bungae_detail/${bungae.bungaeId}" class="link">상세보기</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
 
                         var overlay = new kakao.maps.CustomOverlay({
                             content: content,
