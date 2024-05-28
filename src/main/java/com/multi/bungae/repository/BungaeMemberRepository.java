@@ -33,12 +33,13 @@ public interface BungaeMemberRepository extends JpaRepository<BungaeMember, Long
     Optional<BungaeMember> findByBungae_BungaeIdAndIsOrganizerTrue(Long bungaeId);
 
     // 해당 모임에 userId가 존재하는지 여부
-    //boolean findBy( UserVO user);
+    boolean existsByBungaeAndUser(Bungae bungae, UserVO user);
 
-    @EntityGraph(value = "BungaeMember.user", type = EntityGraph.EntityGraphType.LOAD)
     List<BungaeMember> findByBungae_BungaeId(Long bungaeId);
 
     boolean existsByBungaeAndUserAndIsOrganizerTrue(Bungae bungae, UserVO user);
 
     boolean existsByBungaeAndUserAndIsOrganizerFalse(Bungae bungae, UserVO user);
+
+    List<BungaeMember> findByUserId(int userId);
 }

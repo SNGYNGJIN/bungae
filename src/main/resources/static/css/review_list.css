@@ -17,4 +17,5 @@
 .user-info p {
     flex-grow: 1; /* 닉네임이 차지할 수 있는 모든 공간 차지 */
     margin-right: 10px; /* 닉네임과 버튼 사이의 여백 */
+    margin-top: 20px;
 }

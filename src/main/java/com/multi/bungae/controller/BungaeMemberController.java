@@ -4,24 +4,28 @@ import com.multi.bungae.domain.Bungae;
 import com.multi.bungae.domain.BungaeMember;
 import com.multi.bungae.domain.BungaeStatus;
 import com.multi.bungae.domain.UserVO;
+import com.multi.bungae.repository.UserRepository;
 import com.multi.bungae.service.BungaeMemberService;
 import com.multi.bungae.service.BungaeMemberServiceImpl;
 import com.multi.bungae.service.BungaeService;
 import com.multi.bungae.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
 public class BungaeMemberController {
 
+    @Autowired
+    private UserRepository userRepo;
     private final BungaeMemberService bungaeMemberService;
     private final BungaeService bungaeService;
     private final UserService userService;
@@ -68,16 +72,27 @@ public class BungaeMemberController {
             return "redirect:login";
         }
 
-        UserVO user = userService.getUserByUserId(userId);
-        Bungae bungae = bungaeMemberService.findActiveBungaeByUserId(user.getId());
+        Optional<UserVO> user = userRepo.findByUserId(userId);
+        List<BungaeMember> bungaeMembers = bungaeMemberService.findByUserId(user.get().getId());
 
-        if (bungae == null) {
+        if (bungaeMembers.isEmpty()) {
             return "redirect:map";
         }
 
-        int currentMemberCount = bungaeMemberService.countByBungae_BungaeId(bungae.getBungaeId());
-        model.addAttribute("bungae", bungae);
-        model.addAttribute("currentMemberCount", currentMemberCount);
+        List<Bungae> bungaeList = new ArrayList<>();
+        Map<Long, Integer> bungaeMemberCounts = new HashMap<>();
+
+        for (BungaeMember bungaeMember : bungaeMembers) {
+            Bungae bungae = bungaeMember.getBungae();
+            bungaeList.add(bungae);
+            int bungaeMemberCount = bungaeMemberService.countByBungae_BungaeId(bungae.getBungaeId());
+            bungaeMemberCounts.put(bungae.getBungaeId(), bungaeMemberCount);
+        }
+
+        model.addAttribute("bungaeList", bungaeList);
+        model.addAttribute("bungaeMemberCounts", bungaeMemberCounts);
+
         return "bungae_ing";
     }
+
 }
