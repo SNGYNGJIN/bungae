@@ -30,4 +30,6 @@ public interface BungaeService {
     Bungae cancelBungae2(Long bungaeId, UserVO userVO);
 
     void updateBungaeStatus();
+
+    List<BungaeDTO> search(String keyword);
 }
