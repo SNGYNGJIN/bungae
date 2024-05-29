@@ -6,11 +6,13 @@ import com.multi.bungae.dto.BungaeDTO;
 import com.multi.bungae.dto.LocationDTO;
 import com.multi.bungae.repository.BungaeMemberRepository;
 import com.multi.bungae.repository.BungaeRepository;
+import com.multi.bungae.utils.BungaeSpecification;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cglib.core.Local;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -151,6 +153,26 @@ public class BungaeServiceImpl implements BungaeService {
         }
     }
 
+    @Override
+    @Transactional
+    public void updateBungaeStatus() {
+        LocalDateTime now = LocalDateTime.now();
+
+        bungaeRepository.updateStatusToInProgress(BungaeStatus.SCHEDULED, BungaeStatus.IN_PROGRESS, now);
+
+        bungaeRepository.updateStatusToEnded(BungaeStatus.IN_PROGRESS, BungaeStatus.ENDED, now.minusHours(1));
+    }
+
+    @Override
+    @Transactional
+    public List<BungaeDTO> search(String keyword) {
+        Specification<Bungae> spec = Specification
+                .where(BungaeSpecification.containsKeywordInNameDescriptionLocation(keyword))
+                .and(BungaeSpecification.hasStatus(BungaeStatus.SCHEDULED));
+        List<Bungae> bungaeList = bungaeRepository.findAll(spec);
+        return getBungaeDTOList(bungaeList);
+    }
+
     private Bungae updateBungaeData(Bungae bungae, BungaeDTO bungaeDTO) {
         LocalDateTime createTime = LocalDateTime.now();
 
@@ -181,20 +203,6 @@ public class BungaeServiceImpl implements BungaeService {
         dto.setBungaeMinAge(bungae.getBungaeMinAge());
         dto.setBungaeMaxAge(bungae.getBungaeMaxAge());
         return dto;
-    }
-
-    public void updateBungaeStatus() {
-        List<Bungae> bungaeList = bungaeRepository.findAll();
-        LocalDateTime now = LocalDateTime.now();
-
-        for (Bungae bungae : bungaeList) {
-            if (bungae.getBungaeStatus() == BungaeStatus.SCHEDULED && bungae.getBungaeStartTime().isBefore(now)) {
-                bungae.setBungaeStatus(BungaeStatus.IN_PROGRESS);
-            } else if (bungae.getBungaeStatus() == BungaeStatus.IN_PROGRESS && bungae.getBungaeStartTime().plusHours(1).isBefore(now)) {
-                bungae.setBungaeStatus(BungaeStatus.ENDED);
-            }
-            bungaeRepository.save(bungae);
-        }
     }
 
     private List<BungaeDTO> getBungaeDTOList(List<Bungae> bungaeList) {
