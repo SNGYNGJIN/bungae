@@ -106,4 +106,19 @@ $(document).ready(function () {
             alert('Error: ' + err);
         }
     });
+
+    $('#search-button').click(function () {
+        let keyword = $('#inlineFormInputGroup').val();
+        if (keyword) {
+            window.location.href = `/bungae_list?keyword=${encodeURIComponent(keyword)}`;
+        } else {
+            alert('검색어를 입력해주세요');
+        }
+    });
+
+
+    $('#search-form').submit(function (event) {
+        event.preventDefault();
+        $('#search-button').click();
+    });
 });

@@ -98,7 +98,8 @@ public class BungaeController {
     }
 
     @GetMapping("/bungae_list")
-    public String bungaeList() {
+    public String bungaeList(Model model, @RequestParam(required = false) String keyword) {
+        model.addAttribute("keyword", keyword);
         return "bungae_list";
     }
 
@@ -147,11 +148,6 @@ public class BungaeController {
         return bungaeService.bungaeListOfCreateTime();
     }
 
-    @GetMapping("/find/age")
-    public Bungae findBungaeByAge(@RequestParam("age") int age) {
-        return null;
-    }
-
     @PostMapping("/update_bungae")
     public ResponseEntity<Map<String, String>> updateBungae(@ModelAttribute BungaeDTO bungaeDTO, @RequestParam("keyword") String keyword, @RequestParam("address") String address) {
         LocationDTO locationDTO = new LocationDTO(keyword, address);
@@ -187,6 +183,12 @@ public class BungaeController {
         response.put("redirectUrl", "/bungae_list");
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/searchBungae")
+    @ResponseBody
+    public List<BungaeDTO> searchBungae(@RequestParam String keyword) {
+        return bungaeService.search(keyword);
     }
 
     private String convertBungaeTypeToKorean(BungaeType bungaeType) {
