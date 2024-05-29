@@ -7176,3 +7176,10 @@ font-family: 'BMDOHYEON';
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       white-space: nowrap;
     }
+.list-group{
+    height: 500px;
+    overflow-y: scroll;
+}
+    .list-group::-webkit-scrollbar {
+      display: none;
+    }
