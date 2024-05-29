@@ -32,6 +32,19 @@ if (navigator.geolocation) {
         });
         marker.setMap(map);
 
+        var content = '<div class="customoverlay">' +
+            '  <a>' +
+            '    <span class="title">현재 위치</span>' +
+            '  </a>' +
+            '</div>';
+
+        // 커스텀 오버레이를 생성합니다
+        var customOverlay = new kakao.maps.CustomOverlay({
+            map: map,
+            position: locPosition,
+            content: content,
+            yAnchor: 1
+        });
 
         // 지도의 이동이 끝날 때마다 호출되는 이벤트
         kakao.maps.event.addListener(map, 'idle', function () {
