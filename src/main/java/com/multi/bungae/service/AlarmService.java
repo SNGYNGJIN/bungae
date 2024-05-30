@@ -63,6 +63,7 @@ public class AlarmService {
         }
     }
 
+    @Transactional
     public void sendAlarm(Long bungaeId, String message, String senderNickname) {
         Map<String, SseEmitter> userEmitters = emitters.get(bungaeId);
         viewAlarm(bungaeId, message, senderNickname);
