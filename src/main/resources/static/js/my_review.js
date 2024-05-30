@@ -10,14 +10,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const start = (page - 1) * reviewsPerPage;
         const end = page * reviewsPerPage;
 
+        usersContainer.innerHTML = ''; // 리뷰 목록 초기화
+
         reviews.slice(start, end).forEach(review => {
-            usersContainer.innerHTML = '';
             const reviewElement = document.createElement('div');
             reviewElement.className = 'review-info';
             reviewElement.innerHTML = `
                 <p>${generateStarRating(review.rating)}</p>
                 <p>${review.content}</p>
-                <hSDFASDFASDr>
+                <hr>
             `;
             usersContainer.appendChild(reviewElement);
         });
@@ -36,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-
     myReviewBtn.addEventListener('click', function() {
         fetch(`/review/myReview/${currentId}`)
             .then(response => {
@@ -46,8 +46,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                data.reverse(); // Reverse the array to display reviews in descending order
-                displayReviews(data); // Show the first set of reviews
+                if (data.length > 0) {
+                    data.reverse(); // Reverse the array to display reviews in descending order
+                    displayReviews(data); // Show the first set of reviews
+                } else {
+                    usersContainer.innerHTML = '아직 받은 리뷰가 없어요 🫠';
+                }
                 $(reviewModal).modal('show');
             })
             .catch(error => {
