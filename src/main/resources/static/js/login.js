@@ -1,10 +1,21 @@
-function sendLoginRequest() {
+async function sendLoginRequest() {
     event.preventDefault();  // 폼 기본 제출 방지
 
     // 입력 필드에서 아이디와 비밀번호 값 추출
     const userId = document.getElementById('userId').value;
     const passwd = document.getElementById('passwd').value;
     const data = { userId, passwd };
+
+    // 브라우저 알림 허용 권한 요청
+    let granted = false;
+    if (Notification.permission === 'granted') {
+        granted = true;
+    } else if (Notification.permission !== 'denied') {
+        let permission = await Notification.requestPermission();
+        granted = permission === 'granted';
+    }
+    console.log('Notification permission granted:', granted);
+
 
     fetch('/user/api/login', {
         method: 'POST',
