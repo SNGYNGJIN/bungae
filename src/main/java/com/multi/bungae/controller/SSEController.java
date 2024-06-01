@@ -2,6 +2,7 @@ package com.multi.bungae.controller;
 
 import com.multi.bungae.config.WebSocketChatHandler;
 import com.multi.bungae.domain.BungaeMember;
+import com.multi.bungae.domain.BungaeStatus;
 import com.multi.bungae.domain.SocketState;
 import com.multi.bungae.domain.UserVO;
 import com.multi.bungae.repository.BungaeMemberRepository;
@@ -50,7 +51,7 @@ public class SSEController {
     @GetMapping(path = "/subscribe/{userId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(@PathVariable String userId){
         UserVO user = userRepo.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        Optional<BungaeMember> bungae = bungaeMemberRepo.findByUser(user);
+        Optional<BungaeMember> bungae = bungaeMemberRepo.findByUser_IdAndBungae_BungaeStatusNot(user.getId(), BungaeStatus.ENDED);
         if (bungae.isEmpty()) {
             throw new IllegalStateException("Bungae not found for user");
         }
@@ -68,7 +69,8 @@ public class SSEController {
     @DeleteMapping("/unsubscribe/{userId}")
     public void unsubscribe(@PathVariable String userId) {
         UserVO user = userRepo.findByUserId(userId).orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        Optional<BungaeMember> bungae = bungaeMemberRepo.findByUser(user);
+        Optional<BungaeMember> bungae = bungaeMemberRepo.findByUser_IdAndBungae_BungaeStatusNot(user.getId(), BungaeStatus.ENDED);
+
         if (bungae.isEmpty()) {
             throw new IllegalStateException("Bungae not found for user");
         }

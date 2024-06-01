@@ -86,12 +86,14 @@ public class ChatAPIController {
         return ResponseEntity.ok(userNicknames);
     }
 
+    @ResponseBody
     @GetMapping("/findDisconnect/{userId}")
     public ResponseEntity<Boolean> findDisconnect(@PathVariable String userId) {
         UserVO user = userRepo.findByUserId(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found by chatAPIController"));
 
-        Optional<BungaeMember> bungae = bungaeMemberRepo.findByUser(user);
+        //Optional<BungaeMember> bungae = bungaeMemberRepo.findByUser_IdAndBungae_BungaeStatusNot(user, );
+        Optional<BungaeMember> bungae = bungaeMemberRepo.findByUser_IdAndBungae_BungaeStatusNot(user.getId(), BungaeStatus.ENDED);
 
         if (bungae.isPresent()) {
             Long bungaeId = bungae.get().getBungae().getBungaeId();
