@@ -1,9 +1,7 @@
-# ⚡번개어때
-
 <p align="center">
   <br>
   <img src="./src/main/resources/static/images/bungae.png">
-  <br>
+  <br><br>
 </p>
 
 
@@ -49,12 +47,22 @@
 ### 기능 4
 모임 종료 후 모임 참가원 평가 및 후기 작성 기능
 
+## 화면 구성
+| 메인 | 지도 |
+| :-: | :-: |
+|<img src="https://github.com/SNGYNGJIN/bungae/assets/105650041/78a8cb8f-4f08-4fe5-b41c-0f14ebc1de4b" alt="main" height="350">|<img src="https://github.com/SNGYNGJIN/bungae/assets/105650041/8c5e3b7b-d65c-4b68-ae1b-b9b019ce39f1" alt="map" height="350">|
+| 주최 | 수정 |
+|<img src="https://github.com/SNGYNGJIN/bungae/assets/105650041/84ede148-a158-4acf-a464-54aeee5b3e49" alt="create" height="350">|<img src="https://github.com/SNGYNGJIN/bungae/assets/105650041/8bdce81f-f087-4311-abe6-b89ee4e6645a" alt="update" height="350">|
+| 참가 | 채팅 |
+|<img src="https://github.com/SNGYNGJIN/bungae/assets/105650041/88ea4494-b457-4762-ba6b-cd1ef0857ea4" alt="join" height="350">|<img src="https://github.com/SNGYNGJIN/bungae/assets/105650041/9891fad3-3134-428a-88da-4d9e6d8f7944" alt="chat" height="350">|
+
 <br>
 
 ## 팀원
-|   진성영  | 이용전 |  정혜연   |
-| :--------: | :--------: | :------: |
-|     |   |     |
+|<img src="https://github.com/SNGYNGJIN.png" width="80">|<img src="https://github.com/yong9811.png" width="80">|<img src="https://github.com/JEONGHYEYEON.png" width="80">|
+|:---:|:---:|:---:|
+|[진성영](https://github.com/SNGYNGJIN)|[이용전](https://github.com/yong9811)|[정혜연](https://github.com/JEONGHYEYEON)|
+|번개모임|지도 및 UI 디자인|회원관리 및 채팅|
 <p align="justify">
 
 </p>
