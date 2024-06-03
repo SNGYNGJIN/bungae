@@ -6,6 +6,7 @@ async function sendLoginRequest() {
     const passwd = document.getElementById('passwd').value;
     const data = { userId, passwd };
 
+
     // 브라우저 알림 허용 권한 요청
     let granted = false;
     if (Notification.permission === 'granted') {
